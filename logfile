@@ -1,0 +1,8 @@
+2021-02-05 14:26:13 +07 LOG:  redirecting log output to logging collector process
+2021-02-05 14:26:13 +07 HINT:  Future log output will appear in directory "pg_log".
+2021-02-05 14:28:18 +07 LOG:  redirecting log output to logging collector process
+2021-02-05 14:28:18 +07 HINT:  Future log output will appear in directory "pg_log".
+2021-02-05 14:32:46 +07 LOG:  redirecting log output to logging collector process
+2021-02-05 14:32:46 +07 HINT:  Future log output will appear in directory "pg_log".
+2021-02-05 14:32:53 +07 LOG:  redirecting log output to logging collector process
+2021-02-05 14:32:53 +07 HINT:  Future log output will appear in directory "pg_log".
