@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <!-- Remove Tap Highlight on Windows Phone IE -->
     <meta name="msapplication-tap-highlight" content="no">
-@if (auth()->check())
+@if (auth()->user()->exists)
     <!-- API Token -->
     <meta name="api-token" content="{{ auth()->user()->token()->firstOrNew([], ['api_token' => null])->api_token }}">
 @endif
@@ -173,7 +173,7 @@
                         </a>
                     </div>
                 </div>
-@if (auth()->check())
+@if (auth()->user()->exists)
                     <div class="info-card">
                         <img src="/img/avatars/avatar-male.png" alt="profile photo" class="profile-image rounded">
                         <div class="info-card-text w-100 ml-0 text-center">
@@ -392,7 +392,7 @@
                             </div>
                         </div>
                     </div>
-@if (auth()->check())
+@if (auth()->user()->exists)
                     <!-- app user menu -->
                         <div>
                             <a href="#" data-toggle="dropdown" title="{{ auth()->user()->email }}" class="header-icon d-flex align-items-center justify-content-center ml-2">
@@ -835,7 +835,7 @@
 </div>
 <!-- END Page Settings -->
 
-@if (auth()->check())
+@if (auth()->user()->exists)
     <script src="/js/vendors.bundle.js"></script>
     <script src="/js/app.bundle.js"></script>
 
