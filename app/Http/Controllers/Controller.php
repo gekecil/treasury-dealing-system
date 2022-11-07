@@ -27,6 +27,8 @@ class Controller extends BaseController
                         'transaction_id' => (($salesDeal->specialRateDeal ? 'SR' : 'FX').$salesDeal->created_at->format('dmY').'-'.substr(
                                     '00'.(string) (
                                         $salesDeal->newQuery()
+                                        ->confirmed()
+                                        ->doesntHave('cancellation')
                                         ->whereDate('created_at', $salesDeal->created_at->toDateString())
                                         ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
                                         ->count()
@@ -59,7 +61,7 @@ class Controller extends BaseController
             }
 
         } catch (\Exception $e) {
-            dd($e);//
+            //
         }
     }
 }
