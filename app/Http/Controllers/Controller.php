@@ -59,7 +59,7 @@ class Controller extends BaseController
             }
 
         } catch (\Exception $e) {
-            //
+            dd($e);//
         }
     }
 }
