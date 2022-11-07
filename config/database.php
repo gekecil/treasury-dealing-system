@@ -93,7 +93,7 @@ return [
         ],
 
         'pgsql_sismontavar' => [
-            'driver' => 'sqlsrv',
+            'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST_THIRD', 'localhost'),
             'port' => env('DB_PORT_THIRD', '1433'),
