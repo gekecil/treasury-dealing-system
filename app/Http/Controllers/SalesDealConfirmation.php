@@ -130,6 +130,8 @@ class SalesDealConfirmation extends Controller
 			]);
 		}
 
+        $this->sismontavar(SalesDeal::find($id));
+
 		return redirect()->route(Str::before($request->input('route-name'), '.').'.index')->with('status', 'The Dealing Was Authorized!');
     }
 

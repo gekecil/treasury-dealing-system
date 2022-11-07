@@ -35,15 +35,16 @@ class RefreshToken
 
         if ($request->user()->token()->exists()) {
             $request->user()->token->fill(['api_token' => $request->session()->token()]);
-        }
 
-        if ($request->user()->token()->exists() && $request->user()->token->isDirty('api_token')) {
-            while ($request->user()->token->newQuery()->where('api_token', $request->user()->token->api_token)->exists()) {
-                $request->session()->regenerateToken();
-                $request->user()->token->fill(['api_token' => $request->session()->token()]);
+            if ($request->user()->token->isDirty('api_token')) {
+                while ($request->user()->token->newQuery()->where('api_token', $request->user()->token->api_token)->exists()) {
+                    $request->session()->regenerateToken();
+                    $request->user()->token->fill(['api_token' => $request->session()->token()]);
+                }
+
+                $request->user()->token->save();
+
             }
-
-            $request->user()->token->save();
         }
 
         if ($request->isMethod('post')) {
