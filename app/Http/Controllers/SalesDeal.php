@@ -322,7 +322,7 @@ class SalesDeal extends Controller
             $threshold = Threshold::latest();
             $threshold = $threshold->exists() ? floatval($threshold->first()->threshold) : 0;
 
-            if (!$salesDeal->can_upload_underlying || ($salesDeal.monthly_usd_equivalent < $threshold)) {
+            if (!$salesDeal->can_upload_underlying || ($salesDeal->monthly_usd_equivalent < $threshold)) {
                 $this->sismontavar($salesDeal);
             }
         }
