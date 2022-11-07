@@ -15,4 +15,10 @@ class SpecialRateDeal extends Model
     {
         return $this->belongsTo(SalesDeal::class);
     }
+
+	public function user()
+    {
+        return $this->belongsTo(User::class)
+			->withoutGlobalScopes();
+    }
 }
