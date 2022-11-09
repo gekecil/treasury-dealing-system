@@ -24,7 +24,7 @@ class Controller extends BaseController
                         'transaction_date' => $salesDeal->created_at->format('Ymd His'),
                     ],
                     [
-                        'transaction_id' => (($salesDeal->specialRateDeal ? 'SR' : 'FX').$salesDeal->created_at->format('dmY').'-'.substr(
+                        'transaction_id' => (($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
                                     '00'.(string) (
                                         $salesDeal->newQuery()
                                         ->confirmed()
@@ -42,19 +42,26 @@ class Controller extends BaseController
                         'direction' => ucwords($salesDeal->buyOrSell->name),
                         'base_currency' => $salesDeal->currencyPair->baseCurrency->primary_code,
                         'quote_currency' => $salesDeal->currencyPair->counterCurrency()->firstOrNew([], ['primary_code' => 'IDR'])->primary_code,
+                        'base_volume' => abs($salesDeal->amount),
+                        'quote_volume' => ($salesDeal->customer_rate * abs($salesDeal->amount)),
+                        'periode' => 0,
                         'near_rate' => $salesDeal->customer_rate,
+                        'far_rate' => null,
                         'confirmed_by' => $salesDeal->specialRateDeal()->firstOrNew([], ['user_id' => $salesDeal->user_id])->user->full_name,
                         'trader_name' => $salesDeal->user->full_name,
                         'transaction_purpose' => (
                                 substr('0'.((string) $salesDeal->lhbu_remarks_code), -2).' '.substr('00'.((string) $salesDeal->lhbu_remarks_kind), -3)
                             ),
 
+                        'reported' => false,
                         'near_value_date' => $salesDeal->created_at->format('Ymd His'),
                         'confirmed_at' => $salesDeal->specialRateDeal()->firstOrNew([], ['created_at' => $salesDeal->created_at])
                             ->created_at
                             ->format('Ymd His'),
 
-                        'corporate_id' => $salesDeal->account_id,
+                        'corporate_id' => substr($salesDeal->account->cif, 3),
+                        'created_at' => $salesDeal->created_at->now()->toDateTimeString(),
+                        'manual' => false,
                         'transaction_status' => 1,
                     ]
                 );

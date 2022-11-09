@@ -51,16 +51,16 @@ class SalesDealFile extends Controller
 				}),
 			],
 		]);
-		
+
 		$date = Carbon::now();
-		
+
 		$path = $request->file('document')
 			->storeAs(
 				'uploads/'.$date->format('Y').'/'.$date->format('M'),
 				$request->file('document')->getClientOriginalName(),
 				'local'
 			);
-			
+
 		$salesDealFile = SalesDealFileModel::updateOrCreate(
 			[
 				'sales_deal_id' => $request->input('sales_deal_id')
@@ -71,12 +71,16 @@ class SalesDealFile extends Controller
 				'confirmed' => true,
 			]
 		);
-		
+
+        if (!SalesDeal::find($request->input('sales_deal_id'))->specialRateDeal()->exists()) {
+            $this->sismontavar(SalesDeal::find($request->input('sales_deal_id')));
+        }
+
 		return response()->json([
 			'status' => 'The Document Was Saved!',
 			'data' => $salesDealFile
 		]);
-    
+
     }
 
     /**

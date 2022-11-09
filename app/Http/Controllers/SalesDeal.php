@@ -591,8 +591,6 @@ class SalesDeal extends Controller
 			->update([
 				'confirmed' => true
 			]);
-
-            $this->sismontavar($salesDeal);
 		}
 
         if ($salesDeal->wasRecentlyCreated) {
