@@ -34,6 +34,7 @@ class Blotter extends Controller
             'ttOrBn',
             'todOrTomOrSpotOrForward',
             'modificationUpdated',
+            'cancellation',
             'currencyPair' => function($query) {
                 $query->with([
                     'baseCurrency' => function($query) {
@@ -47,7 +48,6 @@ class Blotter extends Controller
                 ]);
             }
 			])
-            ->doesntHave('cancellation')
             ->select((new SalesDeal)->getTable().'.*');
 
         if ($this->request->user()->is_branch_office_dealer) {
