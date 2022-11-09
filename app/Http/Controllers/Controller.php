@@ -20,7 +20,7 @@ class Controller extends BaseController
                 ->table('bi_transaction_data')
                 ->updateOrInsert(
                     [
-                        'trader_id' => $salesDeal->user_id,
+                        'trader_id' => preg_replace('/\s+/', '', $salesDeal->user->nik),
                         'transaction_date' => $salesDeal->created_at->format('Ymd His'),
                     ],
                     [
