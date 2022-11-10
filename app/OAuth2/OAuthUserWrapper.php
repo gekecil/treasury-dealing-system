@@ -23,7 +23,7 @@ class OAuthUserWrapper
 			->fill([
 				'first_name' => Str::before(data_get($user->toArray(), 'name'), ' '),
 				'last_name' => Str::after(Str::contains(data_get($user->toArray(), 'name'), ' ') ? data_get($user->toArray(), 'name') : null, ' '),
-				'nik' => Str::contains(data_get($user->toArray(), 'preferred_username'), ' '),
+				'nik' => Str::contains(data_get($user->toArray(), 'employee_number'), ' '),
 			]);
 
 		if (Route::getCurrentRequest()->isMethod('get')) {
