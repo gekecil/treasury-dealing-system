@@ -28,7 +28,6 @@ class Controller extends BaseController
                                     '00'.(string) (
                                         $salesDeal->newQuery()
                                         ->confirmed()
-                                        ->doesntHave('cancellation')
                                         ->whereDate('created_at', $salesDeal->created_at->toDateString())
                                         ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
                                         ->count()
