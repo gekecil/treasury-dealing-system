@@ -319,12 +319,7 @@ class SalesDeal extends Controller
 			]);
 
 		} else {
-            $threshold = Threshold::latest();
-            $threshold = $threshold->exists() ? floatval($threshold->first()->threshold) : 0;
-
-            if (!$salesDeal->can_upload_underlying || ($salesDeal->monthly_usd_equivalent < $threshold)) {
-                $this->sismontavar($salesDeal);
-            }
+            $this->sismontavar($salesDeal);
         }
 
         if (!$request->route()->named('sales-special-rate-deal.store') && $salesDeal->salesDealRate) {

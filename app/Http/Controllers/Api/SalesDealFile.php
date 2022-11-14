@@ -72,10 +72,6 @@ class SalesDealFile extends Controller
 			]
 		);
 
-        if (!SalesDeal::find($request->input('sales_deal_id'))->specialRateDeal()->exists()) {
-            $this->sismontavar(SalesDeal::find($request->input('sales_deal_id')));
-        }
-
 		return response()->json([
 			'status' => 'The Document Was Saved!',
 			'data' => $salesDealFile

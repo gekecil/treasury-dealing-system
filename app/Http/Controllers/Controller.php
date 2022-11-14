@@ -7,6 +7,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Controller extends BaseController
 {
@@ -16,6 +17,24 @@ class Controller extends BaseController
     {
 		try {
             if ($salesDeal->usd_equivalent >= 250000) {
+                $corporateName = $salesDeal->account->name;
+
+                while (strlen($corporateName) > 56) {
+                    $corporateName = Str::beforeLast($corporateName, ' ');
+                }
+
+                $traderName = $salesDeal->user->full_name;
+
+                while (strlen($traderName) > 20) {
+                    $traderName = Str::beforeLast($traderName, ' ');
+                }
+
+                $confirmedBy = $salesDeal->specialRateDeal()->firstOrNew([], ['user_id' => $salesDeal->user_id])->user->full_name;
+
+                while (strlen($confirmedBy) > 30) {
+                    $confirmedBy = Str::beforeLast($confirmedBy, ' ');
+                }
+
                 DB::connection('pgsql_sismontavar')
                 ->table('bi_transaction_data')
                 ->updateOrInsert(
@@ -27,7 +46,6 @@ class Controller extends BaseController
                         'transaction_id' => (($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
                                     '00'.(string) (
                                         $salesDeal->newQuery()
-                                        ->confirmed()
                                         ->whereDate('created_at', $salesDeal->created_at->toDateString())
                                         ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
                                         ->count()
@@ -35,7 +53,7 @@ class Controller extends BaseController
                                 )
                             ),
 
-                        'corporate_name' => $salesDeal->account->name,
+                        'corporate_name' => $corporateName,
                         'platform' => 'TDS',
                         'deal_type' => ucwords($salesDeal->todOrTomOrSpotOrForward->name),
                         'direction' => ucwords($salesDeal->buyOrSell->name),
@@ -46,8 +64,8 @@ class Controller extends BaseController
                         'periode' => 0,
                         'near_rate' => $salesDeal->customer_rate,
                         'far_rate' => null,
-                        'confirmed_by' => $salesDeal->specialRateDeal()->firstOrNew([], ['user_id' => $salesDeal->user_id])->user->full_name,
-                        'trader_name' => $salesDeal->user->full_name,
+                        'confirmed_by' => $confirmedBy,
+                        'trader_name' => $traderName,
                         'transaction_purpose' => (
                                 substr('0'.((string) $salesDeal->lhbu_remarks_code), -2).' '.substr('00'.((string) $salesDeal->lhbu_remarks_kind), -3)
                             ),
