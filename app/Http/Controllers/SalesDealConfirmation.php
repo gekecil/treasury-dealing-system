@@ -104,7 +104,8 @@ class SalesDealConfirmation extends Controller
         ) {
 			SpecialRateDeal::where('sales_deal_id', $id)
 			->update([
-				'confirmed' => true
+				'user_id' => Auth::user()->id,
+				'confirmed' => true,
 			]);
 
             SalesDeal::find($id)->salesDealRate()->update([
@@ -126,7 +127,8 @@ class SalesDealConfirmation extends Controller
         ) {
 			Modification::where('deal_updated_id', $id)
 			->update([
-				'confirmed' => true
+				'user_id' => Auth::user()->id,
+				'confirmed' => true,
 			]);
 		}
 
