@@ -100,6 +100,22 @@ class SalesBlotterExcel extends Controller
             ->oldest()
             ->get();
 
+		$unConfirmed = SalesDeal::doesntHave('cancellation')
+            ->where('created_at', '>', $salesDeal->first()->created_at->toDateTimeString())
+            ->where('created_at', '<', $salesDeal->last()->created_at->toDateTimeString())
+            ->where( function($query) {
+                $query->whereHas('specialRateDeal', function($query) {
+                    $query->where('confirmed', false);
+                })
+                ->orWhereHas('modificationUpdated', function($query) {
+                    $query->where('confirmed', false);
+                })
+                ->orWhereHas('salesDealFile', function($query) {
+                    $query->where('confirmed', false);
+                });
+            })
+            ->pluck('created_at');
+
 		$threshold = Threshold::latest();
 		$threshold = $threshold->exists() ? floatval($threshold->first()->threshold) : 0;
 
@@ -502,7 +518,7 @@ class SalesBlotterExcel extends Controller
 		->reverse()
 		->each( function($value, $key)
 			use(
-				$alphabets, $spreadsheet, $worksheet, $columns, $mergeCells, $threshold, $countToday, $user, $request, $yearly
+				$alphabets, $spreadsheet, $worksheet, $columns, $mergeCells, $threshold, $countToday, $user, $request, $yearly, $unConfirmed
 			) {
 			$count = $value->count();
 			$closingRate = ClosingRate::where('created_at', $value->first()->baseCurrencyClosingRate->created_at->toDateString())
@@ -672,7 +688,7 @@ class SalesBlotterExcel extends Controller
                 ->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"_);_(@_)');
 			$worksheet[$day]->getStyle('P3:S'.($count + 3))->getAlignment()->setHorizontal('center');
 
-			$value->each( function($value, $row) use($alphabets, $spreadsheet, $worksheet, $count, $countCurrency, $cancellations, $key) {
+			$value->each( function($value, $row) use($alphabets, $spreadsheet, $worksheet, $count, $countCurrency, $cancellations, $key, $unConfirmed) {
                 $values = collect([
 					($row + 1),
 					$value->user->full_name,
@@ -725,7 +741,12 @@ class SalesBlotterExcel extends Controller
 						$value->created_at->format('d-M-y'),
 
 						($value->specialRateDeal ? 'SR' : 'FX').$value->created_at->format('dmY').'-'.substr(
-                            '00'.(string) ($row + 1), -3
+                            '00'.(string) ($row + 1 + (
+                                $unConfirmed->where('dayOfYear', $value->created_at->dayOfYear)
+                                ->where('timestamp', '<', $value->created_at->timestamp)
+                                ->count()
+                            )),
+                            -3
                         ),
 
 						"='".$value->created_at->format('j M')."'!B".($row + 3),

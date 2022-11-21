@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('branch_code', 16)->nullable();
             $table->string('first_name', 16)->nullable();
             $table->string('last_name', 32)->nullable();
+            $table->string('nik', 16)->nullable();
             $table->timestamps(0);
             $table->date('expires_at')->nullable();
             $table->softDeletes('deleted_at', 0);
