@@ -1482,15 +1482,18 @@
 										render: function(data, type, row, meta) {
 											row.element = document.createElement('span');
 
-                                            if (parseFloat(row.sismontavar_deal.status_code) === 200)
-											{
-												row.element.classList.add('badge', 'badge-success', 'badge-pill');
-												row.element.innerHTML = 'Success';
+                                            if (row.sismontavar_deal)
+                                            {
+                                                if (parseFloat(row.sismontavar_deal.status_code) === 200)
+                                                {
+                                                    row.element.classList.add('badge', 'badge-success', 'badge-pill');
+                                                    row.element.innerHTML = 'Success';
 
-											} else {
-												row.element.classList.add('badge', 'badge-primary', 'badge-pill');
-												row.element.innerHTML = 'Attention';
-											}
+                                                } else {
+                                                    row.element.classList.add('badge', 'badge-primary', 'badge-pill');
+                                                    row.element.innerHTML = 'Attention';
+                                                }
+                                            }
 
 											return row.element.outerHTML;
 										}
