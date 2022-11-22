@@ -1519,13 +1519,7 @@
                                     settings.oInstance.api().columns().header().to$().addClass('text-center');
 
 @if (
-    auth()->user()->can('view', new App\SalesDeal) && (
-        collect([
-            route('sales-fx.index') => 'FX',
-            route('sales-special-rate-deal.index') => 'Request for Fx Deal',
-            route('sales-blotter.index') => 'Blotter',
-        ])->has(request()->url())
-    )
+    auth()->user()->can('view', new App\SalesDeal) && request()->route()->named('sales-blotter.index')
 )
 									$(settings.oInstance.api().table().header().querySelector('select')).on('change', function (e) {
 										if (e.currentTarget.options[e.currentTarget.selectedIndex].value) {
