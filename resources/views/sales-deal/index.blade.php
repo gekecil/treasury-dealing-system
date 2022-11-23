@@ -381,7 +381,14 @@
 														<th>Branch</th>
 @endif
                                                         <th>Customer Name</th>
+@if (
+    collect([
+        route('sales-fx.index') => 'FX',
+        route('sales-special-rate-deal.index') => 'Request for Fx Deal',
+    ])->has(request()->url())
+)
 														<th>TT/BN</th>
+@endif
 @if (request()->route()->named('sales-top-ten-obox.index'))
                                                         <th>Value</th>
 @endif

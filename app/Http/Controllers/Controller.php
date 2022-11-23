@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -150,45 +149,12 @@ class Controller extends BaseController
                     ->save();
                 }
 
-
-                DB::connection('pgsql_sismontavar')
-                ->table('bi_transaction_data')
-                ->updateOrInsert(
-                    [
-                        'trader_id' => $sismontavarDeal->trader_id,
-                        'transaction_date' => $sismontavarDeal->transaction_date,
-                    ],
-                    [
-                        'transaction_id' => $sismontavarDeal->transaction_id,
-                        'corporate_name' => $sismontavarDeal->corporate_name,
-                        'platform' => $sismontavarDeal->platform,
-                        'deal_type' => $sismontavarDeal->deal_type,
-                        'direction' => $sismontavarDeal->direction,
-                        'base_currency' => $sismontavarDeal->base_currency,
-                        'quote_currency' => $sismontavarDeal->quote_currency,
-                        'base_volume' => $sismontavarDeal->base_volume,
-                        'quote_volume' => $sismontavarDeal->quote_volume,
-                        'periode' => $sismontavarDeal->periods,
-                        'near_rate' => $sismontavarDeal->near_rate,
-                        'far_rate' => null,
-                        'confirmed_by' => $sismontavarDeal->confirmed_by,
-                        'trader_name' => $sismontavarDeal->trader_name,
-                        'transaction_purpose' => $sismontavarDeal->transaction_purpose,
-                        'reported' => false,
-                        'near_value_date' => $sismontavarDeal->near_value_date,
-                        'confirmed_at' => $sismontavarDeal->confirmed_at,
-                        'corporate_id' => $sismontavarDeal->corporate_id,
-                        'created_at' => $salesDeal->created_at->now()->toDateTimeString(),
-                        'manual' => false,
-                        'transaction_status' => 1,
-                    ]
-                );
-
             } catch (\Exception $e) {
-                $sismontavarDeal->fill([
-                    'status_code' => 500,
-                    'status_text' => $e->getMessage(),
-                ])
+                if (!$sismontavarDeal->exists) {
+                    $sismontavarDeal->fill(['status_code' => 500]);
+                }
+
+                $sismontavarDeal->fill(['status_text' => $e->getMessage()])
                 ->save();
             }
         }

@@ -204,6 +204,11 @@ class SalesDeal extends Model
         return $this->hasOne(Cancellation::class);
     }
 
+	public function sismontavarDeal()
+    {
+        return $this->hasOne(SismontavarDeal::class);
+    }
+
     public function dealRate()
     {
         return $this->salesDealRate();
