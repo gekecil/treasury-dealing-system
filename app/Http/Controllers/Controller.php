@@ -20,7 +20,7 @@ class Controller extends BaseController
         $sismontavarOption = SismontavarOption::latest()
             ->first();
 
-		if ($salesDeal->usd_equivalent >= $sismontavarOption->threshold) {
+		if (!$salesDeal->currencyPair->counter_currency_id && ($salesDeal->usd_equivalent >= $sismontavarOption->threshold)) {
             $corporateName = $salesDeal->account->name;
 
             while (strlen($corporateName) > 56) {
