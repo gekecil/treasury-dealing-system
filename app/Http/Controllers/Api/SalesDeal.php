@@ -30,6 +30,7 @@ class SalesDeal extends Controller
             'account',
             'salesDealFile',
             'specialRateDeal',
+            'sismontavarDeal',
             'buyOrSell',
             'ttOrBn',
             'todOrTomOrSpotOrForward',

@@ -383,8 +383,8 @@
                                                         <th>Customer Name</th>
 @if (
     collect([
-        route('sales-fx.index') => 'FX',
-        route('sales-special-rate-deal.index') => 'Request for Fx Deal',
+        route('sales-blotter.index') => 'Blotter',
+        route('sales-top-ten-obox.index') => 'Top Ten OBOX',
     ])->has(request()->url())
 )
 														<th>TT/BN</th>
@@ -415,19 +415,21 @@
 														<th>Buy/Sell</th>
 														<th>Created At</th>
 														<th>Status</th>
+@if (
+    collect([
+        route('sales-fx.index') => 'FX',
+        route('sales-special-rate-deal.index') => 'Request for Fx Deal',
+    ])->has(request()->url())
+)
+														<th>SISMONTAVAR</th>
+@endif
 @elseif (request()->route()->named('sales-top-ten-obox.index'))
 														<th>Counter Amount</th>
 														<th>USD Equivalent</th>
 @endif
                                                     </tr>
 @if (
-    auth()->user()->can('view', new App\SalesDeal) && (
-        collect([
-            route('sales-fx.index') => 'FX',
-            route('sales-special-rate-deal.index') => 'Request for Fx Deal',
-            route('sales-blotter.index') => 'Blotter',
-        ])->has(request()->url())
-    )
+    auth()->user()->can('view', new App\SalesDeal) && request()->route()->named('sales-blotter.index')
 )
 													<tr>
 														<th>
@@ -1267,10 +1269,17 @@
 											return data.trim();
 										}
 									},
+@if (
+    collect([
+        route('sales-blotter.index') => 'Blotter',
+        route('sales-top-ten-obox.index') => 'Top Ten OBOX',
+    ])->has(request()->url())
+)
 									{
 										data: 'tt_or_bn.name',
 										className: 'text-center text-uppercase'
 									},
+@endif
 @if (request()->route()->named('sales-top-ten-obox.index'))
 									{
 										data: 'tod_or_tom_or_spot_or_forward.name',
@@ -1457,6 +1466,32 @@
 												row.element.innerHTML = 'Success';
 											}
 											
+											return row.element.outerHTML;
+										}
+									}
+@endif
+@if (
+    collect([
+        route('sales-fx.index') => 'FX',
+        route('sales-special-rate-deal.index') => 'Request for Fx Deal',
+    ])->has(request()->url())
+)
+									,{
+										className: 'text-center',
+                                        orderable: false,
+										render: function(data, type, row, meta) {
+											row.element = document.createElement('span');
+
+                                            if (parseFloat(row.sismontavar_deal.status_code) === 200)
+											{
+												row.element.classList.add('badge', 'badge-success', 'badge-pill');
+												row.element.innerHTML = 'Success';
+
+											} else {
+												row.element.classList.add('badge', 'badge-primary', 'badge-pill');
+												row.element.innerHTML = 'Attention';
+											}
+
 											return row.element.outerHTML;
 										}
 									}
