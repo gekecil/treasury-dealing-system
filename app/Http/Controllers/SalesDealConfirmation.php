@@ -77,7 +77,7 @@ class SalesDealConfirmation extends Controller
     public function update(Request $request, $id)
     {
 		if (
-            SalesDealFile::where('sales_deal_id', $id)->exists() && (
+            SalesDealFile::where('sales_deal_id', $id)->where('confirmed', false)->exists() && (
                 Auth::user()->can('update', SalesDealFile::firstWhere('sales_deal_id', $id))
             )
         ) {
@@ -88,7 +88,7 @@ class SalesDealConfirmation extends Controller
 		}
 
 		if (
-            SpecialRateDeal::where('sales_deal_id', $id)->exists() && (
+            SpecialRateDeal::where('sales_deal_id', $id)->where('confirmed', false)->exists() && (
                 !SalesDeal::find($id)->salesDealRate || (
                     CurrencyPair::whereDate('updated_at', Carbon::today()->toDateString())
                     ->whereNull('counter_currency_id')
@@ -118,10 +118,12 @@ class SalesDealConfirmation extends Controller
                         ->value(SalesDeal::find($id)->buyOrSell->name.'ing_rate')
                     ),
             ]);
+
+            $this->sismontavar(SalesDeal::find($id));
 		}
 
 		if (
-            Modification::where('deal_updated_id', $id)->exists() && (
+            Modification::where('deal_updated_id', $id)->where('confirmed', false)->exists() && (
                 Auth::user()->can('update', Modification::firstWhere('deal_updated_id', $id))
             )
         ) {
@@ -131,8 +133,6 @@ class SalesDealConfirmation extends Controller
 				'confirmed' => true,
 			]);
 		}
-
-        $this->sismontavar(SalesDeal::find($id));
 
 		return redirect()->route(Str::before($request->input('route-name'), '.').'.index')->with('status', 'The Dealing Was Authorized!');
     }
