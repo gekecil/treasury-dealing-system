@@ -76,6 +76,8 @@ class SalesDealConfirmation extends Controller
      */
     public function update(Request $request, $id)
     {
+        Auth::user()->save();
+
 		if (
             SalesDealFile::where('sales_deal_id', $id)->where('confirmed', false)->exists() && (
                 Auth::user()->can('update', SalesDealFile::firstWhere('sales_deal_id', $id))

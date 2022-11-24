@@ -312,6 +312,8 @@ class SalesDeal extends Controller
 			'lhbu_remarks_kind' => $request->input('lhbu-remarks-kind'),
 		]);
 
+		Auth::user()->save();
+
 		if ($request->route()->named('sales-special-rate-deal.store')) {
 			SpecialRateDeal::create([
 				'user_id' => $salesDeal->user_id,
@@ -334,8 +336,6 @@ class SalesDeal extends Controller
 				'value' => $request->input('other-lhbu-remarks-kind'),
 			]);
         }
-
-		Auth::user()->save();
 
 		return redirect()->back()->with('status', 'The Dealing Was Submitted!');
     }
