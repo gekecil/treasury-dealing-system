@@ -41,10 +41,10 @@ class SismontavarDeal extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\SismontavarDeal  $sismontavarDeal
+     * @param  \App\SismontavarDealModel  $sismontavarDeal
      * @return \Illuminate\Http\Response
      */
-    public function show(SismontavarDeal $sismontavarDeal)
+    public function show(SismontavarDealModel $sismontavarDeal)
     {
         $this->authorize('show', $sismontavarDeal->salesDeal);
 
@@ -56,10 +56,10 @@ class SismontavarDeal extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\SismontavarDeal  $sismontavarDeal
+     * @param  \App\SismontavarDealModel  $sismontavarDeal
      * @return \Illuminate\Http\Response
      */
-    public function edit(SismontavarDeal $sismontavarDeal)
+    public function edit(SismontavarDealModel $sismontavarDeal)
     {
         //
     }
@@ -68,10 +68,10 @@ class SismontavarDeal extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\SismontavarDeal  $sismontavarDeal
+     * @param  \App\SismontavarDealModel  $sismontavarDeal
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SismontavarDeal $sismontavarDeal)
+    public function update(Request $request, SismontavarDealModel $sismontavarDeal)
     {
         //
     }
@@ -79,10 +79,10 @@ class SismontavarDeal extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\SismontavarDeal  $sismontavarDeal
+     * @param  \App\SismontavarDealModel  $sismontavarDeal
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SismontavarDeal $sismontavarDeal)
+    public function destroy(SismontavarDealModel $sismontavarDeal)
     {
         //
     }

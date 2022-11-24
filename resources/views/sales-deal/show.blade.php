@@ -37,7 +37,7 @@
 							<div class="col-sm-12 col-md-6 d-flex justify-content-end">
 @if ($salesDeal->sismontavarDeal()->exists())
 								<a href="{{ route('sismontavar-deals.show', ['sismontavarDeal' => $salesDeal->id]) }}">
-									<button class="btn btn-info" type="button" title="SISMONTAVAR Data">
+									<button class="btn btn-primary mr-1" type="button" title="SISMONTAVAR Data">
 										<span class="fal fa-edit mr-1"></span>
 										SISMONTAVAR Data
 									</button>
@@ -50,7 +50,7 @@
 @elseif (request()->route()->named('sales-blotter.show', ['salesDeal' => $salesDeal->id]))
 								<a href="{{ route('sales-blotter.edit', ['salesDeal' => $salesDeal->id]) }}">
 @endif
-									<button class="btn btn-primary" type="button" title="Edit Sales Deal">
+									<button class="btn btn-secondary" type="button" title="Edit Sales Deal">
 										<span class="fal fa-edit mr-1"></span>
 										Edit
 									</button>
