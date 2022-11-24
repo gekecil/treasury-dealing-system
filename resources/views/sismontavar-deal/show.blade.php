@@ -32,11 +32,11 @@
 							<div class="col">
                                 <div id="panel-sismontavar-show" class="panel">
 									<div class="panel-container show">
-                                        <div class="panel-content">
+                                        <div class="panel-content fs-xl">
                                             <table class="table table-responsive">
-@foreach($sismontavarDeal->makeHidden(['sales_deal_id', 'status_text', 'created_at', 'updated_at'])->toArray() as $key => $value)
+@foreach($sismontavarDeal->makeHidden(['sales_deal_id', 'status_text', 'created_at', 'updated_at', 'salesDeal'])->toArray() as $key => $value)
                                                 <tr>
-                                                    <td>{{ $key }}:</td>
+                                                    <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->replace(' id', ' ID')->title() }}:</td>
                                                     <td>{{ $value }}</td>
                                                 </tr>
 @endforeach

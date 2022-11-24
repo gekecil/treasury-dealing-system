@@ -120,7 +120,7 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 		'show'
 	])
 	->parameters([
-		'sismontavar-deals' => 'salesDeal'
+		'sismontavar-deals' => 'sismontavarDeal'
 	]);
 
 	Route::post('interbank-nop-excel', 'NopExcel')->name('interbank-nop.excel');
