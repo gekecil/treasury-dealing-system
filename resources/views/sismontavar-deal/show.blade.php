@@ -36,7 +36,7 @@
                                             <table class="table table-responsive">
 @foreach($sismontavarDeal->makeHidden(['sales_deal_id', 'status_text', 'created_at', 'updated_at', 'salesDeal'])->toArray() as $key => $value)
                                                 <tr>
-                                                    <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->replace(' id', ' ID')->title() }}:</td>
+                                                    <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace(' Id', ' ID') }}:</td>
                                                     <td>{{ $value }}</td>
                                                 </tr>
 @endforeach
