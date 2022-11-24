@@ -36,9 +36,9 @@
 							</div>
 							<div class="col-sm-12 col-md-6 d-flex justify-content-end">
 @if ($salesDeal->sismontavarDeal()->exists())
-								<a href="{{ route('sismontavar-deals.show', ['sismontavarDeal' => $salesDeal->id]) }}">
+								<a href="{{ route('sismontavar-deals.show', ['salesDeal' => $salesDeal->id]) }}">
 									<button class="btn btn-primary mr-1" type="button" title="SISMONTAVAR Data">
-										<span class="fal fa-edit mr-1"></span>
+										<span class="fal fa-th-list mr-1"></span>
 										SISMONTAVAR Data
 									</button>
 								</a>
