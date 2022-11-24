@@ -115,6 +115,14 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 		'sales-deal-confirmation' => 'salesDealConfirmation'
 	]);
 
+	Route::resource('sismontavar-deals', 'SismontavarDeal')
+	->only([
+		'show'
+	])
+	->parameters([
+		'sismontavar-deals' => 'sismontavarDeal'
+	]);
+
 	Route::post('interbank-nop-excel', 'NopExcel')->name('interbank-nop.excel');
 
 	Route::post('sales-blotter-excel', 'SalesBlotterExcel')->name('sales-blotter.excel');

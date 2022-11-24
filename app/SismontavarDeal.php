@@ -10,4 +10,9 @@ class SismontavarDeal extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+	public function salesDeal()
+    {
+        return $this->belongsTo(SalesDeal::class);
+    }
 }

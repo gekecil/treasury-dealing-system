@@ -38,6 +38,7 @@ class CreateSismontavarDealsTable extends Migration
             $table->string('transaction_purpose', 40);
             $table->integer('status_code');
             $table->text('status_text')->nullable();
+            $table->timestamps(0);
         });
     }
 
