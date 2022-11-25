@@ -37,7 +37,11 @@
 @foreach($sismontavarDeal->toArray() as $key => $value)
                                                 <tr>
                                                     <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace(' Id', ' ID') }}:</td>
-                                                    <td>{{ $value ?: 'null' }}</td>
+@if(is_null($value))
+                                                    <td>null</td>
+@else
+                                                    <td>{{ $value }}</td>
+@endif
                                                 </tr>
 @endforeach
 @if($sismontavarDeal->status_code === 200)
