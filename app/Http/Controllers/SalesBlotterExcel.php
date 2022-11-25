@@ -62,7 +62,7 @@ class SalesBlotterExcel extends Controller
 		}
 
 		$worksheet = [];
-		$salesDeal = SalesDeal::query();
+		$salesDeal = SalesDeal::confirmed();
 		$user = Auth::user();
 
 		if ($user->is_branch_office_dealer) {
@@ -100,7 +100,9 @@ class SalesBlotterExcel extends Controller
             ->oldest()
             ->get();
 
-		$unConfirmed = SalesDeal::doesntHave('cancellation')
+		$unConfirmed = SalesDeal::whereDoesntHave('cancellation', function($query) {
+                $query->withoutGlobalScopes();
+            })
             ->where('created_at', '>', $salesDeal->first()->created_at->toDateTimeString())
             ->where('created_at', '<', $salesDeal->last()->created_at->toDateTimeString())
             ->where( function($query) {

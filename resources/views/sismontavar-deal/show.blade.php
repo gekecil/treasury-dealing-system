@@ -34,12 +34,22 @@
 									<div class="panel-container show">
                                         <div class="panel-content fs-xl">
                                             <table class="table table-responsive">
-@foreach($sismontavarDeal->makeHidden(['sales_deal_id', 'status_text', 'created_at', 'updated_at', 'salesDeal'])->toArray() as $key => $value)
+@foreach($sismontavarDeal->toArray() as $key => $value)
                                                 <tr>
                                                     <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace(' Id', ' ID') }}:</td>
-                                                    <td>{{ $value }}</td>
+                                                    <td>{{ $value ?: 'null' }}</td>
                                                 </tr>
 @endforeach
+@if($sismontavarDeal->status_code === 200)
+                                                <tr>
+                                                    <td>Transaction Status:</td>
+                                                    <td>Reported to BI</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Response Status:</td>
+                                                    <td>Success Capture</td>
+                                                </tr>
+@endif
                                                 <tr>
                                                     <td>Time:</td>
                                                     <td>{{ $sismontavarDeal->updated_at->toTimeString() }}</td>

@@ -123,6 +123,8 @@ class Controller extends BaseController
                                 'Periods' => $sismontavarDeal->periods,
                                 'Near_Rate' => $sismontavarDeal->near_rate,
                                 'Near_Value_Date' => $sismontavarDeal->near_value_date,
+                                'Far_Rate' => 'null',
+                                'Far_Value_Date' => 'null',
                                 'Confirmed_At' => $sismontavarDeal->confirmed_at,
                                 'Confirmed_By' => $sismontavarDeal->confirmed_by,
                                 'Trader_ID' => $sismontavarDeal->trader_id,
