@@ -62,7 +62,7 @@ class SalesBlotterExcel extends Controller
 		}
 
 		$worksheet = [];
-		$salesDeal = SalesDeal::confirmed();
+		$salesDeal = SalesDeal::query();
 		$user = Auth::user();
 
 		if ($user->is_branch_office_dealer) {
