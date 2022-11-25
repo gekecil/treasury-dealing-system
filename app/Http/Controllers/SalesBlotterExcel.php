@@ -100,11 +100,7 @@ class SalesBlotterExcel extends Controller
             ->oldest()
             ->get();
 
-		$unConfirmed = SalesDeal::whereDoesntHave('cancellation', function($query) {
-                $query->withoutGlobalScopes()
-                ->whereNotNull('note');
-            })
-            ->where('created_at', '>', $salesDeal->first()->created_at->toDateTimeString())
+		$unConfirmed = SalesDeal::where('created_at', '>', $salesDeal->first()->created_at->toDateTimeString())
             ->where('created_at', '<', $salesDeal->last()->created_at->toDateTimeString())
             ->where( function($query) {
                 $query->whereHas('specialRateDeal', function($query) {
@@ -115,6 +111,10 @@ class SalesBlotterExcel extends Controller
                 })
                 ->orWhereHas('salesDealFile', function($query) {
                     $query->where('confirmed', false);
+                })
+                ->orWhereHas('cancellation', function($query) {
+                    $query->withoutGlobalScopes()
+                    ->whereNull('note');
                 });
             })
             ->pluck('created_at');
