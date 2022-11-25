@@ -101,7 +101,8 @@ class SalesBlotterExcel extends Controller
             ->get();
 
 		$unConfirmed = SalesDeal::whereDoesntHave('cancellation', function($query) {
-                $query->withoutGlobalScopes();
+                $query->withoutGlobalScopes()
+                ->whereNotNull('note');
             })
             ->where('created_at', '>', $salesDeal->first()->created_at->toDateTimeString())
             ->where('created_at', '<', $salesDeal->last()->created_at->toDateTimeString())
