@@ -431,8 +431,8 @@
                                     <i class="float-right text-muted fw-n">Ctrl + P</i>
                                 </a>
                                 <div class="dropdown-divider m-0"></div>
-                                <a class="dropdown-item fw-500 pt-3 pb-3" href="{{ route('logout') }}">
-                                    <span data-i18n="drpdwn.page-logout">Logout</span>
+                                <a class="dropdown-item fw-500 pt-3 pb-3" href="{{ route('sign-out') }}">
+                                    <span data-i18n="drpdwn.page-sign-out">Sign out</span>
                                     <span class="float-right fw-n">&commat;idn.ccb.com</span>
                                 </a>
                             </div>
@@ -564,7 +564,7 @@
     <a href="#" class="menu-item btn" data-toggle="tooltip" data-placement="left" title="Scroll Top">
         <i class="fal fa-arrow-up"></i>
     </a>
-    <a href="{{ route('logout') }}" class="menu-item btn" data-toggle="tooltip" data-placement="left" title="Logout">
+    <a href="{{ route('sign-out') }}" class="menu-item btn" data-toggle="tooltip" data-placement="left" title="Sign out">
         <i class="fal fa-sign-out"></i>
     </a>
     <a href="#" class="menu-item btn" data-action="app-fullscreen" data-toggle="tooltip" data-placement="left" title="Full Screen">
