@@ -89,10 +89,10 @@ class Controller extends BaseController
 
             try {
                 $token = Http::asForm()
-                    ->post('https://api.xnet.bi.go.id/bi/sismontavar/sismontavar/v1/oauth2/token', [
+                    ->post(env('SISMONTAVAR_URL_ACCESS_TOKEN'), [
                         'grant_type' => 'client_credentials',
-                        'client_id' => $sismontavarOption->secret_id,
-                        'client_secret' => $sismontavarOption->secret_key,
+                        'client_id' => env('SISMONTAVAR_CLIENT_ID'),
+                        'client_secret' => env('SISMONTAVAR_CLIENT_SECRET'),
                         'scope' => 'sismontavar',
                     ])
                     ->json();
@@ -100,8 +100,8 @@ class Controller extends BaseController
                 $http = Http::withHeaders([
                         'Accept' => 'application/json',
                         'Content-Type' => 'application/json',
-                        'X-BI-CLIENT-ID' => '5108e167a97b647202e9745e4591770a',
-                        'X-BI-CLIENT-SECRET' => 'a6d64a92d650e507dfbd7b3866868b06',
+                        'X-BI-CLIENT-ID' => env('SISMONTAVAR_CLIENT_ID'),
+                        'X-BI-CLIENT-SECRET' => env('SISMONTAVAR_CLIENT_SECRET'),
                     ])
                     ->withToken($token['access_token'])
                     ->withBody(
@@ -135,7 +135,7 @@ class Controller extends BaseController
 
                         'application/json'
                     )
-                    ->post('https://api.xnet.bi.go.id/bi/sismontavar/test/sismontavar/data');
+                    ->post(env('SISMONTAVAR_URL_SEND_DATA'));
 
                 if ($http->ok()) {
                     $sismontavarDeal->fill([

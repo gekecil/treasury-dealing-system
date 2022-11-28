@@ -31,8 +31,8 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 	->middleware('can:viewAny,App\News')
 	->name('search');
 
-	Route::get('logout', 'Log@out')
-	->name('logout');
+	Route::get('sign-out', 'Sign@out')
+	->name('sign-out');
 
 	Route::resource('interbank-dealing', 'InterbankDeal')
 	->parameters([

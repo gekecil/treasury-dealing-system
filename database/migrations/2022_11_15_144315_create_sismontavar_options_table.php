@@ -17,8 +17,6 @@ class CreateSismontavarOptionsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('bank_id', 3);
-            $table->string('secret_id', 64);
-            $table->string('secret_key', 64);
             $table->string('username', 30);
             $table->decimal('threshold', 16, 2);
             $table->timestamp('created_at', 0);
