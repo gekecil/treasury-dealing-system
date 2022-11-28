@@ -432,7 +432,7 @@
                                 </a>
                                 <div class="dropdown-divider m-0"></div>
                                 <a class="dropdown-item fw-500 pt-3 pb-3" href="{{ route('sign-out') }}">
-                                    <span data-i18n="drpdwn.page-sign-out">Sign out</span>
+                                    <span data-i18n="drpdwn.page-sign-out">Sign Out</span>
                                     <span class="float-right fw-n">&commat;idn.ccb.com</span>
                                 </a>
                             </div>
