@@ -53,7 +53,7 @@ class Controller extends BaseController
                     ),
 
                 'transaction_date' => $salesDeal->created_at->format('Ymd His'),
-                'corporate_id' => substr($salesDeal->account->cif, 3),
+                'corporate_id' => substr($salesDeal->account->cif, -4),
                 'corporate_name' => $corporateName,
                 'platform' => 'TDS',
                 'deal_type' => ucwords($salesDeal->todOrTomOrSpotOrForward->name),
