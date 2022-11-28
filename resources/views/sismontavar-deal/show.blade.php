@@ -35,7 +35,7 @@
                                         <div class="panel-content fs-xl">
                                             <table class="table table-responsive">
 @foreach($sismontavarDeal->toArray() as $key => $value)
-@if($value)
+@if(!is_null($value))
                                                 <tr>
                                                     <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace('Id', 'ID') }}:</td>
                                                     <td>{{ $value }}</td>
