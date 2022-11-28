@@ -33,28 +33,40 @@
                                 <div id="panel-sismontavar-show" class="panel">
 									<div class="panel-container show">
                                         <div class="panel-content fs-xl">
-                                            <table class="table table-responsive">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <table class="table">
+                                                        <tbody>
 @foreach($sismontavarDeal->toArray() as $key => $value)
-                                                <tr>
-                                                    <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace('Id', 'ID') }}:</td>
-                                                    <td>{{ $value }}</td>
-                                                </tr>
+                                                            <tr>
+                                                                <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace('Id', 'ID') }}:</td>
+                                                                <td>{{ $value }}</td>
+                                                            </tr>
 @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col">
+                                                    <table class="table">
+                                                        <tbody>
 @if($sismontavarDeal->status_code === 200)
-                                                <tr>
-                                                    <td>Transaction Status:</td>
-                                                    <td>Reported to BI</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Response Status:</td>
-                                                    <td>Success Capture</td>
-                                                </tr>
+                                                            <tr>
+                                                                <td>Transaction Status:</td>
+                                                                <td>Reported to BI</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Response Status:</td>
+                                                                <td>Success Capture</td>
+                                                            </tr>
 @endif
-                                                <tr>
-                                                    <td>Time:</td>
-                                                    <td>{{ $sismontavarDeal->updated_at->toTimeString() }}</td>
-                                                </tr>
-                                            </table>
+                                                            <tr>
+                                                                <td>Time:</td>
+                                                                <td>{{ $sismontavarDeal->updated_at->toTimeString() }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
 										</div>
                                     </div>
                                 </div>
