@@ -35,14 +35,12 @@
                                         <div class="panel-content fs-xl">
                                             <table class="table table-responsive">
 @foreach($sismontavarDeal->toArray() as $key => $value)
+@if($value)
                                                 <tr>
-                                                    <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace(' Id', ' ID') }}:</td>
-@if(is_null($value))
-                                                    <td>null</td>
-@else
+                                                    <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace('Id', 'ID') }}:</td>
                                                     <td>{{ $value }}</td>
-@endif
                                                 </tr>
+@endif
 @endforeach
 @if($sismontavarDeal->status_code === 200)
                                                 <tr>
