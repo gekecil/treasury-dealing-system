@@ -111,10 +111,6 @@ class SalesBlotterExcel extends Controller
                 })
                 ->orWhereHas('salesDealFile', function($query) {
                     $query->where('confirmed', false);
-                })
-                ->orWhereHas('cancellation', function($query) {
-                    $query->withoutGlobalScopes()
-                    ->whereNull('note');
                 });
             })
             ->pluck('created_at');
