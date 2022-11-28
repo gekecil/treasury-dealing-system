@@ -39,7 +39,7 @@
                                                         <tbody>
 @foreach($sismontavarDeal->toArray() as $key => $value)
                                                             <tr>
-                                                                <td>{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace('Id', 'ID') }}:</td>
+                                                                <td class="fw-500">{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace('Id', 'ID') }}:</td>
                                                                 <td>{{ $value }}</td>
                                                             </tr>
 @endforeach
@@ -51,16 +51,16 @@
                                                         <tbody>
 @if($sismontavarDeal->status_code === 200)
                                                             <tr>
-                                                                <td>Transaction Status:</td>
+                                                                <td class="fw-500">Transaction Status:</td>
                                                                 <td>Reported to BI</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>Response Status:</td>
+                                                                <td class="fw-500">Response Status:</td>
                                                                 <td>Success Capture</td>
                                                             </tr>
 @endif
                                                             <tr>
-                                                                <td>Time:</td>
+                                                                <td class="fw-500">Time:</td>
                                                                 <td>{{ $sismontavarDeal->updated_at->toTimeString() }}</td>
                                                             </tr>
                                                         </tbody>
