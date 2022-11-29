@@ -381,24 +381,11 @@
 														<th>Branch</th>
 @endif
                                                         <th>Customer Name</th>
-@if (
-    collect([
-        route('sales-blotter.index') => 'Blotter',
-        route('sales-top-ten-obox.index') => 'Top Ten OBOX',
-    ])->has(request()->url())
-)
 														<th>TT/BN</th>
-@endif
 @if (request()->route()->named('sales-top-ten-obox.index'))
                                                         <th>Value</th>
 @endif
-@if (
-    collect([
-        route('sales-fx.index') => 'FX',
-        route('sales-special-rate-deal.index') => 'Request for Fx Deal',
-        route('sales-blotter.index') => 'Blotter',
-    ])->has(request()->url())
-)
+@if (request()->route()->named('sales-blotter.index'))
                                                         <th>CIF</th>
 @endif
 														<th>Currency Pairs</th>
@@ -1140,7 +1127,8 @@
 @endif
 @if (
     collect([
-		route('sales-blotter.index') => 'Blotter', route('sales-top-ten-obox.index') => 'Top Ten OBOX'
+		route('sales-blotter.index') => 'Blotter',
+        route('sales-top-ten-obox.index') => 'Top Ten OBOX',
 	])
 	->has(request()->url())
 )
@@ -1269,30 +1257,17 @@
 											return data.trim();
 										}
 									},
-@if (
-    collect([
-        route('sales-blotter.index') => 'Blotter',
-        route('sales-top-ten-obox.index') => 'Top Ten OBOX',
-    ])->has(request()->url())
-)
 									{
 										data: 'tt_or_bn.name',
 										className: 'text-center text-uppercase'
 									},
-@endif
 @if (request()->route()->named('sales-top-ten-obox.index'))
 									{
 										data: 'tod_or_tom_or_spot_or_forward.name',
 										className: 'text-center text-uppercase'
 									},
 @endif
-@if (
-    collect([
-        route('sales-fx.index') => 'FX',
-        route('sales-special-rate-deal.index') => 'Request for Fx Deal',
-        route('sales-blotter.index') => 'Blotter',
-    ])->has(request()->url())
-)
+@if (request()->route()->named('sales-blotter.index'))
                                     {
 										data: 'account.cif',
                                         className: 'text-center'

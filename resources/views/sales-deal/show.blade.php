@@ -124,6 +124,15 @@
 												}}" readonly>
 											</div>
 											<div class="form-group">
+												<label class="form-label" for="cif">
+													CIF
+												</label>
+												<input type="text" class="form-control" value="{{
+													$salesDeal->modificationUpdated->salesDealCreated()
+													->withoutGlobalScopes()->first()->account->cif
+												}}" readonly>
+											</div>
+											<div class="form-group">
 												<label class="form-label" for="region">
 													Region
 												</label>
@@ -326,6 +335,14 @@
 												</label>
 												<input type="text" class="form-control" value="{{
 													$salesDeal->account->number.' '.$salesDeal->account->name
+												}}" readonly>
+											</div>
+											<div class="form-group">
+												<label class="form-label" for="cif">
+													CIF
+												</label>
+												<input type="text" class="form-control" value="{{
+													$salesDeal->account->cif
 												}}" readonly>
 											</div>
 											<div class="form-group">
