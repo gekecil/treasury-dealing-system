@@ -39,7 +39,12 @@
                                                         <tbody>
 @foreach($sismontavarDeal->toArray() as $key => $value)
                                                             <tr>
-                                                                <td class="fw-500">{{ \Illuminate\Support\Str::of($key)->replace('_', ' ')->title()->replace('Id', 'ID') }}:</td>
+                                                                <td class="fw-500 text-capitalize">{{
+                                                                    \Illuminate\Support\Str::of($key)->replaceMatches('/_id$/', function($match) {
+                                                                        return strtoupper($match[0]);
+                                                                    })
+                                                                    ->replace('_', ' ')
+                                                                }}:</td>
                                                                 <td>{{ $value }}</td>
                                                             </tr>
 @endforeach

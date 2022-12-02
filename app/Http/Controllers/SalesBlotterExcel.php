@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use App\SalesDeal;
+use App\SismontavarDeal;
 use App\ClosingRate;
 use App\Threshold;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -512,6 +514,60 @@ class SalesBlotterExcel extends Controller
             ->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"_);_(@_)');
 		$worksheet[$year]->getStyle('P3:P'.($countYear + 3))->getAlignment()->setHorizontal('left');
 		$worksheet[$year]->getStyle('Q3:T'.($countYear + 3))->getAlignment()->setHorizontal('center');
+
+		if ($user->is_head_office_dealer || $user->is_administrator || $user->is_super_administrator) {
+            $worksheet['sismontavar'] = $spreadsheet->createSheet();
+            $worksheet['sismontavar']->setTitle(ucwords('sismontavar data'));
+            $worksheet['sismontavar']->getStyle($alphabets->first().'2:'.$alphabets->last().'2')->getAlignment()->setHorizontal('center');
+            $worksheet['sismontavar']->getStyle($alphabets->first().'2:'.$alphabets->last().'2')->getFont()->setBold(true);
+
+            $sismontavarDeal = SismontavarDeal::whereYear('created_at', $year);
+
+            if ($request->filled('date_from')) {
+                $sismontavarDeal->whereDate('created_at', '>=', $request->input('date_from'));
+            }
+
+            if ($request->filled('date_to')) {
+                $sismontavarDeal->whereDate('created_at', '<=', $request->input('date_to'));
+            }
+
+            $sismontavarDeal = $sismontavarDeal->oldest()
+                ->get()
+                ->whenEmpty( function($collection) {
+                    return $collection->push([]);
+                });
+
+            $sismontavarColumns = $sismontavarDeal->first()
+                ->makeHidden([
+                    'sales_deal_id',
+                    'status_code',
+                    'status_text',
+                    'created_at',
+                    'updated_at',
+                ])
+                ->toArray();
+
+            foreach (array_keys($sismontavarColumns) as $key => $value) {
+                $alphabet = $alphabets->get($key);
+                $value = Str::of($item)
+                    ->replaceMatches('/_id$/', function($match) {
+                        return strtoupper($match[0]);
+                    })
+                    ->replace('_', ' ');
+
+                $worksheet['sismontavar']->getCell($alphabet.'2')->setValue($value);
+                $worksheet['sismontavar']->getColumnDimension($alphabet)->setAutoSize(true);
+                $worksheet['sismontavar']->calculateColumnWidths();
+                
+            }
+
+            $sismontavarDeal->each( function($item, $row) use($worksheet, $alphabets) {
+                foreach (array_keys($sismontavarColumns) as $key => $value) {
+                    $alphabet = $alphabets->get($key);
+                    $worksheet['sismontavar']->getCell($alphabet.((string)($row + 1 + 2)))->setValue($item->{$value});
+                }
+            });
+        }
 
 		$values->values()
 		->reverse()
