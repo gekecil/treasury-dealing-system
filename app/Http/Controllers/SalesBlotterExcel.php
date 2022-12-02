@@ -534,7 +534,7 @@ class SalesBlotterExcel extends Controller
             $sismontavarDeal = $sismontavarDeal->oldest()
                 ->get()
                 ->whenEmpty( function($collection) {
-                    return $collection->push([]);
+                    return $collection->push(new SismontavarDeal(['sales_deal_id' => null]));
                 });
 
             $sismontavarColumns = $sismontavarDeal->first()
@@ -555,7 +555,7 @@ class SalesBlotterExcel extends Controller
                     })
                     ->replace('_', ' ');
 
-                $worksheet['sismontavar']->getCell($alphabet.'2')->setValue($value);
+                $worksheet['sismontavar']->getCell($alphabet.'2')->setValue(ucwords($value));
                 $worksheet['sismontavar']->getColumnDimension($alphabet)->setAutoSize(true);
                 $worksheet['sismontavar']->calculateColumnWidths();
                 
