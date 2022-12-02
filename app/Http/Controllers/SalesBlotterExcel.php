@@ -549,7 +549,7 @@ class SalesBlotterExcel extends Controller
 
             foreach (array_keys($sismontavarColumns) as $key => $value) {
                 $alphabet = $alphabets->get($key);
-                $value = Str::of($item)
+                $value = Str::of($value)
                     ->replaceMatches('/_id$/', function($match) {
                         return strtoupper($match[0]);
                     })
