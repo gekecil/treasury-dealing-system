@@ -561,7 +561,7 @@ class SalesBlotterExcel extends Controller
                 
             }
 
-            $sismontavarDeal->each( function($item, $row) use($worksheet, $alphabets) {
+            $sismontavarDeal->each( function($item, $row) use($worksheet, $alphabets, $sismontavarColumns) {
                 foreach (array_keys($sismontavarColumns) as $key => $value) {
                     $alphabet = $alphabets->get($key);
                     $worksheet['sismontavar']->getCell($alphabet.((string)($row + 1 + 2)))->setValue($item->{$value});
