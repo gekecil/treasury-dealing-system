@@ -224,7 +224,7 @@
 														<td>{{ $value->user->full_name }}</td>
 @elseif ($value->{$key} instanceof \Carbon\Carbon)
 														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
-@elseif (is_numeric($value->{$key}) && (floor($value->{$key}) != $value->{$key}))
+@elseif (is_numeric($value->{$key}))
 														<td class="text-right">
 															<span>&#36;</span>
 															{{ number_format($value->{$key}, 2, '.', ',') }}
