@@ -218,7 +218,7 @@
 @if ($sismontavarOption->exists())
 @foreach ($sismontavarOption->take(10)->get() as $value)
 													<tr>
-@foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $key)
+@foreach(\DB::getSchemaBuilder()->getColumnListing($sismontavarOption->getModel()->getTable()) as $key)
 @if ($key !== 'id')
 @if ($key === 'user_id')
 														<td>{{ $value->user->full_name }}</td>
