@@ -151,6 +151,14 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 		'settings-threshold' => 'threshold'
 	]);
 
+	Route::resource('settings-sismontavar', 'Threshold')
+	->only([
+		'store'
+	])
+	->parameters([
+		'settings-sismontavar' => 'threshold'
+	]);
+
 	Route::resource('settings-dealer-limits', 'DealerLimit')
 	->only([
 		'index'

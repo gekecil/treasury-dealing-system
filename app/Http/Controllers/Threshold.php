@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Threshold as ThresholdModel;
+use App\SismontavarOption;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use App\Threshold as ThresholdModel;
-use App\User;
 
 class Threshold extends Controller
 {
@@ -23,9 +24,11 @@ class Threshold extends Controller
     public function index()
     {
 		$threshold = ThresholdModel::latest();
-		
+		$sismontavarOption = SismontavarOption::latest();
+
 		return view('threshold.index', [
-			'threshold' => $threshold
+			'threshold' => $threshold,
+			'sismontavarOption' => $sismontavarOption,
 		]);
     }
 
@@ -47,11 +50,21 @@ class Threshold extends Controller
      */
     public function store(Request $request)
     {
-		ThresholdModel::create([
-			'user_id' => Auth::id(),
-			'threshold' => ($request->input('threshold') ?: 0)
-		]);
-		
+        $model = new ThresholdModel;
+
+        if ($request->route()->named('settings-sismontavar.store')) {
+            $model = new SismontavarOption;
+        }
+
+        collect($model->latest()->first()->makeHidden(['id', 'created_at'])->toArray())
+        ->merge(['threshold' => ($request->input('threshold') ?: 0)])
+        ->merge(['user_id' => Auth::id()])
+        ->each( function($item, $key) use($model) {
+            $model->{$key} = $item;
+        });
+
+        $model->save();
+
 		return redirect()->back()->with('status', 'Threshold Was Saved!');
     }
 
