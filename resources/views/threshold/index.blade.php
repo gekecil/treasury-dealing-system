@@ -102,7 +102,8 @@
 @foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $value)
 @if ($value !== 'id')
 														<th class="text-capitalize">{{
-                                                            \Illuminate\Support\Str::of($value)->replaceMatches('/_id$/', function($match) {
+                                                            \Illuminate\Support\Str::of($value)->replace('user_id', 'user')
+                                                            ->replaceMatches('/_id$/', function($match) {
                                                                 return strtoupper($match[0]);
                                                             })
                                                             ->replace('_', ' ')
@@ -117,7 +118,9 @@
 													<tr>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $key)
 @if ($key !== 'id')
-@if ($value->{$key} instanceof \Carbon\Carbon)
+@if ($value->{$key} === 'user_id')
+														<td>{{ $value->{$key}->user->full_name }}</td>
+@elseif ($value->{$key} instanceof \Carbon\Carbon)
 														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
 @elseif (is_numeric($value->{$key}) && (floor($value->{$key}) != $value->{$key}))
 														<td class="text-right">
@@ -201,7 +204,8 @@
 @foreach(\DB::getSchemaBuilder()->getColumnListing($sismontavarOption->getModel()->getTable()) as $value)
 @if ($value !== 'id')
 														<th class="text-capitalize">{{
-                                                            \Illuminate\Support\Str::of($value)->replaceMatches('/_id$/', function($match) {
+                                                            \Illuminate\Support\Str::of($value)->replace('user_id', 'user')
+                                                            ->replaceMatches('/_id$/', function($match) {
                                                                 return strtoupper($match[0]);
                                                             })
                                                             ->replace('_', ' ')
@@ -216,7 +220,9 @@
 													<tr>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $key)
 @if ($key !== 'id')
-@if ($value->{$key} instanceof \Carbon\Carbon)
+@if ($value->{$key} === 'user_id')
+														<td>{{ $value->{$key}->user->full_name }}</td>
+@elseif ($value->{$key} instanceof \Carbon\Carbon)
 														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
 @elseif (is_numeric($value->{$key}) && (floor($value->{$key}) != $value->{$key}))
 														<td class="text-right">
