@@ -118,7 +118,7 @@
 													<tr>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $key)
 @if ($key !== 'id')
-@if ($value->{$key} === 'user')
+@if ($key === 'user_id')
 														<td>{{ $value->{$key}->user->full_name }}</td>
 @elseif ($value->{$key} instanceof \Carbon\Carbon)
 														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
@@ -220,7 +220,7 @@
 													<tr>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $key)
 @if ($key !== 'id')
-@if ($value->{$key} === 'user')
+@if ($key === 'user_id')
 														<td>{{ $value->{$key}->user->full_name }}</td>
 @elseif ($value->{$key} instanceof \Carbon\Carbon)
 														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
