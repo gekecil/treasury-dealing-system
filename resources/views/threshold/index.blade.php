@@ -120,13 +120,13 @@
 @if ($key !== 'id')
 @if ($key === 'user_id')
 														<td>{{ $value->user->full_name }}</td>
-@elseif ($value->{$key} instanceof \Carbon\Carbon)
-														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
-@elseif (is_numeric($value->{$key}) && (floor($value->{$key}) != $value->{$key}))
+@elseif ($key === 'threshold')
 														<td class="text-right">
 															<span>&#36;</span>
 															{{ number_format($value->{$key}, 2, '.', ',') }}
 														</td>
+@elseif ($value->{$key} instanceof \Carbon\Carbon)
+														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
 @else
 														<td>
 															{{ $value->{$key} }}
@@ -222,13 +222,13 @@
 @if ($key !== 'id')
 @if ($key === 'user_id')
 														<td>{{ $value->user->full_name }}</td>
-@elseif ($value->{$key} instanceof \Carbon\Carbon)
-														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
-@elseif (is_numeric($value->{$key}))
+@elseif ($key === 'threshold')
 														<td class="text-right">
 															<span>&#36;</span>
 															{{ number_format($value->{$key}, 2, '.', ',') }}
 														</td>
+@elseif ($value->{$key} instanceof \Carbon\Carbon)
+														<td class="text-center">{{ $value->{$key}->toDayDateTimeString() }}</td>
 @else
 														<td>
 															{{ $value->{$key} }}
