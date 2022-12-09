@@ -181,6 +181,7 @@
 											<table id="dt-basic" class="table table-bordered table-hover table-striped w-100">
 												<thead class="thead-dark">
 													<tr>
+                                                        <th>User</th>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($sismontavarOption->getModel()->getTable()) as $value)
 @if (!collect(['id', 'user_id'])->contains($value))
 														<th class="text-capitalize">{{
