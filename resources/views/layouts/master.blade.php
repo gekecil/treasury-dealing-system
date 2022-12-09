@@ -1013,8 +1013,7 @@
                     },
                     paging: false,
                     bInfo: false,
-@if (!request()->route()->named('settings-threshold.index'))
-                    select: true,
+@if (request()->route()->named('settings-threshold.index'))
                     dom: "<'row mb-3'" +
                         "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f>" +
                         "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>" +
@@ -1027,10 +1026,12 @@
                             titleAttr: 'Update Threshold',
                             className: 'btn btn-outline-primary waves-effect waves-themed mr-1',
                             action: function ( e, dt, node, config ) {
-                                window.location.replace(@json(route('users.create')));
+                                $('.modal').has('#sismontavar-from').modal();
                             }
                         }
                     ],
+@else
+                    select: true,
 @endif
                     searching: false,
                     ordering: false,
