@@ -1065,7 +1065,7 @@
 
 @if (request()->route()->named('settings-threshold.index'))
                         if (settings.oInstance.api().button().container().is($('.dt-buttons').eq(0))) {
-                            settings.oInstance.api().button().container().remove();
+                            settings.oInstance.api().button().container().children().remove();
                         }
 @endif
                     }
