@@ -1026,7 +1026,7 @@
                             titleAttr: 'Update Threshold',
                             className: 'btn btn-outline-primary waves-effect waves-themed mr-1',
                             action: function ( e, dt, node, config ) {
-                                $('.modal').has('#sismontavar-from').modal();
+                                $('.modal').has('#sismontavar-form').modal();
                             }
                         }
                     ],
