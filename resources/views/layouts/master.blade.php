@@ -1064,7 +1064,9 @@
                         }
 
 @if (request()->route()->named('settings-threshold.index'))
-                        settings.oInstance.api().buttons().to$().first().addClass('d-none');
+                        if (settings.oInstance.api().button().container().is($('.dt-buttons').eq(0))) {
+                            settings.oInstance.api().button().container().remove();
+                        }
 @endif
                     }
 
