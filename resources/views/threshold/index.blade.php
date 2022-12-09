@@ -135,11 +135,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+						<div class="row">
                             <div class="col-xl-12">
-                                <div id="panel-sismontavar-show" class="panel">
+                                <div id="panel-sismontavar-index" class="panel">
+                                    <div class="panel-hdr">
+										<h2>
+											<span class="fw-300"><i>Sismontavar Options</i></span>
+										</h2>
+                                        <div class="panel-toolbar">
+                                            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+											<button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+											<button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                                        </div>
+                                    </div>
                                     <div class="panel-container show">
-                                        <div class="panel-content">
+										<div class="panel-content">
                                             <form action="{{ route('settings-sismontavar.store') }}" method="post">
 												@csrf
 												
@@ -167,26 +177,6 @@
                                                 </button>
 												<div class="spinner-border collapse" role="status"></div>
 											</form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-						<div class="row">
-                            <div class="col-xl-12">
-                                <div id="panel-sismontavar-index" class="panel">
-                                    <div class="panel-hdr">
-										<h2>
-											<span class="fw-300"><i>The Last Few Sismontavar Options</i></span>
-										</h2>
-                                        <div class="panel-toolbar">
-                                            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
-											<button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
-											<button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
-                                        </div>
-                                    </div>
-                                    <div class="panel-container show">
-										<div class="panel-content">
 											<!-- datatable start -->
 											<table id="dt-basic" class="table table-bordered table-hover table-striped w-100">
 												<thead class="thead-dark">
@@ -206,7 +196,7 @@
 												</thead>
 												<tbody>
 @if ($sismontavarOption->exists())
-@foreach ($sismontavarOption->take(10)->get() as $value
+@foreach ($sismontavarOption->take(10)->get() as $value)
 													<tr>
 														<td>{{ $value->user->full_name }}</td>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($sismontavarOption->getModel()->getTable()) as $key)
