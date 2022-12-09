@@ -1027,7 +1027,6 @@
                             className: 'btn btn-outline-primary waves-effect waves-themed mr-1',
                             action: function ( e, dt, node, config ) {
                                 $('.modal').has('#sismontavar-form').modal();
-                                $('.modal').find('#sismontavar-form').find('[name="threshold"]').next().trigger('input');
                             }
                         }
                     ],

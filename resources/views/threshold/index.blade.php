@@ -234,7 +234,9 @@
 											<input type="hidden" name="threshold" value="{{
                                                 $sismontavarOption->firstOrNew([], ['threshold' => null])->threshold
                                             }}" required>
-											<input type="text" class="form-control" autocomplete="off" required>
+											<input type="text" class="form-control" autocomplete="off" value="{{
+                                                number_format($sismontavarOption->firstOrNew([], ['threshold' => 0])->threshold, 2)
+                                            }}" required>
                                         </div>
                                     </form>
                                 </div>

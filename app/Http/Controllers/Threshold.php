@@ -54,14 +54,12 @@ class Threshold extends Controller
 
         if ($request->route()->named('settings-sismontavar.store')) {
             $model = new SismontavarOption;
+            $model->bank_id = $request->input('bank-id');
+            $model->username = $request->input('username');
         }
 
-        collect($model->latest()->first()->makeHidden(['id', 'created_at'])->toArray())
-        ->merge(['threshold' => ($request->input('threshold') ?: 0)])
-        ->merge(['user_id' => Auth::id()])
-        ->each( function($item, $key) use($model) {
-            $model->{$key} = $item;
-        });
+        $model->threshold = ($request->input('threshold') ?: 0);
+        $model->user_id = Auth::id();
 
         $model->save();
 
