@@ -73,13 +73,13 @@
 														<input type="hidden" name="threshold" value="{{ $threshold->exists() ? $threshold->first()->threshold : 0 }}" required>
 														<input id="input-group-lg-size" type="text" class="form-control" aria-describedby="input-group-lg-size" value="{{ $threshold->exists() ? number_format($threshold->first()->threshold, 2, '.', ',') : 0 }}" autocomplete="off" required readonly>
 														<div class="input-group-append">
-															<button class="btn btn-outline-default" type="button" data-toggle="collapse" data-target="#button-collapse" aria-expanded="false" aria-controls="button-collapse">
+															<button class="btn btn-outline-default" type="button" data-toggle="collapse" data-target="#threshold-button-collapse" aria-expanded="false" aria-controls="threshold-button-collapse">
 																<i class="fal fa-edit"></i>
 															</button>
 														</div>
 													</div>
 												</div>
-												<button type="button" id="button-collapse" class="btn btn-lg btn-default collapse" data-toggle="modal" data-target="#modal-alert">
+												<button type="button" id="threshold-button-collapse" class="btn btn-lg btn-default collapse" data-toggle="modal" data-target="#modal-alert">
                                                     <span class="fal fa-check mr-1"></span>
                                                     Submit
                                                 </button>
@@ -155,13 +155,13 @@
 														<input type="hidden" name="threshold" value="{{ $sismontavarOption->exists() ? $sismontavarOption->first()->threshold : 0 }}" required>
 														<input id="input-group-lg-size" type="text" class="form-control" aria-describedby="input-group-lg-size" value="{{ $sismontavarOption->exists() ? number_format($sismontavarOption->first()->threshold, 2, '.', ',') : 0 }}" autocomplete="off" required readonly>
 														<div class="input-group-append">
-															<button class="btn btn-outline-default" type="button" data-toggle="collapse" data-target="#button-collapse" aria-expanded="false" aria-controls="button-collapse">
+															<button class="btn btn-outline-default" type="button" data-toggle="collapse" data-target="#sismontavar-button-collapse" aria-expanded="false" aria-controls="sismontavar-button-collapse">
 																<i class="fal fa-edit"></i>
 															</button>
 														</div>
 													</div>
 												</div>
-												<button type="button" id="button-collapse" class="btn btn-lg btn-default collapse" data-toggle="modal" data-target="#modal-alert">
+												<button type="button" id="sismontavar-button-collapse" class="btn btn-lg btn-default collapse" data-toggle="modal" data-target="#modal-alert">
                                                     <span class="fal fa-check mr-1"></span>
                                                     Submit
                                                 </button>
@@ -192,9 +192,9 @@
 												<thead class="thead-dark">
 													<tr>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($sismontavarOption->getModel()->getTable()) as $value)
-@if ($value !== 'id')
+@if (!collect(['id', 'user_id'])->contains($value))
 														<th class="text-capitalize">{{
-                                                            \Illuminate\Support\Str::of($value)->replace('user_id', 'user')
+                                                            \Illuminate\Support\Str::of($value)
                                                             ->replaceMatches('/_id$/', function($match) {
                                                                 return strtoupper($match[0]);
                                                             })
@@ -206,13 +206,12 @@
 												</thead>
 												<tbody>
 @if ($sismontavarOption->exists())
-@foreach ($sismontavarOption->take(10)->get() as $value)
+@foreach ($sismontavarOption->take(10)->get() as $value
 													<tr>
-@foreach(\DB::getSchemaBuilder()->getColumnListing($sismontavarOption->getModel()->getTable()) as $key)
-@if ($key !== 'id')
-@if ($key === 'user_id')
 														<td>{{ $value->user->full_name }}</td>
-@elseif ($key === 'threshold')
+@foreach(\DB::getSchemaBuilder()->getColumnListing($sismontavarOption->getModel()->getTable()) as $key)
+@if (!collect(['id', 'user_id'])->contains($key))
+@if (is_float($value->{$key}))
 														<td class="text-right">
 															<span>&#36;</span>
 															{{ number_format($value->{$key}, 2, '.', ',') }}
@@ -252,15 +251,15 @@
 							$('a[href="{!! url()->current() !!}"]').parent().parent().parent().attr('class', 'active open');
 							initApp.buildNavigation(myapp_config.navHooks);
 						})
-						
-						$('form[method="post"] #button-collapse').on('show.bs.collapse', function(e) {
+
+						$(document).find('#threshold-button-collapse, #sismontavar-button-collapse').on('show.bs.collapse', function(e) {
 							$(e.target).prev().find('input[name="threshold"]').next().prop('readonly', false);
 							$(e.target).prev().find('input[name="threshold"]').next().focus();
 						})
-						
-						$('form[method="post"] #button-collapse').on('hide.bs.collapse', function(e) {
+
+						$(document).find('#threshold-button-collapse, #sismontavar-button-collapse').on('hide.bs.collapse', function(e) {
 							$(e.target).prev().find('input[name="threshold"]').next().prop('readonly', true);
 						})
-						
+
 					</script>
 @endsection
