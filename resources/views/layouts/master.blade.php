@@ -319,9 +319,9 @@
                             </a>
                             <ul>
                                 <li>
-                                    <a href="{{ route('settings-threshold.index') }}" title="Threshold" data-filter-tags="settings threshold">
+                                    <a href="{{ route('settings-threshold.index') }}" title="Thresholds" data-filter-tags="settings threshold">
                                         <i class="fal fa-bullhorn"></i>
-                                        <span class="nav-link-text" data-i18n="nav.settings_threshold">Threshold</span>
+                                        <span class="nav-link-text" data-i18n="nav.settings_threshold">Thresholds</span>
                                     </a>
                                 </li>
                                 <li>
