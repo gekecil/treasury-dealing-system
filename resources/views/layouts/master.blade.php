@@ -1013,9 +1013,25 @@
                     },
                     paging: false,
                     bInfo: false,
-                    @if (!request()->route()->named('settings-threshold.index'))
+@if (!request()->route()->named('settings-threshold.index'))
                     select: true,
-                    @endif
+                    dom: "<'row mb-3'" +
+                        "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f>" +
+                        "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>" +
+                        ">" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                    buttons: [
+                        {
+                            text: '<span class="fal fa-edit mr-1"></span>Update',
+                            titleAttr: 'Update Threshold',
+                            className: 'btn btn-outline-primary waves-effect waves-themed mr-1',
+                            action: function ( e, dt, node, config ) {
+                                window.location.replace(@json(route('users.create')));
+                            }
+                        }
+                    ],
+@endif
                     searching: false,
                     ordering: false,
                     language: {

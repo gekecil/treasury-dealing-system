@@ -86,7 +86,7 @@
 												<div class="spinner-border collapse" role="status"></div>
 											</form>
 											<!-- datatable start -->
-											<table id="dt-basic" class="table table-bordered table-hover table-striped w-100">
+											<table class="table table-bordered table-hover table-striped dt-basic w-100">
 												<thead class="thead-dark">
 													<tr>
                                                         <th>User</th>
@@ -150,35 +150,8 @@
                                     </div>
                                     <div class="panel-container show">
 										<div class="panel-content">
-                                            <form action="{{ route('settings-sismontavar.store') }}" method="post">
-												@csrf
-												
-												<div class="form-group">
-													<div class="input-group input-group-lg">
-														<div class="input-group-prepend">
-															<span class="input-group-text bg-transparent py-1 px-3">
-																<span class="icon-stack" style="font-size: 2rem">
-																	<i class="fal fa-dollar-sign"></i>
-																</span>
-															</span>
-														</div>
-														<input type="hidden" name="threshold" value="{{ $sismontavarOption->exists() ? $sismontavarOption->first()->threshold : 0 }}" required>
-														<input id="input-group-lg-size" type="text" class="form-control" aria-describedby="input-group-lg-size" value="{{ $sismontavarOption->exists() ? number_format($sismontavarOption->first()->threshold, 2, '.', ',') : 0 }}" autocomplete="off" required readonly>
-														<div class="input-group-append">
-															<button class="btn btn-outline-default" type="button" data-toggle="collapse" data-target="#sismontavar-button-collapse" aria-expanded="false" aria-controls="sismontavar-button-collapse">
-																<i class="fal fa-edit"></i>
-															</button>
-														</div>
-													</div>
-												</div>
-												<button type="button" id="sismontavar-button-collapse" class="btn btn-lg btn-default collapse" data-toggle="modal" data-target="#modal-alert">
-                                                    <span class="fal fa-check mr-1"></span>
-                                                    Submit
-                                                </button>
-												<div class="spinner-border collapse" role="status"></div>
-											</form>
 											<!-- datatable start -->
-											<table id="dt-basic" class="table table-bordered table-hover table-striped w-100">
+											<table class="table table-bordered table-hover table-striped dt-basic w-100">
 												<thead class="thead-dark">
 													<tr>
                                                         <th>User</th>
@@ -228,6 +201,43 @@
                             </div>
                         </div>
                     </main>
+					<!-- Modal -->
+					<div class="modal fade" role="dialog" aria-hidden="true">
+						<div class="modal-dialog modal-lg" role="document">
+							<div class="modal-content">
+                                <div class="modal-header pb-0">
+                                    <h4 class="modal-title">Sismontavar Options</h4>
+                                    <div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="sismontavar-form" action="{{ route('settings-sismontavar.store') }}" method="post">
+                                        @csrf
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label" for="bank-id">Bank ID</label>
+                                            <input type="text" name="bank-id" class="form-control" autocomplete="off" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="username">Username</label>
+                                            <input type="text" name="username" class="form-control" autocomplete="off" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="threshold">Threshold</label>
+                                            <input type="text" name="threshold" class="form-control" autocomplete="off" required>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" form="sismontavar-form" class="btn btn-primary">Submit</button>
+                                </div>
+							</div>
+						</div>
+					</div>
                     <!-- this overlay is activated only when mobile menu is triggered -->
                     <div class="page-content-overlay" data-action="toggle" data-class="mobile-nav-on"></div>
 @endsection
@@ -243,12 +253,12 @@
 							initApp.buildNavigation(myapp_config.navHooks);
 						})
 
-						$(document).find('#threshold-button-collapse, #sismontavar-button-collapse').on('show.bs.collapse', function(e) {
+						$(document).find('#threshold-button-collapse').on('show.bs.collapse', function(e) {
 							$(e.target).prev().find('input[name="threshold"]').next().prop('readonly', false);
 							$(e.target).prev().find('input[name="threshold"]').next().focus();
 						})
 
-						$(document).find('#threshold-button-collapse, #sismontavar-button-collapse').on('hide.bs.collapse', function(e) {
+						$(document).find('#threshold-button-collapse').on('hide.bs.collapse', function(e) {
 							$(e.target).prev().find('input[name="threshold"]').next().prop('readonly', true);
 						})
 
