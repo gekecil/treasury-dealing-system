@@ -23,8 +23,8 @@ class Threshold extends Controller
      */
     public function index()
     {
-		$threshold = ThresholdModel::latest();
-		$sismontavarOption = SismontavarOption::latest();
+		$threshold = ThresholdModel::withCasts(['threshold' => 'float'])->latest();
+		$sismontavarOption = SismontavarOption::withCasts(['threshold' => 'float'])->latest();
 
 		return view('threshold.index', [
 			'threshold' => $threshold,
