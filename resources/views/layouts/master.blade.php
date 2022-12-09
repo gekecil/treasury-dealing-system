@@ -1062,6 +1062,10 @@
                         } else if ($(settings.oInstance.api().table().container().closest('.panel')).is('#panel-branch-index')) {
                             settings.oInstance.api().column(3).visible(false);
                         }
+
+@if (request()->route()->named('settings-threshold.index'))
+                        settings.oInstance.api().buttons().to$().first().addClass('d-none');
+@endif
                     }
 
                 }).on('select', function(e, dt, type, indexes) {
