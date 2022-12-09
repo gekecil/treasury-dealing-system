@@ -91,7 +91,7 @@
 													<tr>
                                                         <th>User</th>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $value)
-@if (!collect(['id', 'user_id'])->contains($key))
+@if (!collect(['id', 'user_id'])->contains($value))
 														<th class="text-capitalize">{{
                                                             \Illuminate\Support\Str::of($value)
                                                             ->replaceMatches('/_id$/', function($match) {
