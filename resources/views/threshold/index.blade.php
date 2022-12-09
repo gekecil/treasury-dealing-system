@@ -219,15 +219,22 @@
                                         
                                         <div class="form-group">
                                             <label class="form-label" for="bank-id">Bank ID</label>
-                                            <input type="text" name="bank-id" class="form-control" autocomplete="off" required>
+                                            <input type="text" name="bank-id" class="form-control" autocomplete="off" value="{{
+                                                $sismontavarOption->firstOrNew([], ['bank_id' => null])->bank_id
+                                            }}" required>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label" for="username">Username</label>
-                                            <input type="text" name="username" class="form-control" autocomplete="off" required>
+                                            <input type="text" name="username" class="form-control" autocomplete="off" value="{{
+                                                $sismontavarOption->firstOrNew([], ['username' => null])->username
+                                            }}" required>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label" for="threshold">Threshold</label>
-                                            <input type="text" name="threshold" class="form-control" autocomplete="off" required>
+											<input type="hidden" name="threshold" value="{{
+                                                $sismontavarOption->firstOrNew([], ['threshold' => null])->threshold
+                                            }}" required>
+											<input type="text" class="form-control" autocomplete="off" required>
                                         </div>
                                     </form>
                                 </div>
