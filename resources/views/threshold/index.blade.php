@@ -109,7 +109,7 @@
 													<tr>
 														<td>{{ $value->user->full_name }}</td>
 @foreach(\DB::getSchemaBuilder()->getColumnListing($threshold->getModel()->getTable()) as $key)
-@if (collect(['id', 'user_id'])->contains($key))
+@if (!collect(['id', 'user_id'])->contains($key))
 @if (is_float($value->{$key}))
 														<td class="text-right">
 															<span>&#36;</span>
