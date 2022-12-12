@@ -1022,11 +1022,17 @@
                         "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                     buttons: [
                         {
-                            text: '<span class="fal fa-edit mr-1"></span>Update',
-                            titleAttr: 'Update Threshold',
-                            className: 'btn btn-outline-primary waves-effect waves-themed mr-1',
-                            action: function ( e, dt, node, config ) {
-                                $('.modal').has('#sismontavar-form').modal();
+                            init: function ( dt, node, config ) {
+                                if (dt.table().node().closest('#panel-threshold-index')) {
+                                    dt.button().remove();
+
+                                } else {
+                                    dt.button().text('<span class="fal fa-edit mr-1"></span>Update');
+                                    dt.button().node().addClass('btn-outline-primary waves-effect waves-themed mr-1');
+                                    dt.button().action( function ( e, dt, node, config ) {
+                                        $('.modal').has('#sismontavar-form').modal();
+                                    });
+                                }
                             }
                         }
                     ],
@@ -1062,12 +1068,6 @@
                         } else if ($(settings.oInstance.api().table().container().closest('.panel')).is('#panel-branch-index')) {
                             settings.oInstance.api().column(3).visible(false);
                         }
-
-@if (request()->route()->named('settings-threshold.index'))
-                        if (settings.oInstance.api().button().container().is($('.dt-buttons').eq(0))) {
-                            settings.oInstance.api().button().container().find('button').remove();
-                        }
-@endif
                     }
 
                 }).on('select', function(e, dt, type, indexes) {
