@@ -197,8 +197,9 @@ class SalesDeal extends Controller
             $usdEquivalent = new SalesDeal([
                     'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
                     'amount' => ($request->input('amount') ?: 0)
-                ])
-                ->usd_equivalent;
+                ]);
+
+            $usdEquivalent = $usdEquivalent->usd_equivalent;
         }
 
         $request->validate([
