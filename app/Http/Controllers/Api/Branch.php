@@ -76,7 +76,7 @@ class Branch extends Controller
                         $item = ((array) $item);
                     }
 
-                    return array_map('htmlspecialchars_decode', $item);
+                    return ((object) array_map('htmlspecialchars_decode', $item));
                 })
                 ->toArray()
 		]);

@@ -59,6 +59,16 @@ class SalesDeal extends Controller
                 ->get();
         }
 
+        $regions = $regions->map( function($item) {
+                if ($item instanceof Branch) {
+                    $item = $item->toArray();
+                } else {
+                    $item = ((array) $item);
+                }
+
+                return ((object) array_map('htmlspecialchars_decode', $item));
+            });
+
 		$market = Market::whereDate('closing_at', '<=', Carbon::today()->toDateString())
             ->latest('closing_at')
             ->first();
@@ -413,6 +423,16 @@ class SalesDeal extends Controller
                 ->whereNotNull('region')
                 ->get();
         }
+
+        $regions = $regions->map( function($item) {
+                if ($item instanceof Branch) {
+                    $item = $item->toArray();
+                } else {
+                    $item = ((array) $item);
+                }
+
+                return ((object) array_map('htmlspecialchars_decode', $item));
+            });
 
         $threshold = Threshold::latest();
 		$threshold = $threshold->exists() ? floatval($threshold->first()->threshold) : 0;

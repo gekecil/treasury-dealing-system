@@ -53,6 +53,16 @@ class User extends Controller
                 ->get();
         }
 
+        $regions = $regions->map( function($item) {
+                if ($item instanceof Branch) {
+                    $item = $item->toArray();
+                } else {
+                    $item = ((array) $item);
+                }
+
+                return ((object) array_map('htmlspecialchars_decode', $item));
+            });
+
 		$role = Role::oldest('id')->get();
 		
 		return view('user.create', [
@@ -107,6 +117,16 @@ class User extends Controller
                 ->orderBy('name')
                 ->get();
         }
+
+        $regions = $regions->map( function($item) {
+                if ($item instanceof Branch) {
+                    $item = $item->toArray();
+                } else {
+                    $item = ((array) $item);
+                }
+
+                return ((object) array_map('htmlspecialchars_decode', $item));
+            });
 
 		$role = Role::oldest('id')->get();
 		

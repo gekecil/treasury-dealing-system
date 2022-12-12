@@ -54,6 +54,16 @@ class DealerLimit extends Controller
                 ->get();
         }
 
+        $branch = $branch->map( function($item) {
+                if ($item instanceof Branch) {
+                    $item = $item->toArray();
+                } else {
+                    $item = ((array) $item);
+                }
+
+                return ((object) array_map('htmlspecialchars_decode', $item));
+            });
+
 		$role = Role::orderBy('id')->get();
 
         return view('dealer-limit.index', [
