@@ -70,7 +70,13 @@ class Branch extends Controller
 
 		return response()->json([
 			'data' => $branch->map( function($item) {
-                    return array_map('htmlspecialchars_decode', ((array) $item));
+                    if ($item instanceof Branch) {
+                        $item = $item->toArray();
+                    } else {
+                        $item = ((array) $item);
+                    }
+
+                    return array_map('htmlspecialchars_decode', $item);
                 })
                 ->toArray()
 		]);
