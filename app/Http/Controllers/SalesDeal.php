@@ -215,13 +215,14 @@ class SalesDeal extends Controller
         $request->validate([
             'sales-limit' => [
                 'required',
-                'lte:'.$usdEquivalent,
+                'gt:'.$usdEquivalent,
             ],
         ]);
 
         if (Str::of($request->input('buy-sell'))->lower()->after('bank')->trim()->exactly('sell') && !$request->filled('counter-primary-code')) {
             $request->validate([
-                'threshold'
+                'threshold',
+                'gt:'.$usdEquivalent,
             ]);
         }
 
