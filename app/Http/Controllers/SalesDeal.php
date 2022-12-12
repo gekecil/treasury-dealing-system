@@ -159,7 +159,60 @@ class SalesDeal extends Controller
                     ));
                 }),
             ],
+            'sismontavar-option-id' => [
+                'required',
+                'exists:App\SismontavarOption,id',
+            ],
         ]);
+
+        $baseCurrencyClosingRateId = ClosingRate::firstWhere([
+                'currency_id' => Currency::whereNull('secondary_code')
+                    ->firstOrNew(
+                        ['primary_code' => $request->input('base-primary-code')],
+                        ['id' => null]
+                    )
+                    ->id,
+
+                'created_at' => Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
+                    ->latest('closing_at')
+                    ->firstOr( function() {
+                        $market = Market::select('closing_at')
+                            ->latest('closing_at')
+                            ->first();
+
+                        while ($market->closing_at->isWeekend()) {
+                            $market->closing_at = $market->closing_at->subDay();
+                        }
+
+                        return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
+                    })
+                    ->closing_at
+                    ->toDateString(),
+            ])
+            ->id;
+
+        $usdEquivalent = ($request->input('amount') ?: 0);
+
+        if (Currency::where('primary_code', $request->input('base-primary-code'))->first()->id != 1) {
+            $usdEquivalent = new SalesDeal([
+                    'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
+                    'amount' => ($request->input('amount') ?: 0)
+                ])
+                ->usd_equivalent;
+        }
+
+        $request->validate([
+            'sales-limit' => [
+                'required',
+                'lte:'.$usdEquivalent,
+            ],
+        ]);
+
+        if (Str::of($request->input('buy-sell'))->lower()->after('bank')->trim()->exactly('sell') && !$request->filled('counter-primary-code')) {
+            $request->validate([
+                'threshold'
+            ]);
+        }
 
         try {
 			$decrypted = Crypt::decryptString($request->input('encrypted-query-string'));
@@ -253,35 +306,7 @@ class SalesDeal extends Controller
 			'account_id' => $account->id,
 			'branch_id' => $branch->id,
 			'currency_pair_id' => $request->input('currency_id'),
-
-			'base_currency_closing_rate_id' => (
-                ClosingRate::firstWhere([
-                    'currency_id' => Currency::whereNull('secondary_code')
-                        ->firstOrNew(
-                            ['primary_code' => $request->input('base-primary-code')],
-                            ['id' => null]
-                        )
-                        ->id,
-
-                    'created_at' => Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
-                        ->latest('closing_at')
-                        ->firstOr( function() {
-                            $market = Market::select('closing_at')
-                                ->latest('closing_at')
-                                ->first();
-
-                            while ($market->closing_at->isWeekend()) {
-                                $market->closing_at = $market->closing_at->subDay();
-                            }
-
-                            return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
-                        })
-                        ->closing_at
-                        ->toDateString(),
-                ])
-				->id
-            ),
-
+			'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
 			'interoffice_rate' => ($request->input('interoffice_rate') ?: 0),
 			'customer_rate' => ($request->input('customer-rate') ?: 0),
 

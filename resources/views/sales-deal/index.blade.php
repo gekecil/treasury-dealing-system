@@ -480,6 +480,11 @@
 									<input type="hidden" name="account-cif">
 									<input type="hidden" name="account-name">
 									<input type="hidden" name="branch-name">
+									<input type="hidden" name="sismontavar-option-id" value="{{
+                                        App\SismontavarOption::select('id as sismontavar_option_id')->latest()
+                                        ->firstOrNew([], ['sismontavar_option_id' => null])
+                                        ->sismontavar_option_id
+                                    }}">
 @cannot ('update', new App\SalesDeal)
 									<input type="hidden" name="region">
 @endcan

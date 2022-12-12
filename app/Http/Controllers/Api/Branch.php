@@ -69,7 +69,10 @@ class Branch extends Controller
         }
 
 		return response()->json([
-			'data' => $branch->toArray()
+			'data' => $branch->map( function($item) {
+                    return array_map('htmlspecialchars_decode', $item->toArray());
+                })
+                ->toArray()
 		]);
     }
 
