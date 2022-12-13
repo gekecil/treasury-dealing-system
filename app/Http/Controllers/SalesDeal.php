@@ -169,10 +169,6 @@ class SalesDeal extends Controller
                     ));
                 }),
             ],
-            'sismontavar-option-id' => [
-                'required',
-                'exists:App\SismontavarOption,id',
-            ],
         ]);
 
         $baseCurrencyClosingRateId = ClosingRate::firstWhere([
@@ -201,31 +197,6 @@ class SalesDeal extends Controller
             ])
             ->id;
 
-        $usdEquivalent = ($request->input('amount') ?: 0);
-
-        if (Currency::where('primary_code', $request->input('base-primary-code'))->first()->id != 1) {
-            $usdEquivalent = new SalesDeal([
-                    'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
-                    'amount' => ($request->input('amount') ?: 0)
-                ]);
-
-            $usdEquivalent = $usdEquivalent->usd_equivalent;
-        }
-
-        $request->validate([
-            'sales-limit' => [
-                'required',
-                'gt:'.$usdEquivalent,
-            ],
-        ]);
-
-        if (Str::of($request->input('buy-sell'))->lower()->after('bank')->trim()->exactly('sell') && !$request->filled('counter-primary-code')) {
-            $request->validate([
-                'threshold',
-                'gt:'.$usdEquivalent,
-            ]);
-        }
-
         try {
 			$decrypted = Crypt::decryptString($request->input('encrypted-query-string'));
 
@@ -246,7 +217,22 @@ class SalesDeal extends Controller
 		}
 
 		if ($request->route()->named('sales-fx.store')) {
+            $usdEquivalent = ($request->input('amount') ?: 0);
+
+            if (Currency::where('primary_code', $request->input('base-primary-code'))->first()->id != 1) {
+                $usdEquivalent = new SalesDeal([
+                        'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
+                        'amount' => ($request->input('amount') ?: 0)
+                    ]);
+
+                $usdEquivalent = $usdEquivalent->usd_equivalent;
+            }
+
 			$request->validate([
+                'sales-limit' => [
+                    'required',
+                    'gt:'.$usdEquivalent,
+                ],
 				'currency_id' => [
 					'required',
 					Rule::exists((new CurrencyPair)->getTable(), 'id')->where(function ($query) {
@@ -261,6 +247,13 @@ class SalesDeal extends Controller
                     ]),
 				],
 			]);
+
+            if (Str::of($request->input('buy-sell'))->lower()->after('bank')->trim()->exactly('sell') && !$request->filled('counter-primary-code')) {
+                $request->validate([
+                    'threshold',
+                    'gt:'.$usdEquivalent,
+                ]);
+            }
 
 		} else {
 			$request->request->set('currency_id', (

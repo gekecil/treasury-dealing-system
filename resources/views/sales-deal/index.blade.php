@@ -480,10 +480,10 @@
 									<input type="hidden" name="account-cif">
 									<input type="hidden" name="account-name">
 									<input type="hidden" name="branch-name">
-									<input type="hidden" name="sismontavar-option-id" value="{{
-                                        App\SismontavarOption::select('id as sismontavar_option_id')->latest()
-                                        ->firstOrNew([], ['sismontavar_option_id' => null])
-                                        ->sismontavar_option_id
+									<input type="hidden" name="sismontavar-threshold" value="{{
+                                        App\SismontavarOption::latest()
+                                        ->firstOrNew([], ['threshold' => null])
+                                        ->threshold
                                     }}">
 @cannot ('update', new App\SalesDeal)
 									<input type="hidden" name="region">
@@ -693,9 +693,17 @@
 
 							if (
 								response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency) && (
+                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
+                                    .find('[name="sismontavar-threshold"]')
+                                    .val()
+                                    .length
+                                ) && (
                                     $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="threshold"]').val().length
                                 ) && (
-                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="sales-limit"]').val().length || (
+                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
+                                    .find('[name="sales-limit"]')
+                                    .val()
+                                    .length || (
                                         @json(auth()->user()->is_super_administrator)
                                     )
                                 ) && (
