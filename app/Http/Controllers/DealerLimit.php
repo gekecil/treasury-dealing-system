@@ -43,7 +43,7 @@ class DealerLimit extends Controller
                         );
 
                     $item->sales_limit = $branch->sales_limit;
-                    $item->updated_at = $branch->updated_at;
+                    $item->updated_at = $branch->updated_at->toDayDateTimeString();
 
                     return $item;
                 });
@@ -51,7 +51,12 @@ class DealerLimit extends Controller
         } catch (\Exception $e) {
             $branch = Branch::whereRaw("lower(region) != 'kantor pusat'")
                 ->latest('updated_at')
-                ->get();
+                ->get()
+                ->map( function($item, $key) {
+                    $item->updated_at = $item->updated_at->toDayDateTimeString();
+
+                    return $item;
+                });
         }
 
         $branch = $branch->map( function($item) {

@@ -155,7 +155,7 @@
 														</td>
 														<td class="text-center">
 @if ($value->updated_at)
-															{{ $value->updated_at->toDayDateTimeString() }}
+															{{ $value->updated_at }}
 @endif
 														</td>
                                                     </tr>

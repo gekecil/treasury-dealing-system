@@ -99,6 +99,9 @@ class User extends Authenticatable
                 ->table('StrukturCabang')
                 ->where('Id', $this->branch_code)
                 ->get(['Company name as branch_name', 'NamaRegion as branch_region'])
+                ->map( function($item) {
+                    return ((object) array_map('htmlspecialchars_decode', ((array) $item)));
+                })
                 ->whenEmpty( function($collection) {
                     return $collection->push((object) (['branch_name' => null, 'branch_region' => null]));
                 })
