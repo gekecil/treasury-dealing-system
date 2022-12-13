@@ -220,7 +220,7 @@ class SalesDeal extends Controller
             $usdEquivalent = ($request->input('amount') ?: 0);
 
             if (Currency::where('primary_code', $request->input('base-primary-code'))->first()->id != 1) {
-                $usdEquivalent = new SalesDeal([
+                $usdEquivalent = new SalesDealModel([
                         'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
                         'amount' => ($request->input('amount') ?: 0)
                     ]);
