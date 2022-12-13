@@ -43,6 +43,7 @@ class DealerLimit extends Controller
                         );
 
                     $item->sales_limit = $branch->sales_limit;
+                    $item->updated_at = $branch->updated_at;
 
                     if ($branch->updated_at) {
                         $item->updated_at = $branch->updated_at->toDayDateTimeString();
