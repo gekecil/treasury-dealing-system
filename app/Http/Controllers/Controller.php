@@ -88,7 +88,7 @@ class Controller extends BaseController
             ]);
 
             foreach ($sismontavarDeal->toArray() as $key => $value) {
-                if ($key === '') {
+                if ($key === 'corporate_name') {
                     $sismontavarDeal->{$key} = preg_replace("/[^A-Za-z0-9\ ]/", "", $value);
                 } else {
                     $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
