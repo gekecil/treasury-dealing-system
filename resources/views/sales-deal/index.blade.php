@@ -869,9 +869,17 @@
 
 							if (
 								response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency) && (
+                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
+                                    .find('[name="sismontavar-threshold"]')
+                                    .val()
+                                    .length
+                                ) && (
                                     $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="threshold"]').val().length
                                 ) && (
-                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="sales-limit"]').val().length || (
+                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
+                                    .find('[name="sales-limit"]')
+                                    .val()
+                                    .length || (
                                         @json(auth()->user()->is_super_administrator)
                                     )
                                 ) && (
