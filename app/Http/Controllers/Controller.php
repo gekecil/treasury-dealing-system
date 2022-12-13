@@ -87,6 +87,14 @@ class Controller extends BaseController
                     ),
             ]);
 
+            foreach ($sismontavarDeal->toArray() as $key => $value) {
+                if ($key === '') {
+                    $sismontavarDeal->{$key} = preg_replace("/[^A-Za-z0-9\ ]/", "", $value);
+                } else {
+                    $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
+                }
+            }
+
             try {
                 $token = Http::asForm()
                     ->post(env('SISMONTAVAR_URL_ACCESS_TOKEN'), [
