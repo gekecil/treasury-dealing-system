@@ -21,19 +21,20 @@ class Controller extends BaseController
             ->first();
 
 		if (!$salesDeal->currencyPair->counter_currency_id && ($salesDeal->usd_equivalent >= $sismontavarOption->threshold)) {
-            $corporateName = $salesDeal->account->name;
+            $corporateName = preg_replace("/[^A-Za-z0-9\ ]/", "", $salesDeal->account->name);
 
             while (strlen($corporateName) > 56) {
                 $corporateName = Str::beforeLast($corporateName, ' ');
             }
 
-            $traderName = $salesDeal->user->full_name;
+            $traderName = preg_replace("/[^A-Za-z\ ]/", "", Str::before($salesDeal->user->full_name, '@'));
 
             while (strlen($traderName) > 20) {
                 $traderName = Str::beforeLast($traderName, ' ');
             }
 
             $confirmedBy = $salesDeal->specialRateDeal()->firstOrNew([], ['user_id' => $salesDeal->user_id])->user->full_name;
+            $confirmedBy = preg_replace("/[^A-Za-z\ ]/", "", Str::before($confirmedBy, '@'));
 
             while (strlen($confirmedBy) > 30) {
                 $confirmedBy = Str::beforeLast($confirmedBy, ' ');
@@ -88,11 +89,7 @@ class Controller extends BaseController
             ]);
 
             foreach ($sismontavarDeal->toArray() as $key => $value) {
-                if ($key === 'corporate_name') {
-                    $sismontavarDeal->{$key} = preg_replace("/[^A-Za-z0-9\ ]/", "", $value);
-                } else {
-                    $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
-                }
+                $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
             }
 
             try {
