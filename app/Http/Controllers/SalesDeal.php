@@ -229,6 +229,9 @@ class SalesDeal extends Controller
             }
 
 			$request->validate([
+                'interoffice_rate' => [
+                    'required',
+                ],
                 'sales-limit' => [
                     'required',
                     'gt:'.$usdEquivalent,
@@ -248,11 +251,27 @@ class SalesDeal extends Controller
 				],
 			]);
 
-            if (Str::of($request->input('buy-sell'))->lower()->after('bank')->trim()->exactly('sell') && !$request->filled('counter-primary-code')) {
-                $request->validate([
-                    'threshold',
-                    'gt:'.$usdEquivalent,
-                ]);
+            switch (Str::of($request->input('buy-sell'))->lower()->after('bank')->trim()) {
+                case 'buy':
+                    $request->validate([
+                        'customer-rate' => [
+                            'required',
+                            'lt:'.$request->input('interoffice_rate'),
+                        ],
+                    ]);
+
+                    break;
+
+                case 'sell':
+                    $request->validate([
+                        'customer-rate' => [
+                            'required',
+                            'gt:'.$request->input('interoffice_rate'),
+                        ],
+                    ]);
+
+                    break;
+
             }
 
 		} else {
