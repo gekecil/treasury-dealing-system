@@ -48,7 +48,17 @@
         ))
         ->exists()
 )
-								<a href="{{ route('sismontavar-deals.show', ['sismontavarDeal' => $salesDeal->id]) }}">
+								<a href="{{ route('sismontavar-deals.show', ['sismontavarDeal' => (
+                                    (($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
+                                            '00'.(string) (
+                                                $salesDeal->newQuery()
+                                                ->whereDate('created_at', $salesDeal->created_at->toDateString())
+                                                ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
+                                                ->count()
+                                            ), -3
+                                        )
+                                    )
+                                )]) }}">
 									<button class="btn btn-primary mr-1" type="button" title="SISMONTAVAR Data">
 										<span class="fal fa-th-list mr-1"></span>
 										SISMONTAVAR Data
