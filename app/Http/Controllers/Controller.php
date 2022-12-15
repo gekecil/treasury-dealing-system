@@ -42,7 +42,6 @@ class Controller extends BaseController
 
             $sismontavarDeal = new SismontavarDeal;
             $sismontavarDeal->fill([
-                'sales_deal_id' => $salesDeal->id,
                 'transaction_id' => (($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
                             '00'.(string) (
                                 $salesDeal->newQuery()

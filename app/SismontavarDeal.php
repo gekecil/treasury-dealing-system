@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SismontavarDeal extends Model
 {
-    protected $primaryKey = 'sales_deal_id';
+    protected $primaryKey = 'transaction_id';
     protected $guarded = [];
 
 	public function salesDeal()

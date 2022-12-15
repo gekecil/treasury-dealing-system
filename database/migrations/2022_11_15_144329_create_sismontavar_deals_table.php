@@ -14,8 +14,7 @@ class CreateSismontavarDealsTable extends Migration
     public function up()
     {
         Schema::create('sismontavar_deals', function (Blueprint $table) {
-            $table->foreignId('sales_deal_id')->primary()->constrained();
-            $table->string('transaction_id', 11);
+            $table->string('transaction_id', 11)->primary();
             $table->string('transaction_date', 15);
             $table->integer('corporate_id');
             $table->string('corporate_name', 56);
