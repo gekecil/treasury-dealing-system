@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\SalesDeal as SalesDealModel;
 use App\Branch;
+use App\SismontavarDeal;
 use App\Threshold;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -30,7 +31,6 @@ class SalesDeal extends Controller
             'account',
             'salesDealFile',
             'specialRateDeal',
-            'sismontavarDeal',
             'buyOrSell',
             'ttOrBn',
             'todOrTomOrSpotOrForward',
@@ -209,7 +209,21 @@ class SalesDeal extends Controller
             ->append('can_upload_underlying')
             ->map( function($item, $key) {
                 $item->baseCurrencyClosingRate = $item->baseCurrencyClosingRate->append('world_currency_closing_mid_rate');
-                
+
+                if ($item->created_at->isToday()) {
+                    $item->sismontavar_deal = SismontavarDeal::find(
+                            (($item->specialRateDeal()->exists() ? 'SR' : 'FX').$item->created_at->format('dmy').substr(
+                                    '00'.(string) (
+                                        $item->newQuery()
+                                        ->whereDate('created_at', $item->created_at->toDateString())
+                                        ->whereTime('created_at', '<=', $item->created_at->toTimeString())
+                                        ->count()
+                                    ), -3
+                                )
+                            )
+                        );
+                }
+
                 return $item;
             });
 
