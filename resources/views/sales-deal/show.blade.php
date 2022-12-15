@@ -37,11 +37,11 @@
 							<div class="col-sm-12 col-md-6 d-flex justify-content-end">
 @if (
     \App\SismontavarDeal::where('transaction_id', (
-        ($item->specialRateDeal()->exists() ? 'SR' : 'FX').$item->created_at->format('dmy').substr(
+        ($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
                 '00'.(string) (
-                    $item->newQuery()
-                    ->whereDate('created_at', $item->created_at->toDateString())
-                    ->whereTime('created_at', '<=', $item->created_at->toTimeString())
+                    $salesDeal->newQuery()
+                    ->whereDate('created_at', $salesDeal->created_at->toDateString())
+                    ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
                     ->count()
                 ), -3
             )
