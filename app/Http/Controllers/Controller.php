@@ -134,15 +134,15 @@ class Controller extends BaseController
                     ->post(env('SISMONTAVAR_URL_SEND_DATA'));
 
                 if ($http->ok()) {
-                    $status = $http->status();
+                    $body = $http->body();
 
-                    if (json_decode($status)) {
-                        $status = json_decode($status)->Message;
+                    if (json_decode($body)) {
+                        $body = json_decode($body)->Message;
                     }
 
                     $sismontavarDeal->fill([
-                        'status_code' => $status,
-                        'status_text' => $http->body(),
+                        'status_code' => $http->status(),
+                        'status_text' => $body,
                     ])
                     ->save();
 
