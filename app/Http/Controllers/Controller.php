@@ -41,7 +41,7 @@ class Controller extends BaseController
             }
 
             $sismontavarDeal = SismontavarDeal::firstOrNew(
-                    ['transaction_id' => (($salesDeal->sr_fx).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number))],
+                    ['transaction_id' => (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number))],
                     []
                 );
 
@@ -134,8 +134,14 @@ class Controller extends BaseController
                     ->post(env('SISMONTAVAR_URL_SEND_DATA'));
 
                 if ($http->ok()) {
+                    $status = $http->status();
+
+                    if (json_decode($status)) {
+                        $status = $status->Message;
+                    }
+
                     $sismontavarDeal->fill([
-                        'status_code' => $http->status(),
+                        'status_code' => $status,
                         'status_text' => $http->body(),
                     ])
                     ->save();
