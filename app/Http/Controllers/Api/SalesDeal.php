@@ -212,15 +212,7 @@ class SalesDeal extends Controller
 
                 if ($item->created_at->isToday()) {
                     $item->sismontavar_deal = SismontavarDeal::find(
-                            (($item->specialRateDeal()->exists() ? 'SR' : 'FX').$item->created_at->format('dmy').substr(
-                                    '00'.(string) (
-                                        $item->newQuery()
-                                        ->whereDate('created_at', $item->created_at->toDateString())
-                                        ->whereTime('created_at', '<=', $item->created_at->toTimeString())
-                                        ->count()
-                                    ), -3
-                                )
-                            )
+                            ($item->sr_fx).($item->created_at->format('dmy')).($item->blotter_number)
                         );
                 }
 

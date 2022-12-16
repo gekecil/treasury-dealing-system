@@ -15,6 +15,7 @@ use App\Market;
 use App\OtherLhbuRemarksKind;
 use App\Threshold;
 use App\Modification;
+use App\SismontavarDeal;
 use Carbon\Carbon;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
@@ -407,10 +408,15 @@ class SalesDeal extends Controller
         $threshold = Threshold::latest();
 		$threshold = $threshold->exists() ? floatval($threshold->first()->threshold) : 0;
 
+		$sismontavarDeal = SismontavarDeal::find(
+                ($salesDeal->sr_fx).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number)
+            );
+
 		return view('sales-deal.show', [
 			'salesDeal' => $salesDeal,
 			'currencyPair' => $currencyPair,
 			'threshold' => $threshold,
+			'sismontavarDeal' => $sismontavarDeal,
 		]);
     }
 

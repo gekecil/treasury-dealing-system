@@ -40,18 +40,12 @@ class Controller extends BaseController
                 $confirmedBy = Str::beforeLast($confirmedBy, ' ');
             }
 
-            $sismontavarDeal = new SismontavarDeal;
-            $sismontavarDeal->fill([
-                'transaction_id' => (($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
-                            '00'.(string) (
-                                $salesDeal->newQuery()
-                                ->whereDate('created_at', $salesDeal->created_at->toDateString())
-                                ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
-                                ->count()
-                            ), -3
-                        )
-                    ),
+            $sismontavarDeal = SismontavarDeal::firstOrNew(
+                    ['transaction_id' => (($salesDeal->sr_fx).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number))],
+                    []
+                );
 
+            $sismontavarDeal->fill([
                 'transaction_date' => $salesDeal->created_at->format('Ymd His'),
                 'corporate_id' => substr($salesDeal->account->cif, -4),
                 'corporate_name' => $corporateName,
@@ -142,6 +136,7 @@ class Controller extends BaseController
                 if ($http->ok()) {
                     $sismontavarDeal->fill([
                         'status_code' => $http->status(),
+                        'status_text' => $http->body(),
                     ])
                     ->save();
 

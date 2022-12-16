@@ -46,7 +46,7 @@ class SismontavarDeal extends Controller
      */
     public function show(SismontavarDealModel $sismontavarDeal)
     {
-        //$this->authorize('view', $sismontavarDeal->salesDeal);
+        $this->authorize('view', $sismontavarDeal);
 
         $sismontavarDeal->makeHidden([
             'sales_deal_id',

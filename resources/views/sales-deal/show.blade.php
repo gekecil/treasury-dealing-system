@@ -35,30 +35,8 @@
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 d-flex justify-content-end">
-@if (
-    \App\SismontavarDeal::where('transaction_id', (
-        ($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
-                '00'.(string) (
-                    $salesDeal->newQuery()
-                    ->whereDate('created_at', $salesDeal->created_at->toDateString())
-                    ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
-                    ->count()
-                ), -3
-            )
-        ))
-        ->exists()
-)
-								<a href="{{ route('sismontavar-deals.show', ['sismontavarDeal' => (
-                                    (($salesDeal->specialRateDeal()->exists() ? 'SR' : 'FX').$salesDeal->created_at->format('dmy').substr(
-                                            '00'.(string) (
-                                                $salesDeal->newQuery()
-                                                ->whereDate('created_at', $salesDeal->created_at->toDateString())
-                                                ->whereTime('created_at', '<=', $salesDeal->created_at->toTimeString())
-                                                ->count()
-                                            ), -3
-                                        )
-                                    )
-                                )]) }}">
+@if ($sismontavarDeal)
+								<a href="{{ route('sismontavar-deals.show', ['sismontavarDeal' => $sismontavarDeal->transaction_id]) }}">
 									<button class="btn btn-primary mr-1" type="button" title="SISMONTAVAR Data">
 										<span class="fal fa-th-list mr-1"></span>
 										SISMONTAVAR Data

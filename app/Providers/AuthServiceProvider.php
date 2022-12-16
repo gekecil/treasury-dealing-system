@@ -26,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
 		'App\Role' => 'App\Policies\RolePolicy',
 		'App\SalesDealFile' => 'App\Policies\SalesDealFilePolicy',
 		'App\SalesDeal' => 'App\Policies\SalesDealPolicy',
+		'App\SismontavarDeal' => 'App\Policies\SismontavarDealPolicy',
 		'App\SpecialRateDeal' => 'App\Policies\SpecialRateDealPolicy',
 		'App\Threshold' => 'App\Policies\ThresholdPolicy',
 		'App\User' => 'App\Policies\UserPolicy'

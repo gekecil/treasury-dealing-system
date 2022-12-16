@@ -104,6 +104,29 @@ class SalesDeal extends Model
 		);
 	}
 
+	public function getBlotterNumberAttribute()
+    {
+		return (
+            substr(
+                '00'.(string) (
+                    $this->newQuery()
+                    ->whereDate('created_at', $this->created_at->toDateString())
+                    ->oldest()
+                    ->get($sale->getKeyName())
+                    ->pluck($sale->getKeyName())
+                    ->search($sale->{$sale->getKeyName()})
+                    +1
+                ),
+                -3
+            )
+        );
+	}
+
+	public function getFxSrAttribute()
+    {
+		return ($this->specialRateDeal()->exists() ? 'SR' : 'FX');
+	}
+
 	public function currencyPair()
     {
         return $this->belongsTo(CurrencyPair::class)
