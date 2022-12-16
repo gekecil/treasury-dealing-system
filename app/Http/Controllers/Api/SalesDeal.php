@@ -212,7 +212,7 @@ class SalesDeal extends Controller
 
                 if ($item->created_at->isToday()) {
                     $item->sismontavar_deal = SismontavarDeal::find(
-                            ($item->sr_fx).($item->created_at->format('dmy')).($item->blotter_number)
+                            ($item->fx_sr).($item->created_at->format('dmy')).($item->blotter_number)
                         );
                 }
 

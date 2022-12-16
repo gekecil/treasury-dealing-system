@@ -409,7 +409,7 @@ class SalesDeal extends Controller
 		$threshold = $threshold->exists() ? floatval($threshold->first()->threshold) : 0;
 
 		$sismontavarDeal = SismontavarDeal::find(
-                ($salesDeal->sr_fx).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number)
+                ($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number)
             );
 
 		return view('sales-deal.show', [
