@@ -137,7 +137,7 @@ class Controller extends BaseController
                     $status = $http->status();
 
                     if (json_decode($status)) {
-                        $status = $status->Message;
+                        $status = json_decode($status)->Message;
                     }
 
                     $sismontavarDeal->fill([
