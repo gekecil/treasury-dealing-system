@@ -38,11 +38,15 @@ class SismontavarDealPolicy
      */
     public function view(User $user, SismontavarDeal $sismontavarDeal)
     {
-        $salesDeal = SalesDeal::whereDate('created_at', $sismontavarDeal->created_at->toDateString())
+        $salesDeal = SalesDeal::select([(new SalesDeal)->getKeyName(), 'branch_id'])
+            ->whereDate('created_at', $sismontavarDeal->created_at->toDateString())
             ->oldest()
-            ->get((new SalesDeal)->getKeyName());
+            ->get();
 
-        $salesDeal = $salesDeal->get($salesDeal->search(((int) substr($sismontavarDeal->transaction_id, -3)) -1));
+        $salesDeal = $salesDeal->get(
+                $salesDeal->pluck((new SalesDeal)->getKeyName())->search(((int) substr($sismontavarDeal->transaction_id, -3)) -1)
+            );
+
         $branch = ($salesDeal ?: new SalesDeal)->branch()->firstOrNew([], ['code' => null]);
 
         return (($user->is_branch_office_dealer && ($user->branch_code === $branch->code)) || $user->is_head_office_dealer);
