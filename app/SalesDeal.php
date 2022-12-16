@@ -112,9 +112,9 @@ class SalesDeal extends Model
                     $this->newQuery()
                     ->whereDate('created_at', $this->created_at->toDateString())
                     ->oldest()
-                    ->get($sale->getKeyName())
-                    ->pluck($sale->getKeyName())
-                    ->search($sale->{$sale->getKeyName()})
+                    ->get($this->getKeyName())
+                    ->pluck($this->getKeyName())
+                    ->search($this->{$this->getKeyName()})
                     +1
                 ),
                 -3
