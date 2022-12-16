@@ -61,7 +61,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-500">Response Status:</td>
-                                                                <td>Success Capture</td>
+                                                                <td>{{ $sismontavarDeal->status_text }}</td>
                                                             </tr>
 @endif
                                                             <tr>
