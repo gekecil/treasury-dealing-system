@@ -197,7 +197,7 @@
 										titleAttr: 'Add the SISMONTAVAR',
 										className: 'btn btn-outline-primary waves-effect waves-themed',
 										action: function() {
-											alert();
+											$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal();
 										}
 									}
 								],
