@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use SismontavarDeal as SismontavarDealModel;
+use App\SismontavarDeal as SismontavarDealModel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
