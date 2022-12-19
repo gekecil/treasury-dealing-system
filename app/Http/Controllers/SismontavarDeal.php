@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\SismontavarDeal as SismontavarDealModel;
+use App\SalesDeal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SismontavarDeal extends Controller
@@ -36,7 +38,14 @@ class SismontavarDeal extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $salesDeal = new SalesDeal;
+        $salesDeal = $salesDeal->fill([
+                'user_id' => Au
+            ]);
+
+        $this->sismontavar();
+
+		return redirect()->back()->with('status', 'The SISMONTAVAR Data Was Sent!');
     }
 
     /**
@@ -55,7 +64,6 @@ class SismontavarDeal extends Controller
             'status_text',
             'created_at',
             'updated_at',
-            'salesDeal',
         ]);
 
         return view('sismontavar-deal.show', [

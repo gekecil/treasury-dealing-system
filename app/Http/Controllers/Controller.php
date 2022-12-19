@@ -20,8 +20,13 @@ class Controller extends BaseController
         $sismontavarOption = SismontavarOption::latest()
             ->first();
 
-		if (!$salesDeal->currencyPair->counter_currency_id && ($salesDeal->usd_equivalent >= $sismontavarOption->threshold)) {
-            $corporateName = preg_replace("/[^A-Za-z0-9\ ]/", "", $salesDeal->account->name);
+		if (
+            !$salesDeal->currencyPair || (
+                !$salesDeal->currencyPair->counter_currency_id && ($salesDeal->usd_equivalent >= $sismontavarOption->threshold)
+            )
+        ) {
+            $corporateName = $salesDeal->account()->firstOrNew([], ['name' => $salesDeal->corporate_name])->name;
+            $corporateName = preg_replace("/[^A-Za-z0-9\ ]/", "", $corporateName);
 
             while (strlen($corporateName) > 56) {
                 $corporateName = Str::beforeLast($corporateName, ' ');
@@ -47,13 +52,22 @@ class Controller extends BaseController
 
             $sismontavarDeal->fill([
                 'transaction_date' => $salesDeal->created_at->format('Ymd His'),
-                'corporate_id' => substr($salesDeal->account->cif, -4),
+                'corporate_id' => substr($salesDeal->account()->firstOrNew([], ['cif' => $salesDeal->cif])->cif, -4),
                 'corporate_name' => $corporateName,
                 'platform' => 'TDS',
-                'deal_type' => ucwords($salesDeal->todOrTomOrSpotOrForward->name),
-                'direction' => ucwords($salesDeal->buyOrSell->name),
-                'base_currency' => $salesDeal->currencyPair->baseCurrency->primary_code,
-                'quote_currency' => $salesDeal->currencyPair->counterCurrency()->firstOrNew([], ['primary_code' => 'IDR'])->primary_code,
+                'deal_type' => ucwords($salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name),
+                'direction' => ucwords($salesDeal->buyOrSell()->firstOrNew([], ['name' => $salesDeal->direction])->name),
+                'base_currency' => $salesDeal->currencyPair()
+                    ->firstOrNew([], ['currency_pair_id' => $salesDeal->currency_id])
+                    ->baseCurrency
+                    ->primary_code,
+
+                'quote_currency' => $salesDeal->currencyPair()
+                    ->firstOrNew([], ['currency_pair_id' => $salesDeal->currency_id])
+                    ->counterCurrency()
+                    ->firstOrNew([], ['primary_code' => 'IDR'])
+                    ->primary_code,
+
                 'base_volume' => abs($salesDeal->amount),
                 'quote_volume' => ($salesDeal->customer_rate * abs($salesDeal->amount)),
                 'periods' => (
@@ -63,7 +77,13 @@ class Controller extends BaseController
                             'spot' => 2,
                             'forward' => 3,
                         ])
-                        ->get($salesDeal->todOrTomOrSpotOrForward->name)
+                        ->filter( function($value, $key) use($salesDeal) {
+                            return ($key === $salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name);
+                        })
+                        ->whenEmpty( function($collection) use($salesDeal) {
+                            return $collection->push($salesDeal->periods);
+                        })
+                        ->first()
                     ),
 
                 'near_rate' => $salesDeal->customer_rate,
@@ -80,6 +100,10 @@ class Controller extends BaseController
                         substr('0'.((string) $salesDeal->lhbu_remarks_code), -2).' '.substr('00'.((string) $salesDeal->lhbu_remarks_kind), -3)
                     ),
             ]);
+
+            if ($salesDeal->transaction_purpose) {
+                $sismontavarDeal->transaction_purpose = $salesDeal->transaction_purpose;
+            }
 
             foreach ($sismontavarDeal->toArray() as $key => $value) {
                 $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);

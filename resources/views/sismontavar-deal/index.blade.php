@@ -58,6 +58,9 @@
 								<form action="{{ route('sismontavar-deals.store') }}" method="post">
 									@csrf
 									
+									<input type="hidden" name="account-number">
+									<input type="hidden" name="account-cif">
+									<input type="hidden" name="account-name">
 									<div class="modal-header pb-0">
 										<h4 class="modal-title"></h4>
 										<div>
@@ -95,8 +98,8 @@
 											<select name="account" required></select>
 										</div>
 										<div class="form-group">
-											<label class="form-label" for="tod-tom-spot-forward-swap">TOD/TOM/Spot/Forward/SWAP</label>
-											<select name="tod-tom-spot-forward-swap" class="form-control" required>
+											<label class="form-label" for="deal-type">Deal Type</label>
+											<select name="deal-type" class="form-control" required>
 												<option value>Choose</option>
 												<option value="TOD">TOD</option>
 												<option value="TOM">TOM</option>
