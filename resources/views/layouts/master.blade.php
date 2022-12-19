@@ -266,7 +266,7 @@
                                 </li>
                                 <li>
                                     <a href="{{ route('sismontavar-deals.index') }}" title="SISMONTAVAR" data-filter-tags="sales sismontavar">
-                                        <i class="fal fa-arrow-alt-to-top"></i>
+                                        <i class="fal fa-clipboard-list-check"></i>
                                         <span class="nav-link-text" data-i18n="nav.sales_sismontavar">SISMONTAVAR</span>
                                     </a>
                                 </li>
