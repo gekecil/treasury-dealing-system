@@ -158,7 +158,9 @@
 							</div>
 						</div>
 					</div>
+@endsection
 
+@section('javascript')
 					<script src="/js/datagrid/datatables/datatables.bundle.js"></script>
 					<script src="/moment/min/moment.min.js"></script>
 					<script src="/js/formplugins/inputmask/inputmask.bundle.js"></script>
