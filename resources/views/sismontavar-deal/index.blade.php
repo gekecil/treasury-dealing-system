@@ -220,6 +220,26 @@
 										data: 'corporate_name'
 									},
 									{
+										title: 'Direction',
+										data: 'direction'
+									},
+									{
+										title: 'Base Currency',
+										data: 'base_currency'
+									},
+									{
+										title: 'Near Rate',
+										data: 'near_rate'
+									},
+									{
+										title: 'Base Volume',
+										data: 'base_volume'
+									},
+									{
+										title: 'Periods',
+										data: 'periods'
+									},
+									{
 										title: 'Created At',
 										data: 'created_at',
 										className: 'text-center',
