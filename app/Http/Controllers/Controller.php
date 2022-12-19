@@ -133,26 +133,11 @@ class Controller extends BaseController
                     )
                     ->post(env('SISMONTAVAR_URL_SEND_DATA'));
 
-                if ($http->ok()) {
-                    $body = $http->body();
-
-                    if (json_decode($body)) {
-                        $body = json_decode($body)->Message;
-                    }
-
-                    $sismontavarDeal->fill([
-                        'status_code' => $http->status(),
-                        'status_text' => $body,
-                    ])
-                    ->save();
-
-                } else {
-                    $sismontavarDeal->fill([
-                        'status_code' => $http->status(),
-                        'status_text' => $http->body(),
-                    ])
-                    ->save();
-                }
+                $sismontavarDeal->fill([
+                    'status_code' => $http->status(),
+                    'status_text' => $http->body(),
+                ])
+                ->save();
 
             } catch (\Exception $e) {
                 if (!$sismontavarDeal->exists) {

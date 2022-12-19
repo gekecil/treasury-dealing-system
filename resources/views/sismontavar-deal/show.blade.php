@@ -61,7 +61,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-500">Response Status:</td>
-                                                                <td>{{ $sismontavarDeal->status_text }}</td>
+                                                                <td>{{ json_decode($sismontavarDeal->status_text)->Message }}</td>
                                                             </tr>
 @endif
                                                             <tr>
