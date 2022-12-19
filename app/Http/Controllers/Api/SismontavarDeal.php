@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class SismontavarDeal extends Controller
 {
+    public function __construct(Request $request)
+    {
+		$this->request = $request;
+        //$this->authorizeResource(NewsModel::class);
+    }
+
     /**
      * Display a listing of the resource.
      *
