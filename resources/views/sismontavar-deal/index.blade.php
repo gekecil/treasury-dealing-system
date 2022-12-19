@@ -106,6 +106,10 @@
 											</select>
 										</div>
 										<div class="form-group">
+											<label class="form-label" for="periods">Periods</label>
+											<input type="number" name="periods" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
 											<label class="form-label" for="transaction-purpose">Transaction Purpose</label>
 											<input type="text" name="transaction-purpose" class="form-control" autocomplete="off" required>
 										</div>
