@@ -100,6 +100,7 @@ class SalesBlotterExcel extends Controller
                 ->first()
             )
             ->oldest()
+            ->orderBy('id')
             ->get();
 
 		$unConfirmed = SalesDeal::where('created_at', '>', $salesDeal->first()->created_at->toDateTimeString())

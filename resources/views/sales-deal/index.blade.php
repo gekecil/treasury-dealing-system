@@ -1673,7 +1673,34 @@
 
 							$(e.currentTarget).find('input[name="amount"]').next().val('');
 							$(e.currentTarget).find('input[name="amount"]').next().trigger('input');
-							
+
+                            $(e.currentTarget).find('input[name="interoffice-rate"]').get(0).dataset.minimum = '1';
+                            $(e.currentTarget).find('input[name="amount"]').get(0).dataset.minimum = '1';
+
+                            switch (e.relatedTarget.children[0].innerHTML.trim().toLowerCase()) {
+                                case 'bank buy':
+                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = '1';
+                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum = $(e.currentTarget)
+                                        .find('input[name="interoffice-rate"]')
+                                        .val();
+
+                                break;
+
+                                default:
+                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = $(e.currentTarget)
+                                        .find('input[name="interoffice-rate"]')
+                                        .val();
+
+                                    delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
+
+                            }
+
+                            if ($(e.currentTarget).find('input[name="sales-limit"]').val().length) {
+                                $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = $(e.currentTarget)
+                                    .find('input[name="sales-limit"]')
+                                    .val();
+                            }
+
 						})
 
                         $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('hidden.bs.modal', function(e) {
@@ -1686,6 +1713,10 @@
 
 							$(e.currentTarget).find('input[name="amount"]').next().val('');
 							$(e.currentTarget).find('input[name="amount"]').next().trigger('input');
+
+                            $(e.currentTarget).find('[aria-describedby^="tooltip"]').each( function(element) {
+                                element.tooltip('hide');
+                            });
                         })
 
 						$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[type="submit"]').on('focus', function(e) {
@@ -1761,14 +1792,19 @@
 						})
 
 						$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('form').on('submit', function(e) {
-							if (
-								$(e.currentTarget).find('[aria-describedby^="tooltip"]') && (
-									document.getElementById($(e.currentTarget).find('[aria-describedby^="tooltip"]').attr('aria-describedby'))
-									.children[1].classList.contains('bg-danger-500')
-								)
-							) {
-								e.preventDefault()
-							}
+                            $(e.currentTarget).find('[data-minimum],[data-maximum]').each( function(key, element) {
+                                if (
+                                    !element.value.length || !(
+                                        (
+                                            parseFloat(element.dataset.minimum) <= parseFloat(element.value)
+                                        ) && (
+                                            !element.dataset.maximum || parseFloat(element.dataset.maximum) >= parseFloat(element.value)
+                                        )
+                                    )
+                                ) {
+                                    e.preventDefault();
+                                }
+                            })
 						})
 						
 					</script>

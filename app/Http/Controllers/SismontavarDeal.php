@@ -14,7 +14,7 @@ class SismontavarDeal extends Controller
      */
     public function index()
     {
-        //
+        return view('sismontavar-deal.index');
     }
 
     /**

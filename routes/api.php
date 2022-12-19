@@ -54,6 +54,11 @@ Route::middleware('auth:api')
         'index',
     ]);
 
+    Route::apiResource('sismontavar-deals', 'Api\SismontavarDeal')
+    ->only([
+        'index',
+    ]);
+
     Route::apiResource('closing-rates', 'Api\ClosingRate')
     ->only([
         'index'
