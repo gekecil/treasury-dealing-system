@@ -58,21 +58,6 @@
 								<form action="{{ route('sismontavar-deals.store') }}" method="post">
 									@csrf
 									
-									<input type="hidden" name="base-primary-code" required>
-									<input type="hidden" name="base-secondary-code" required>
-									<input type="hidden" name="counter-primary-code">
-									<input type="hidden" name="counter-secondary-code">
-									<input type="hidden" name="buy-sell" required>
-									<input type="hidden" name="threshold">
-									<input type="hidden" name="sales-limit">
-									<input type="hidden" name="base-currency-closing-rate">
-									<input type="hidden" name="world-currency-closing-rate">
-									<input type="hidden" name="world-currency-code">
-									<input type="hidden" name="encrypted-query-string">
-									<input type="hidden" name="account-number">
-									<input type="hidden" name="account-cif">
-									<input type="hidden" name="account-name">
-									<input type="hidden" name="branch-name">
 									<div class="modal-header pb-0">
 										<h4 class="modal-title"></h4>
 										<div>
@@ -84,70 +69,53 @@
 									</div>
 									<div class="modal-body">
 										<div class="form-group">
-											<label class="form-label" for="interoffice-rate">Interoffice Rate</label>
-											<input type="hidden" name="interoffice-rate" required>
-											<input type="text" class="form-control" autocomplete="off" required>
+											<label class="form-label" for="base-currency">Base Currency</label>
+											<input type="text" name="base-currency" class="form-control" autocomplete="off" max="3" required>
 										</div>
 										<div class="form-group">
-											<label class="form-label" for="customer-rate">Customer Rate</label>
-											<input type="hidden" name="customer-rate" required>
-											<input type="text" class="form-control" autocomplete="off" required>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="base-amount">Base Amount</label>
-											<input type="hidden" name="amount" required>
-											<input type="text" class="form-control" autocomplete="off" required>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="counter-amount">Counter Amount</label>
-											<input type="text" class="form-control" readonly>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="region">Region</label>
-											<select name="region" class="form-control" onkeydown="event.preventDefault()" required>
+											<label class="form-label" for="direction">Direction</label>
+											<select name="direction" class="form-control" required>
 												<option value>Choose</option>
-@foreach ($regions->pluck('region')->unique()->sort() as $value)
-												<option value="{{ $value }}">{{ $value }}</option>
-@endforeach
+												<option value="Buy">Buy</option>
+												<option value="Sell">Sell</option>
 											</select>
 										</div>
-										<div class="form-group collapse">
-											<label class="form-label" for="branch">Branch</label>
-											<select name="branch-code" class="form-control" onkeydown="event.preventDefault()">
-												<option value>Choose</option>
-											</select>
+										<div class="form-group">
+											<label class="form-label" for="customer-rate">Near Rate</label>
+											<input type="hidden" name="near-rate" required>
+											<input type="text" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="base-volume">Base Volume</label>
+											<input type="hidden" name="base-volume" required>
+											<input type="text" class="form-control" autocomplete="off" required>
 										</div>
 										<div class="form-group">
 											<label class="form-label" for="account">Account</label>
 											<select name="account" required></select>
 										</div>
-                                        <div class="form-group">
-											<label class="form-label" for="monthly-usd-equivalent">Monthly USD Equivalent</label>
-											<input type="text" class="form-control" value="0" readonly>
-										</div>
 										<div class="form-group">
-											<label class="form-label" for="tod-tom-spot-forward">TOD/TOM/Spot/Forward</label>
-											<select name="tod-tom-spot-forward" class="form-control" onkeydown="event.preventDefault()" required>
+											<label class="form-label" for="tod-tom-spot-forward-swap">TOD/TOM/Spot/Forward/SWAP</label>
+											<select name="tod-tom-spot-forward-swap" class="form-control" required>
 												<option value>Choose</option>
 												<option value="TOD">TOD</option>
 												<option value="TOM">TOM</option>
-												<option value="spot">Spot</option>
-												<option value="forward">Forward</option>
+												<option value="Spot">Spot</option>
+												<option value="Forward">Forward</option>
+												<option value="SWAP">SWAP</option>
 											</select>
 										</div>
 										<div class="form-group">
-											<label class="form-label" for="tt-bn">TT/BN</label>
-											<select name="tt-bn" class="form-control" onkeydown="event.preventDefault()" required>
-												<option value>Choose</option>
-												<option value="TT">TT</option>
-												<option value="BN">BN</option>
-											</select>
+											<label class="form-label" for="transaction-purpose">Transaction Purpose</label>
+											<input type="text" name="transaction-purpose" class="form-control" autocomplete="off" required>
 										</div>
-                                        <div class="form-group">
-											<label class="form-label" for="lhbu-remarks-code">LHBU Remarks</label>
-											<select name="lhbu-remarks-code" required></select>
-                                            <select name="lhbu-remarks-kind" required></select>
-                                            <textarea name="other-lhbu-remarks-kind" class="form-control mt-2 collapse" rows="5"></textarea>
+										<div class="form-group">
+											<label class="form-label" for="transaction-date">Transaction Date</label>
+											<input type="date" name="transaction-date" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="transaction-time">Transaction Time</label>
+											<input type="time" name="transaction-time" class="form-control" autocomplete="off" required>
 										</div>
 									</div>
 									<div class="modal-footer">
