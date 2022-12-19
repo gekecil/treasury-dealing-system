@@ -117,7 +117,7 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 
 	Route::resource('sismontavar-deals', 'SismontavarDeal')
 	->only([
-		'store', 'show'
+		'index', 'store', 'show'
 	])
 	->parameters([
 		'sismontavar-deals' => 'sismontavarDeal'

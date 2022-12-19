@@ -51,21 +51,11 @@
                             </div>
                         </div>
 					</main>
-@if (
-	collect([
-		route('sales-fx.index') => 'FX', route('sales-special-rate-deal.index') => 'Request for Fx Deal'
-	])
-	->has(request()->url())
-)
 					<!-- Modal -->
 					<div class="modal fade" role="dialog" aria-hidden="true">
 						<div class="modal-dialog modal-lg" role="document">
 							<div class="modal-content">
-@if (request()->route()->named('sales-fx.index'))
-								<form action="{{ route('sales-fx.store') }}" method="post">
-@elseif (request()->route()->named('sales-special-rate-deal.index'))
-								<form action="{{ route('sales-special-rate-deal.store') }}" method="post">
-@endif
+								<form action="{{ route('sismontavar-deals.store') }}" method="post">
 									@csrf
 									
 									<input type="hidden" name="base-primary-code" required>
@@ -83,14 +73,6 @@
 									<input type="hidden" name="account-cif">
 									<input type="hidden" name="account-name">
 									<input type="hidden" name="branch-name">
-									<input type="hidden" name="sismontavar-threshold" value="{{
-                                        App\SismontavarOption::latest()
-                                        ->firstOrNew([], ['threshold' => null])
-                                        ->threshold
-                                    }}">
-@cannot ('update', new App\SalesDeal)
-									<input type="hidden" name="region">
-@endcan
 									<div class="modal-header pb-0">
 										<h4 class="modal-title"></h4>
 										<div>
@@ -104,11 +86,7 @@
 										<div class="form-group">
 											<label class="form-label" for="interoffice-rate">Interoffice Rate</label>
 											<input type="hidden" name="interoffice-rate" required>
-@if (request()->route()->named('sales-fx.index'))
-											<input type="text" class="form-control" readonly>
-@elseif (request()->route()->named('sales-special-rate-deal.index'))
 											<input type="text" class="form-control" autocomplete="off" required>
-@endif
 										</div>
 										<div class="form-group">
 											<label class="form-label" for="customer-rate">Customer Rate</label>
@@ -124,7 +102,6 @@
 											<label class="form-label" for="counter-amount">Counter Amount</label>
 											<input type="text" class="form-control" readonly>
 										</div>
-@can ('update', new App\SalesDeal)
 										<div class="form-group">
 											<label class="form-label" for="region">Region</label>
 											<select name="region" class="form-control" onkeydown="event.preventDefault()" required>
@@ -140,13 +117,6 @@
 												<option value>Choose</option>
 											</select>
 										</div>
-@can ('create', 'App\User')
-										<div class="form-group">
-											<label class="form-label" for="dealer">Dealer</label>
-											<select name="dealer-id" class="form-control" onkeydown="event.preventDefault()" required></select>
-										</div>
-@endcan
-@endcan
 										<div class="form-group">
 											<label class="form-label" for="account">Account</label>
 											<select name="account" required></select>
@@ -240,16 +210,12 @@
 								},
 								columns: [
 									{
-										title: '<i class="fal fa-check"></i>',
-										orderable: false,
-										data: null,
-										defaultContent: '',
-										className: 'select-checkbox text-center pointer',
-										width: '5%'
+										title: 'Transaction ID',
+										data: 'transaction_id'
 									},
 									{
-										title: 'Title',
-										data: 'title'
+										title: 'Corporate Name',
+										data: 'corporate_name'
 									},
 									{
 										title: 'Created At',
@@ -260,11 +226,15 @@
 										}
 									},
 									{
-										title: 'Updated At',
-										data: 'updated_at',
+										title: 'Status',
+										data: 'status_text',
 										className: 'text-center',
 										render: function(data, type, row, meta) {
-											return moment(data).format('llll');
+                                            if (row.status_code != 200) {
+                                                return row.status_code;
+                                            }
+
+											return JSON.parse(data).Message;
 										}
 									}
 								],

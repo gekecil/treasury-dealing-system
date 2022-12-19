@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\SismontavarDeal as SismontavarDealModel;
+use App\Branch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SismontavarDeal extends Controller
 {
@@ -14,7 +16,34 @@ class SismontavarDeal extends Controller
      */
     public function index()
     {
-        return view('sismontavar-deal.index');
+        $regions;
+
+		try {
+            $regions = DB::connection('sqlsrv')->table('StrukturCabang')
+                ->select('NamaRegion as region')
+                ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
+                ->whereNotNull('NamaRegion')
+                ->get();
+
+        } catch (\Exception $e) {
+            $regions = Branch::select('region')
+                ->whereNotNull('region')
+                ->get();
+        }
+
+        $regions = $regions->map( function($item) {
+                if ($item instanceof Branch) {
+                    $item = $item->toArray();
+                } else {
+                    $item = ((array) $item);
+                }
+
+                return ((object) array_map('htmlspecialchars_decode', $item));
+            });
+
+        return view('sismontavar-deal.index', [
+            'regions' => $regions
+        ]);
     }
 
     /**
