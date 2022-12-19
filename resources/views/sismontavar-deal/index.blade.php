@@ -220,12 +220,12 @@
 										data: 'corporate_name'
 									},
 									{
-										title: 'Direction',
-										data: 'direction'
-									},
-									{
 										title: 'Base Currency',
 										data: 'base_currency'
+									},
+									{
+										title: 'Direction',
+										data: 'direction'
 									},
 									{
 										title: 'Near Rate',
