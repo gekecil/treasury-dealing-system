@@ -17,7 +17,11 @@ class SismontavarDeal extends Controller
      */
     public function index()
     {
-        return view('sismontavar-deal.index');
+        $currencyPair = CurrencyPair::whereNull('counter_currency_id')->orderBy('id')->get();
+
+        return view('sismontavar-deal.index', [
+            'currencyPair' => $currencyPair
+        ]);
     }
 
     /**
@@ -38,12 +42,23 @@ class SismontavarDeal extends Controller
      */
     public function store(Request $request)
     {
+        Auth::user()->save();
+
         $salesDeal = new SalesDeal;
         $salesDeal = $salesDeal->fill([
-                'user_id' => Au
+                'user_id' => Auth::id(),
+            ])
+            ->forceFill([
+                'corporate_name' => $request->input('account-name'),
+                'cif' => $request->input('account-cif'),
+                'deal_type' => $request->input('deal-type'),
+                'direction' => $request->input('direction'),
+                'currency_id' => $request->input('currency-pair'),
+                'periods' => $request->input('periods'),
+                'transaction_purpose' => $request->input('transaction-purpose'),
             ]);
 
-        $this->sismontavar();
+        $this->sismontavar($salesDeal);
 
 		return redirect()->back()->with('status', 'The SISMONTAVAR Data Was Sent!');
     }

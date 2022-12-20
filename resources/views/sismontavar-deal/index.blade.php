@@ -73,7 +73,12 @@
 									<div class="modal-body">
 										<div class="form-group">
 											<label class="form-label" for="base-currency">Base Currency</label>
-											<input type="text" name="base-currency" class="form-control" autocomplete="off" max="3" required>
+											<select name="currency_pair" class="form-control" required>
+												<option value>Choose</option>
+@foreach ($currencyPair as $value)
+												<option value="{{ $value->id }}">{{ $value->baseCurency->primary_code }}</option>
+@endforeach
+											</select>
 										</div>
 										<div class="form-group">
 											<label class="form-label" for="direction">Direction</label>

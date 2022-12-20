@@ -106,16 +106,36 @@ class SalesDeal extends Model
 
 	public function getBlotterNumberAttribute()
     {
-		return (
+        $transactions = $this->newQuery()
+            ->select(['user_id', 'created_at'])
+            ->whereDate('created_at', $this->created_at->toDateString())
+            ->oldest()
+            ->orderBy('id')
+            ->get();
+
+        return (
             substr(
                 '00'.(string) (
-                    $this->newQuery()
-                    ->whereDate('created_at', $this->created_at->toDateString())
-                    ->oldest()
-                    ->orderBy('id')
-                    ->get($this->getKeyName())
-                    ->pluck($this->getKeyName())
-                    ->search($this->{$this->getKeyName()})
+                    $transactions->map( function($item) {
+                        return ['trader_id' => preg_replace('/\s+/', '', $item->user->nik), 'transaction_date' => $item->created_at->format('Ymd His')];
+                    })
+                    ->concat(
+                        App\SismontavarDeal::select(['trader_id', 'transaction_date'])
+                        ->whereNotExists( function($query) use($transactions) {
+                            $query->select(DB::raw(1))
+                            ->from($transactions->first()->getTable())
+                            ->whereIn('user_id', $transactions->pluck('user_id')->toArray())
+                            ->whereIn('created_at', $transactions->pluck('created_at')->toArray());
+                        })
+                        ->get()
+                        ->toArray()
+                    )
+                    ->search( function($item) {
+                        $traderId = preg_replace('/\s+/', '', $this->user->nik);
+                        $transactionDate = $this->created_at->format('Ymd His');
+
+                        return (($item['trader_id'] === $traderId) && ($item['transaction_date'] === $transactionDate));
+                    })
                     +1
                 ),
                 -3
@@ -125,7 +145,7 @@ class SalesDeal extends Model
 
 	public function getFxSrAttribute()
     {
-		return ($this->specialRateDeal()->exists() ? 'SR' : 'FX');
+        return ($this->specialRateDeal()->exists() ? 'SR' : 'FX');
 	}
 
 	public function currencyPair()
