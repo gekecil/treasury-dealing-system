@@ -54,8 +54,10 @@ class SismontavarDeal extends Controller
                 'created_at' => Carbon::createFromFormat('Ymd His', $request->input('transaction-date'))->toDateTimeString(),
             ]);
 
+        $blotterNumber = substr('00'.(string) (((int) $salesDeal->blotter_number) +1), -3);
+
         $salesDeal = $salesDeal->forceFill([
-                'transaction_id' => (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number)) +1,
+                'transaction_id' => (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($blotterNumber)),
                 'corporate_name' => $request->input('account-name'),
                 'cif' => $request->input('account-cif'),
                 'deal_type' => $request->input('deal-type'),
