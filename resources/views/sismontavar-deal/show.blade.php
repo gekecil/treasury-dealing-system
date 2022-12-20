@@ -15,7 +15,7 @@
 								</ul>
 							</li>
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ config('app.name') }}</a></li>
-                            <li class="breadcrumb-item"><a href="#sismontavar">SISMONTAVAR</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('sismontavar-deals.index') }}">SISMONTAVAR</a></li>
                             <li class="breadcrumb-item active">{{ $sismontavarDeal->transaction_id }}</li>
                             <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
                         </ol>
