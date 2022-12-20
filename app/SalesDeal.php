@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use App\Scopes\SalesDealScope;
 use App\Observers\SalesDeal as SalesDealObserver;
 
