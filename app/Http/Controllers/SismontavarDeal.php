@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\SismontavarDeal as SismontavarDealModel;
+use App\CurrencyPair;
 use App\SalesDeal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
