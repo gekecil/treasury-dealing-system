@@ -125,11 +125,7 @@
 										</div>
 										<div class="form-group">
 											<label class="form-label" for="transaction-date">Transaction Date</label>
-											<input type="date" name="transaction-date" class="form-control" autocomplete="off" required>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="transaction-time">Transaction Time</label>
-											<input type="time" name="transaction-time" class="form-control" autocomplete="off" required>
+											<input type="text" name="transaction-date" class="form-control" autocomplete="off" required>
 										</div>
 									</div>
 									<div class="modal-footer">

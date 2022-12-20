@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\SismontavarDeal as SismontavarDealModel;
 use App\CurrencyPair;
 use App\SalesDeal;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,9 @@ class SismontavarDeal extends Controller
         $salesDeal = new SalesDeal;
         $salesDeal = $salesDeal->fill([
                 'user_id' => Auth::id(),
+                'amount' => $request->input('base-volume'),
+                'customer_rate' => $request->input('near-rate'),
+                'created_at' => Carbon::createFromFormat('Ymd His', $request->input('transaction-date'))->toDateTimeString(),
             ])
             ->forceFill([
                 'corporate_name' => $request->input('account-name'),
