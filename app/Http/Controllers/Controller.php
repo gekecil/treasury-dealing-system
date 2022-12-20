@@ -21,7 +21,7 @@ class Controller extends BaseController
             ->first();
 
 		if (
-            !$salesDeal->currencyPair || (
+            !$salesDeal->exists || (
                 !$salesDeal->currencyPair->counter_currency_id && ($salesDeal->usd_equivalent >= $sismontavarOption->threshold)
             )
         ) {
@@ -57,17 +57,11 @@ class Controller extends BaseController
                 'platform' => 'TDS',
                 'deal_type' => ucwords($salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name),
                 'direction' => ucwords($salesDeal->buyOrSell()->firstOrNew([], ['name' => $salesDeal->direction])->name),
-                'base_currency' => $salesDeal->currencyPair()
-                    ->firstOrNew([], ['currency_pair_id' => $salesDeal->currency_id])
+                'base_currency' => $salesDeal->currencyPair
                     ->baseCurrency
                     ->primary_code,
 
-                'quote_currency' => $salesDeal->currencyPair()
-                    ->firstOrNew([], ['currency_pair_id' => $salesDeal->currency_id])
-                    ->counterCurrency()
-                    ->firstOrNew([], ['primary_code' => 'IDR'])
-                    ->primary_code,
-
+                'quote_currency' => 'IDR',
                 'base_volume' => abs($salesDeal->amount),
                 'quote_volume' => ($salesDeal->customer_rate * abs($salesDeal->amount)),
                 'periods' => (

@@ -49,6 +49,7 @@ class SismontavarDeal extends Controller
         $salesDeal = new SalesDeal;
         $salesDeal = $salesDeal->fill([
                 'user_id' => Auth::id(),
+                'currency_pair_id' => $request->input('currency-pair'),
                 'amount' => $request->input('base-volume'),
                 'customer_rate' => $request->input('near-rate'),
                 'created_at' => Carbon::createFromFormat('Ymd His', $request->input('transaction-date'))->toDateTimeString(),
@@ -58,7 +59,6 @@ class SismontavarDeal extends Controller
                 'cif' => $request->input('account-cif'),
                 'deal_type' => $request->input('deal-type'),
                 'direction' => $request->input('direction'),
-                'currency_id' => $request->input('currency-pair'),
                 'periods' => $request->input('periods'),
                 'transaction_purpose' => $request->input('transaction-purpose'),
             ]);
