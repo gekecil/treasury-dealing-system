@@ -124,7 +124,7 @@ class SalesDeal extends Model
                         SismontavarDeal::select(['trader_id', 'transaction_date'])
                         ->whereNotExists( function($query) use($transactions) {
                             $query->select(DB::raw(1))
-                            ->from($transactions->first()->getTable())
+                            ->from($this->table)
                             ->whereIn('user_id', $transactions->pluck('user_id')->toArray())
                             ->whereIn('created_at', $transactions->pluck('created_at')->toArray());
                         })
