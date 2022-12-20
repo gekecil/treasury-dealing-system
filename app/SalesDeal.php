@@ -114,33 +114,34 @@ class SalesDeal extends Model
             ->orderBy('id')
             ->get();
 
-        return (
-            substr(
-                '00'.(string) (
-                    $transactions->map( function($item) {
-                        return ['trader_id' => preg_replace('/\s+/', '', $item->user->nik), 'transaction_date' => $item->created_at->format('Ymd His')];
-                    })
-                    ->concat(
-                        SismontavarDeal::select(['trader_id', 'transaction_date'])
-                        ->whereNotExists( function($query) use($transactions) {
-                            $query->select(DB::raw(1))
-                            ->from($this->table)
-                            ->whereIn('user_id', $transactions->pluck('user_id')->toArray())
-                            ->whereIn('created_at', $transactions->pluck('created_at')->toArray());
-                        })
-                        ->get()
-                        ->toArray()
-                    )
-                    ->search( function($item) {
-                        $traderId = preg_replace('/\s+/', '', $this->user->nik);
-                        $transactionDate = $this->created_at->format('Ymd His');
+        $transactions = $transactions->map( function($item) {
+                return ['trader_id' => preg_replace('/\s+/', '', $item->user->nik), 'transaction_date' => $item->created_at->format('Ymd His')];
+            })
+            ->concat(
+                SismontavarDeal::select(['trader_id', 'transaction_date'])
+                ->whereNotExists( function($query) use($transactions) {
+                    $query->select(DB::raw(1))
+                    ->from($this->table)
+                    ->whereIn('user_id', $transactions->pluck('user_id')->toArray())
+                    ->whereIn('created_at', $transactions->pluck('created_at')->toArray());
+                })
+                ->get()
+                ->toArray()
+            );
 
-                        return (($item['trader_id'] === $traderId) && ($item['transaction_date'] === $transactionDate));
-                    })
-                    +1
-                ),
-                -3
-            )
+        $blotterNumber = $transactions->search( function($item) {
+                $traderId = preg_replace('/\s+/', '', $this->user->nik);
+                $transactionDate = $this->created_at->format('Ymd His');
+
+                return (($item['trader_id'] === $traderId) && ($item['transaction_date'] === $transactionDate));
+            });
+
+        if ($blotterNumber) {
+            $blotterNumber = $transactions->count();
+        }
+
+        return (
+            substr('00'.(string) ($blotterNumber +1), -3)
         );
 	}
 
