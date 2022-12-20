@@ -76,7 +76,9 @@
 											<select name="currency_pair" class="form-control" required>
 												<option value>Choose</option>
 @foreach ($currencyPair as $value)
-												<option value="{{ $value->id }}">{{ $value->baseCurrency->primary_code }}</option>
+												<option value="{{ $value->id }}">{{
+                                                    ($value->baseCurrency->secondary_code ?: $value->baseCurrency->primary_code)
+                                                }}</option>
 @endforeach
 											</select>
 										</div>
