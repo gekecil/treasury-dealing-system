@@ -1155,6 +1155,12 @@
                             }
 
                             dataTable.modal.modal();
+
+                        } else if (!dataTable.id) {
+                            dataTable.keys = Object.keys(dataTable);
+
+                            url += dataTable[dataTable.keys[0]];
+
                         } else {
                             url += dataTable.id;
                         }
