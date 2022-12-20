@@ -4,8 +4,9 @@ namespace App\Policies;
 
 use App\SismontavarDeal;
 use App\User;
-use App\SalesDeal;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\DB;
 
 class SismontavarDealPolicy
 {
@@ -26,7 +27,7 @@ class SismontavarDealPolicy
      */
     public function viewAny(User $user)
     {
-		return $user->id;
+        return $user->is_head_office_dealer;
     }
 
     /**
@@ -38,16 +39,10 @@ class SismontavarDealPolicy
      */
     public function view(User $user, SismontavarDeal $sismontavarDeal)
     {
-        $salesDeal = SalesDeal::select([(new SalesDeal)->getKeyName(), 'branch_id'])
-            ->whereDate('created_at', $sismontavarDeal->created_at->toDateString())
-            ->oldest()
-            ->get();
-
-        $salesDeal = $salesDeal->get(
-                $salesDeal->pluck((new SalesDeal)->getKeyName())->search(((int) substr($sismontavarDeal->transaction_id, -3)) -1)
-            );
-
-        $branch = ($salesDeal ?: new SalesDeal)->branch()->firstOrNew([], ['code' => null]);
+        $branch = User::where(DB::raw("TRIM(REGEXP_REPLACE(nik, '\s+', '', 'g'))"), $sismontavarDeal->trader_id)
+            ->first()
+            ->branch()
+            ->firstOrNew([], ['code' => null]);
 
         return (($user->is_branch_office_dealer && ($user->branch_code === $branch->code)) || $user->is_head_office_dealer);
     }
@@ -60,7 +55,7 @@ class SismontavarDealPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->is_head_office_dealer;
     }
 
     /**
@@ -72,7 +67,7 @@ class SismontavarDealPolicy
      */
     public function update(User $user, SismontavarDeal $sismontavarDeal)
     {
-        //
+        return $user->is_head_office_dealer;
     }
 
     /**
