@@ -73,7 +73,7 @@
 									<div class="modal-body">
 										<div class="form-group">
 											<label class="form-label" for="base-currency">Base Currency</label>
-											<select name="currency_pair" class="form-control" required>
+											<select name="currency-pair" class="form-control" required>
 												<option value>Choose</option>
 @foreach ($currencyPair as $value)
 												<option value="{{ $value->id }}">{{
