@@ -52,8 +52,10 @@ class SismontavarDeal extends Controller
                 'currency_pair_id' => $request->input('currency-pair'),
                 'amount' => $request->input('base-volume'),
                 'created_at' => Carbon::createFromFormat('Ymd His', $request->input('transaction-date'))->toDateTimeString(),
-            ])
-            ->forceFill([
+            ]);
+
+        $salesDeal = $salesDeal->forceFill([
+                'transaction_id' => (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number)) +1,
                 'corporate_name' => $request->input('account-name'),
                 'cif' => $request->input('account-cif'),
                 'deal_type' => $request->input('deal-type'),

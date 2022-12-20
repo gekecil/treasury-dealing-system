@@ -52,7 +52,7 @@ class Controller extends BaseController
             }
 
             $sismontavarDeal = SismontavarDeal::firstOrNew(
-                    ['transaction_id' => (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number))],
+                    ['transaction_id' => $transactionId],
                     []
                 );
 

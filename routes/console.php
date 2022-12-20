@@ -17,3 +17,11 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+
+
+Artisan::command('test', function () {
+    dd(
+        (new App\SalesDeal(['user_id' => 1, 'created_at' => \Carbon\Carbon::createFromFormat('Ymd His', '20221220 151515')->toDateTimeString()]))
+        ->blotter_number
+    );
+});
