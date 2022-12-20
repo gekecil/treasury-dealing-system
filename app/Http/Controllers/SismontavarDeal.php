@@ -60,8 +60,8 @@ class SismontavarDeal extends Controller
                 'direction' => $request->input('direction'),
                 'periods' => $request->input('periods'),
                 'transaction_purpose' => $request->input('transaction-purpose'),
-                'near-rate' => $request->input('near-rate'),
-                'far-rate' => $request->input('far-rate'),
+                'near_rate' => $request->input('near-rate'),
+                'far_rate' => $request->input('far-rate'),
                 'near_value_date' => $request->input('near-value-date'),
                 'far_value_date' => $request->input('far-value-date'),
             ]);
