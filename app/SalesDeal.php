@@ -136,7 +136,7 @@ class SalesDeal extends Model
                 return (($item['trader_id'] === $traderId) && ($item['transaction_date'] === $transactionDate));
             });
 
-        if ($blotterNumber) {
+        if ($blotterNumber === false) {
             $blotterNumber = $transactions->count();
         }
 
