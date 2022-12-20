@@ -120,7 +120,7 @@ class SalesDeal extends Model
                         return ['trader_id' => preg_replace('/\s+/', '', $item->user->nik), 'transaction_date' => $item->created_at->format('Ymd His')];
                     })
                     ->concat(
-                        App\SismontavarDeal::select(['trader_id', 'transaction_date'])
+                        SismontavarDeal::select(['trader_id', 'transaction_date'])
                         ->whereNotExists( function($query) use($transactions) {
                             $query->select(DB::raw(1))
                             ->from($transactions->first()->getTable())
