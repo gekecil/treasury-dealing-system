@@ -45,6 +45,12 @@ class Controller extends BaseController
                 $confirmedBy = Str::beforeLast($confirmedBy, ' ');
             }
 
+            $transactionId = $salesDeal->transaction_id;
+
+            if (!$transactionId) {
+                $transactionId = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
+            }
+
             $sismontavarDeal = SismontavarDeal::firstOrNew(
                     ['transaction_id' => (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number))],
                     []
@@ -63,7 +69,7 @@ class Controller extends BaseController
 
                 'quote_currency' => 'IDR',
                 'base_volume' => abs($salesDeal->amount),
-                'quote_volume' => ($salesDeal->customer_rate * abs($salesDeal->amount)),
+                'quote_volume' => (($salesDeal->customer_rate ?: $salesDeal->near_rate) * abs($salesDeal->amount)),
                 'periods' => (
                         collect([
                             'TOD' => 0,
@@ -80,8 +86,10 @@ class Controller extends BaseController
                         ->first()
                     ),
 
-                'near_rate' => $salesDeal->customer_rate,
-                'near_value_date' => $salesDeal->created_at->format('Ymd His'),
+                'near_rate' => ($salesDeal->near_rate ?: $salesDeal->customer_rate),
+                'far_rate' => $salesDeal->far_rate,
+                'near_value_date' => ($salesDeal->near_value_date ?: $salesDeal->created_at->format('Ymd His')),
+                'far_value_date' => $salesDeal->far_value_date,
                 'confirmed_at' => $salesDeal->specialRateDeal()
                     ->firstOrNew([], ['created_at' => $salesDeal->created_at])
                     ->created_at

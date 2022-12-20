@@ -72,35 +72,6 @@
 									</div>
 									<div class="modal-body">
 										<div class="form-group">
-											<label class="form-label" for="base-currency">Base Currency</label>
-											<select name="currency-pair" class="form-control" required>
-												<option value>Choose</option>
-@foreach ($currencyPair as $value)
-												<option value="{{ $value->id }}">{{
-                                                    ($value->baseCurrency->secondary_code ?: $value->baseCurrency->primary_code)
-                                                }}</option>
-@endforeach
-											</select>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="direction">Direction</label>
-											<select name="direction" class="form-control" required>
-												<option value>Choose</option>
-												<option value="Buy">Buy</option>
-												<option value="Sell">Sell</option>
-											</select>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="customer-rate">Near Rate</label>
-											<input type="hidden" name="near-rate" required>
-											<input type="text" class="form-control" autocomplete="off" required>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="base-volume">Base Volume</label>
-											<input type="hidden" name="base-volume" required>
-											<input type="text" class="form-control" autocomplete="off" required>
-										</div>
-										<div class="form-group">
 											<label class="form-label" for="account">Account</label>
 											<select name="account" required></select>
 										</div>
@@ -116,8 +87,49 @@
 											</select>
 										</div>
 										<div class="form-group">
+											<label class="form-label" for="direction">Direction</label>
+											<select name="direction" class="form-control" required>
+												<option value>Choose</option>
+												<option value="Buy">Buy</option>
+												<option value="Sell">Sell</option>
+												<option value="Buy and Sell">Buy and Sell</option>
+												<option value="Sell and Buy">Sell and Buy</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="base-currency">Base Currency</label>
+											<select name="currency-pair" class="form-control" required>
+												<option value>Choose</option>
+@foreach ($currencyPair as $value)
+												<option value="{{ $value->id }}">{{
+                                                    ($value->baseCurrency->secondary_code ?: $value->baseCurrency->primary_code)
+                                                }}</option>
+@endforeach
+											</select>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="base-volume">Base Volume</label>
+											<input type="hidden" name="base-volume" required>
+											<input type="text" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="quote-volume">Quote Volume</label>
+											<input type="hidden" name="quote-volume" required>
+											<input type="text" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
 											<label class="form-label" for="periods">Periods</label>
 											<input type="number" name="periods" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="near-rate">Near Rate</label>
+											<input type="hidden" name="near-rate" required>
+											<input type="text" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="far-rate">Far Rate</label>
+											<input type="hidden" name="far-rate" required>
+											<input type="text" class="form-control" autocomplete="off" required>
 										</div>
 										<div class="form-group">
 											<label class="form-label" for="transaction-purpose">Transaction Purpose</label>
@@ -126,6 +138,14 @@
 										<div class="form-group">
 											<label class="form-label" for="transaction-date">Transaction Date</label>
 											<input type="text" name="transaction-date" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="near-value-date">Near Value Date</label>
+											<input type="text" name="near-value-date" class="form-control" autocomplete="off" required>
+										</div>
+										<div class="form-group">
+											<label class="form-label" for="far-value-date">Far Value Date</label>
+											<input type="text" name="far-value-date" class="form-control" autocomplete="off" required>
 										</div>
 									</div>
 									<div class="modal-footer">

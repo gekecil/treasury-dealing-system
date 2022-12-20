@@ -51,7 +51,6 @@ class SismontavarDeal extends Controller
                 'user_id' => Auth::id(),
                 'currency_pair_id' => $request->input('currency-pair'),
                 'amount' => $request->input('base-volume'),
-                'customer_rate' => $request->input('near-rate'),
                 'created_at' => Carbon::createFromFormat('Ymd His', $request->input('transaction-date'))->toDateTimeString(),
             ])
             ->forceFill([
@@ -61,6 +60,10 @@ class SismontavarDeal extends Controller
                 'direction' => $request->input('direction'),
                 'periods' => $request->input('periods'),
                 'transaction_purpose' => $request->input('transaction-purpose'),
+                'near-rate' => $request->input('near-rate'),
+                'far-rate' => $request->input('far-rate'),
+                'near_value_date' => $request->input('near-value-date'),
+                'far_value_date' => $request->input('far-value-date'),
             ]);
 
         $this->sismontavar($salesDeal);
