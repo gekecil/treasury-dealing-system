@@ -1699,6 +1699,23 @@
                                 $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = $(e.currentTarget)
                                     .find('input[name="sales-limit"]')
                                     .val();
+
+                                
+                                if (
+                                    e.relatedTarget.closest('[class^=col-sm]').dataset.basePrimaryCode
+                                    !==
+                                    e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyCode
+                                ) {
+                                    $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = Math.abs(
+                                        e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyClosingRate * (
+                                            parseFloat($(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum)
+                                            / (
+                                                parseFloat(parseFloat(e.relatedTarget.closest('[class^=col-sm]').dataset.baseCurrencyClosingRate))
+                                            )
+                                        )
+                                    );
+                                }
+
                             }
 
 						})
