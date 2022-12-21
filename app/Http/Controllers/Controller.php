@@ -87,9 +87,9 @@ class Controller extends BaseController
                     ),
 
                 'near_rate' => ($salesDeal->near_rate ?: $salesDeal->customer_rate),
-                'far_rate' => $salesDeal->far_rate,
+                'far_rate' => ($salesDeal->far_rate ?: null),
                 'near_value_date' => ($salesDeal->near_value_date ?: $salesDeal->created_at->format('Ymd His')),
-                'far_value_date' => $salesDeal->far_value_date,
+                'far_value_date' => ($salesDeal->far_value_date ?: null),
                 'confirmed_at' => $salesDeal->specialRateDeal()
                     ->firstOrNew([], ['created_at' => $salesDeal->created_at])
                     ->created_at
