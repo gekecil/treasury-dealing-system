@@ -122,7 +122,7 @@ class SalesDeal extends Model
                 ->where(DB::raw("SUBSTRING(transaction_date FROM '[^ ]+'::TEXT)"), $this->created_at->format('Ymd'))
                 ->whereNotExists( function($query) use($transactions) {
                     $query->select(DB::raw(1))
-                    ->from($this->table)
+                    ->from($this->getTable())
                     ->whereIn('user_id', $transactions->pluck('user_id')->toArray())
                     ->whereIn('created_at', $transactions->pluck('created_at')->toArray());
                 })
