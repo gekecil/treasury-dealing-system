@@ -124,7 +124,7 @@ class SalesDeal extends Model
                     $query->select(DB::raw(1))
                     ->from($this->getTable())
                     ->join($this->user->getTable(), $this->user->getTable().'.id', '=', $this->getTable().'.user_id')
-                    ->whereRaw("REPLACE(".$this->user->getTable().".nik, ' ', '')::BIGINT = ".$query->getModel()->getTable().".trader_id")
+                    ->whereRaw("REPLACE(".$this->user->getTable().".nik, ' ', '')::BIGINT = trader_id")
                     ->whereRaw("TO_CHAR(".$this->getTable().".created_at, 'YYYYMMDD HH24MISS') = transaction_date");
                 })
                 ->get()
