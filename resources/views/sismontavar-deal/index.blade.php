@@ -103,7 +103,7 @@
 @foreach ($currencyPair as $value)
 												<option value="{{ $value->id }}">{{
                                                     ($value->baseCurrency->secondary_code ?: $value->baseCurrency->primary_code)
-                                                }}</option>
+                                                }}/IDR</option>
 @endforeach
 											</select>
 										</div>

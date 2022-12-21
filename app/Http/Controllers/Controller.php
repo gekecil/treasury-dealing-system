@@ -87,9 +87,7 @@ class Controller extends BaseController
                     ),
 
                 'near_rate' => ($salesDeal->near_rate ?: $salesDeal->customer_rate),
-                'far_rate' => ($salesDeal->far_rate ?: null),
                 'near_value_date' => ($salesDeal->near_value_date ?: $salesDeal->created_at->format('Ymd His')),
-                'far_value_date' => ($salesDeal->far_value_date ?: null),
                 'confirmed_at' => $salesDeal->specialRateDeal()
                     ->firstOrNew([], ['created_at' => $salesDeal->created_at])
                     ->created_at
@@ -98,16 +96,20 @@ class Controller extends BaseController
                 'confirmed_by' => $confirmedBy,
                 'trader_id' => preg_replace('/\s+/', '', $salesDeal->user->nik),
                 'trader_name' => $traderName,
-                'transaction_purpose' => (
+                'transaction_purpose' => ($salesDeal->transaction_purpose ?: (
                         substr('0'.((string) $salesDeal->lhbu_remarks_code), -2).' '.substr('00'.((string) $salesDeal->lhbu_remarks_kind), -3)
-                    ),
+                    )),
             ]);
 
-            if ($salesDeal->transaction_purpose) {
-                $sismontavarDeal->transaction_purpose = $salesDeal->transaction_purpose;
+            if ($salesDeal->far_rate) {
+                $sismontavarDeal->fill(['far_rate' => $salesDeal->far_rate]);
             }
 
-            foreach ($sismontavarDeal->toArray() as $key => $value) {
+            if ($salesDeal->far_value_date) {
+                $sismontavarDeal->fill(['far_value_date' => $salesDeal->far_value_date]);
+            }
+
+            foreach ($sismontavarDeal->makeHidden(['status_code', 'status_text', 'created_at', 'updated_at'])->toArray() as $key => $value) {
                 $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
             }
 
@@ -132,29 +134,20 @@ class Controller extends BaseController
                         json_encode([
                             'Username' => $sismontavarOption->username,
                             'SandiBank' => $sismontavarOption->bank_id,
-                            'Data' => [[
-                                'Transaction_ID' => $sismontavarDeal->transaction_id,
-                                'Transaction_Date' => $sismontavarDeal->transaction_date,
-                                'Corporate_ID' => $sismontavarDeal->corporate_id,
-                                'Corporate_Name' => $sismontavarDeal->corporate_name,
-                                'Platform' => $sismontavarDeal->platform,
-                                'Deal_Type' => $sismontavarDeal->deal_type,
-                                'Direction' => $sismontavarDeal->direction,
-                                'Base_Currency' => $sismontavarDeal->base_currency,
-                                'Quote_Currency' => $sismontavarDeal->quote_currency,
-                                'Base_Volume' => $sismontavarDeal->base_volume,
-                                'Quote_Volume' => $sismontavarDeal->quote_volume,
-                                'Periods' => $sismontavarDeal->periods,
-                                'Near_Rate' => $sismontavarDeal->near_rate,
-                                'Far_Rate' => $sismontavarDeal->far_rate,
-                                'Near_Value_Date' => $sismontavarDeal->near_value_date,
-                                'Far_Value_Date' => $sismontavarDeal->far_value_date,
-                                'Confirmed_At' => $sismontavarDeal->confirmed_at,
-                                'Confirmed_By' => $sismontavarDeal->confirmed_by,
-                                'Trader_ID' => $sismontavarDeal->trader_id,
-                                'Trader_Name' => $sismontavarDeal->trader_name,
-                                'Transaction_Purpose' => $sismontavarDeal->transaction_purpose,
-                            ]],
+                            'Data' => [
+                                collect(
+                                    $sismontavarDeal->makeHidden(['status_code', 'status_text', 'created_at', 'updated_at'])->toArray()
+                                )
+                                ->mapWithKeys( function($item, $key) {
+                                    $key = Str::of($key)->replaceMatches('/_id$/', function($match) {
+                                            return strtoupper($match[0]);
+                                        })
+                                        ->ucfirst();
+
+                                    return [$key => $item];
+                                })
+                                ->toArray()
+                            ],
                         ]),
 
                         'application/json'
