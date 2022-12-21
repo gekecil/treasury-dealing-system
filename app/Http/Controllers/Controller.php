@@ -144,7 +144,7 @@ class Controller extends BaseController
                                         })
                                         ->ucfirst();
 
-                                    return [$key => $item];
+                                    return [((string) $key) => $item];
                                 })
                                 ->toArray()
                             ],
