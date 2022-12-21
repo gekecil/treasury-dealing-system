@@ -120,11 +120,12 @@ class SalesDeal extends Model
             ->concat(
                 SismontavarDeal::select(['trader_id', 'transaction_date'])
                 ->where(DB::raw("SUBSTRING(transaction_date FROM '[^ ]+'::TEXT)"), $this->created_at->format('Ymd'))
-                ->whereNotExists( function($query) use($transactions) {
+                ->whereNotExists( function($query) {
                     $query->select(DB::raw(1))
                     ->from($this->getTable())
-                    ->whereIn('user_id', $transactions->pluck('user_id')->toArray())
-                    ->whereIn('created_at', $transactions->pluck('created_at')->toArray());
+                    ->join($this->user->getTable(), $this->user->getTable().'.id', '=', $this->getTable().'.user_id')
+                    ->whereRaw("REPLACE(".$this->user->getTable().".nik, ' ', '')::BIGINT = ".$query->getModel()->getTable().".trader_id")
+                    ->whereRaw("TO_CHAR(".$this->getTable().".created_at, 'YYYYMMDD HH24MISS') = transaction_date");
                 })
                 ->get()
                 ->toArray()

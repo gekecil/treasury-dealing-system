@@ -55,7 +55,6 @@ class SismontavarDeal extends Controller
             ]);
 
         $salesDeal = $salesDeal->forceFill([
-                'transaction_id' => (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number)),
                 'corporate_name' => $request->input('account-name'),
                 'cif' => $request->input('account-cif'),
                 'deal_type' => $request->input('deal-type'),
