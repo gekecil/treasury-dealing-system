@@ -218,8 +218,12 @@
 										data: 'corporate_name'
 									},
 									{
-										title: 'Base Currency',
-										data: 'base_currency'
+										title: 'Currency Pairs',
+										className: 'text-center',
+										data: 'base_currency',
+										render: function(data, type, row, meta) {
+											return data.concat('/').concat(row.quote_currency);
+										}
 									},
 									{
 										title: 'Direction',
@@ -227,14 +231,17 @@
 									},
 									{
 										title: 'Near Rate',
+										className: 'text-right',
 										data: 'near_rate'
 									},
 									{
 										title: 'Base Volume',
+										className: 'text-right',
 										data: 'base_volume'
 									},
 									{
 										title: 'Periods',
+										className: 'text-center',
 										data: 'periods'
 									},
 									{
