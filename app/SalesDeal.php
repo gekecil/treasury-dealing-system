@@ -114,17 +114,22 @@ class SalesDeal extends Model
             ->get();
 
         $transactions = $transactions->map( function($item) {
-                return ['trader_id' => preg_replace('/\s+/', '', $item->user->nik), 'transaction_date' => $item->created_at->format('Ymd His')];
+                return [
+                    'trader_id' => ((int) preg_replace('/\s+/', '', $item->user->nik)),
+                    'transaction_date' => $item->created_at->format('Ymd His')
+                ];
             });
 
         $transactions = $transactions->concat(
                 SismontavarDeal::select(['trader_id', 'transaction_date'])
                 ->where('transaction_date', 'like', $this->created_at->format('Ymd').'%')
                 ->get()
-                ->filter( function($item) use($transactions) {
-                    return $transactions->where('transaction_date', $item->transaction_date)
-                        ->where('trader_id', $item->trader_id)
-                        ->isEmpty();
+                ->reject( function($item) use($transactions) {
+                    foreach ($transactions->toArray() as $value) {
+                        return ($value === $item->toArray());
+                    }
+
+                    return false;
                 })
                 ->toArray()
             );

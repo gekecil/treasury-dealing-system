@@ -129,7 +129,7 @@
 										<div class="form-group">
 											<label class="form-label" for="far-rate">Far Rate</label>
 											<input type="hidden" name="far-rate" required>
-											<input type="text" class="form-control" autocomplete="off" required>
+											<input type="text" class="form-control" autocomplete="off">
 										</div>
 										<div class="form-group">
 											<label class="form-label" for="transaction-purpose">Transaction Purpose</label>
@@ -145,7 +145,7 @@
 										</div>
 										<div class="form-group">
 											<label class="form-label" for="far-value-date">Far Value Date</label>
-											<input type="text" name="far-value-date" class="form-control" autocomplete="off" required>
+											<input type="text" name="far-value-date" class="form-control" autocomplete="off">
 										</div>
 									</div>
 									<div class="modal-footer">
