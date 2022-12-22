@@ -32,7 +32,7 @@
 								</div>
 							</div>
 							<div class="col-sm-12 col-md-6 d-flex justify-content-end">
-@if (auth()->user()->can('create', get_class($sismontavarDeal)))
+@if (auth()->user()->can('create', get_class($sismontavarDeal)) && ($sismontavarDeal->status_code !== 200))
 								<a href="javascript:$('.modal:not(.js-modal-settings):not(.modal-alert)').modal();">
 									<button class="btn btn-primary mr-1" type="button" title="Resend">
 										<span class="fal fa-edit mr-1"></span>
