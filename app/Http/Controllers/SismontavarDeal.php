@@ -25,7 +25,7 @@ class SismontavarDeal extends Controller
     public function index()
     {
         $currencyPair = CurrencyPair::whereNull('counter_currency_id')
-            ->whereHas('baseCurreny', function($query) {
+            ->whereHas('baseCurrency', function($query) {
                 $query->whereNull('secondary_code');
             })
             ->orderBy('id')
@@ -103,7 +103,7 @@ class SismontavarDeal extends Controller
         ]);
 
         $currencyPair = CurrencyPair::whereNull('counter_currency_id')
-            ->whereHas('baseCurreny', function($query) {
+            ->whereHas('baseCurrency', function($query) {
                 $query->whereNull('secondary_code');
             })
             ->orderBy('id')
