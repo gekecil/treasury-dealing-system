@@ -134,11 +134,11 @@ class SalesDeal extends Model
                 ->toArray()
             );
 
-        $blotterNumber = $transactions->search( function($item) {
-                $traderId = preg_replace('/\s+/', '', $this->user->nik);
-                $transactionDate = $this->created_at->format('Ymd His');
+        $this->trader_id = ((int) preg_replace('/\s+/', '', $this->user->nik));
+        $this->transaction_date = $this->created_at->format('Ymd His');
 
-                return (($item['trader_id'] === $traderId) && ($item['transaction_date'] === $transactionDate));
+        $blotterNumber = $transactions->search( function($item) {
+                return (($item['trader_id'] === $this->trader_id) && ($item['transaction_date'] === $this->transaction_date));
             });
 
         if ($blotterNumber === false) {
