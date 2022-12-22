@@ -56,57 +56,55 @@ class Controller extends BaseController
                     []
                 );
 
-            $sismontavarDeal->fill([
-                'transaction_date' => $salesDeal->created_at->format('Ymd His'),
-                'corporate_id' => substr($salesDeal->account()->firstOrNew([], ['cif' => $salesDeal->cif])->cif, -4),
-                'corporate_name' => $corporateName,
-                'platform' => 'TDS',
-                'deal_type' => ucwords($salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name),
-                'direction' => ucwords($salesDeal->buyOrSell()->firstOrNew([], ['name' => $salesDeal->direction])->name),
-                'base_currency' => $salesDeal->currencyPair
-                    ->baseCurrency
-                    ->primary_code,
+            $sismontavarDeal->transaction_date = $salesDeal->created_at->format('Ymd His');
+            $sismontavarDeal->corporate_id = substr($salesDeal->account()->firstOrNew([], ['cif' => $salesDeal->cif])->cif, -4);
+            $sismontavarDeal->corporate_name = $corporateName;
+            $sismontavarDeal->platform = 'TDS';
+            $sismontavarDeal->deal_type = ucwords($salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name);
+            $sismontavarDeal->direction = ucwords($salesDeal->buyOrSell()->firstOrNew([], ['name' => $salesDeal->direction])->name);
+            $sismontavarDeal->base_currency = $salesDeal->currencyPair
+                ->baseCurrency
+                ->primary_code;
 
-                'quote_currency' => 'IDR',
-                'base_volume' => abs($salesDeal->amount),
-                'quote_volume' => (($salesDeal->customer_rate ?: $salesDeal->near_rate) * abs($salesDeal->amount)),
-                'periods' => (
-                        collect([
-                            'TOD' => 0,
-                            'TOM' => 1,
-                            'spot' => 2,
-                            'forward' => 3,
-                        ])
-                        ->filter( function($value, $key) use($salesDeal) {
-                            return ($key === $salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name);
-                        })
-                        ->whenEmpty( function($collection) use($salesDeal) {
-                            return $collection->push($salesDeal->periods);
-                        })
-                        ->first()
-                    ),
+            $sismontavarDeal->quote_currency = 'IDR';
+            $sismontavarDeal->base_volume = abs($salesDeal->amount);
+            $sismontavarDeal->quote_volume = (($salesDeal->customer_rate ?: $salesDeal->near_rate) * abs($salesDeal->amount));
+            $sismontavarDeal->periods = (
+                    collect([
+                        'TOD' => 0,
+                        'TOM' => 1,
+                        'spot' => 2,
+                        'forward' => 3,
+                    ])
+                    ->filter( function($value, $key) use($salesDeal) {
+                        return ($key === $salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name);
+                    })
+                    ->whenEmpty( function($collection) use($salesDeal) {
+                        return $collection->push($salesDeal->periods);
+                    })
+                    ->first()
+                );
 
-                'near_rate' => ($salesDeal->near_rate ?: $salesDeal->customer_rate),
-                'near_value_date' => ($salesDeal->near_value_date ?: $salesDeal->created_at->format('Ymd His')),
-                'confirmed_at' => $salesDeal->specialRateDeal()
-                    ->firstOrNew([], ['created_at' => $salesDeal->created_at])
-                    ->created_at
-                    ->format('Ymd His'),
+            $sismontavarDeal->near_rate = ($salesDeal->near_rate ?: $salesDeal->customer_rate);
+            $sismontavarDeal->near_value_date = ($salesDeal->near_value_date ?: $salesDeal->created_at->format('Ymd His'));
+            $sismontavarDeal->confirmed_at = $salesDeal->specialRateDeal()
+                ->firstOrNew([], ['created_at' => $salesDeal->created_at])
+                ->created_at
+                ->format('Ymd His');
 
-                'confirmed_by' => $confirmedBy,
-                'trader_id' => preg_replace('/\s+/', '', $salesDeal->user->nik),
-                'trader_name' => $traderName,
-                'transaction_purpose' => ($salesDeal->transaction_purpose ?: (
-                        substr('0'.((string) $salesDeal->lhbu_remarks_code), -2).' '.substr('00'.((string) $salesDeal->lhbu_remarks_kind), -3)
-                    )),
-            ]);
+            $sismontavarDeal->confirmed_by = $confirmedBy;
+            $sismontavarDeal->trader_id = preg_replace('/\s+/', '', $salesDeal->user->nik);
+            $sismontavarDeal->trader_name = $traderName;
+            $sismontavarDeal->transaction_purpose = ($salesDeal->transaction_purpose ?: (
+                    substr('0'.((string) $salesDeal->lhbu_remarks_code), -2).' '.substr('00'.((string) $salesDeal->lhbu_remarks_kind), -3)
+                ));
 
             if ($salesDeal->far_rate) {
-                $sismontavarDeal->fill(['far_rate' => $salesDeal->far_rate]);
+                $sismontavarDeal->far_rate = $salesDeal->far_rate;
             }
 
             if ($salesDeal->far_value_date) {
-                $sismontavarDeal->fill(['far_value_date' => $salesDeal->far_value_date]);
+                $sismontavarDeal->far_value_date = $salesDeal->far_value_date;
             }
 
             foreach ($sismontavarDeal->makeHidden(['status_code', 'status_text', 'created_at', 'updated_at'])->toArray() as $key => $value) {
@@ -154,19 +152,19 @@ class Controller extends BaseController
                     )
                     ->post(env('SISMONTAVAR_URL_SEND_DATA'));
 
-                $sismontavarDeal->fill([
-                    'status_code' => $http->status(),
-                    'status_text' => $http->body(),
-                ])
-                ->save();
+                $sismontavarDeal->status_code = $http->status();
+                $sismontavarDeal->status_text = $http->body();
+
+                $sismontavarDeal->save();
 
             } catch (\Exception $e) {
                 if (!$sismontavarDeal->exists) {
-                    $sismontavarDeal->fill(['status_code' => 500]);
+                    $sismontavarDeal->status_code = 500;
                 }
 
-                $sismontavarDeal->fill(['status_text' => $e->getMessage()])
-                ->save();
+                $sismontavarDeal->status_text = $e->getMessage();
+                
+                $sismontavarDeal->save();
             }
         }
     }
