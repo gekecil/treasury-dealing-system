@@ -132,13 +132,17 @@ class SalesDeal extends Model
                     return false;
                 })
                 ->toArray()
-            );
+            )
+            ->sortBy('transaction_date')
+            ->values();
 
-        $this->trader_id = ((int) preg_replace('/\s+/', '', $this->user->nik));
-        $this->transaction_date = $this->created_at->format('Ymd His');
+        $search = [
+                'trader_id' => ((int) preg_replace('/\s+/', '', $this->user->nik)),
+                'transaction_date' => $this->created_at->format('Ymd His')
+            ];
 
-        $blotterNumber = $transactions->search( function($item) {
-                return (($item['trader_id'] === $this->trader_id) && ($item['transaction_date'] === $this->transaction_date));
+        $blotterNumber = $transactions->search( function($item) use($search) {
+                return ($item === $search);
             });
 
         if ($blotterNumber === false) {
