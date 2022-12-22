@@ -14,7 +14,7 @@ class SismontavarDeal extends Controller
 {
     public function __construct()
     {
-		$this->authorizeResource(SismontavarDealModel::class, 'salesDeal');
+		$this->authorizeResource(SismontavarDealModel::class, 'sismontavarDeal');
     }
 
     /**
