@@ -24,7 +24,12 @@ class SismontavarDeal extends Controller
      */
     public function index()
     {
-        $currencyPair = CurrencyPair::whereNull('counter_currency_id')->orderBy('id')->get();
+        $currencyPair = CurrencyPair::whereNull('counter_currency_id')
+            ->whereHas('baseCurreny', function($query) {
+                $query->whereNull('secondary_code');
+            })
+            ->orderBy('id')
+            ->get();
 
         return view('sismontavar-deal.index', [
             'currencyPair' => $currencyPair
@@ -97,7 +102,12 @@ class SismontavarDeal extends Controller
             'updated_at',
         ]);
 
-        $currencyPair = CurrencyPair::whereNull('counter_currency_id')->orderBy('id')->get();
+        $currencyPair = CurrencyPair::whereNull('counter_currency_id')
+            ->whereHas('baseCurreny', function($query) {
+                $query->whereNull('secondary_code');
+            })
+            ->orderBy('id')
+            ->get();
 
         return view('sismontavar-deal.show', [
 			'sismontavarDeal' => $sismontavarDeal,
