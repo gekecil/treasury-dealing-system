@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\DB;
 
 class SismontavarDeal extends Controller
 {
+    public function __construct()
+    {
+		$this->authorizeResource(SismontavarDealModel::class, 'salesDeal');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -80,8 +85,6 @@ class SismontavarDeal extends Controller
      */
     public function show(SismontavarDealModel $sismontavarDeal)
     {
-        $this->authorize('view', $sismontavarDeal);
-
         $sismontavarDeal->makeHidden([
             'sales_deal_id',
             'status_code',
@@ -90,8 +93,11 @@ class SismontavarDeal extends Controller
             'updated_at',
         ]);
 
+        $currencyPair = CurrencyPair::whereNull('counter_currency_id')->orderBy('id')->get();
+
         return view('sismontavar-deal.show', [
 			'sismontavarDeal' => $sismontavarDeal,
+            'currencyPair' => $currencyPair,
 		]);
     }
 

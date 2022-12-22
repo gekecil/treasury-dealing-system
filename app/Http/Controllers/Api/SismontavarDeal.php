@@ -11,7 +11,7 @@ class SismontavarDeal extends Controller
     public function __construct(Request $request)
     {
 		$this->request = $request;
-        //$this->authorizeResource(NewsModel::class);
+        $this->authorizeResource(SismontavarDealModel::class);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use App\Scopes\SalesDealScope;
 use App\Observers\SalesDeal as SalesDealObserver;
 
@@ -116,18 +115,17 @@ class SalesDeal extends Model
 
         $transactions = $transactions->map( function($item) {
                 return ['trader_id' => preg_replace('/\s+/', '', $item->user->nik), 'transaction_date' => $item->created_at->format('Ymd His')];
-            })
-            ->concat(
+            });
+
+        $transactions = $transactions->concat(
                 SismontavarDeal::select(['trader_id', 'transaction_date'])
-                ->where(DB::raw("SUBSTRING(transaction_date FROM '[^ ]+'::TEXT)"), $this->created_at->format('Ymd'))
-                ->whereNotExists( function($query) {
-                    $query->select(DB::raw(1))
-                    ->from($this->getTable())
-                    ->join($this->user->getTable(), $this->user->getTable().'.id', '=', $this->getTable().'.user_id')
-                    ->whereRaw("REPLACE(".$this->user->getTable().".nik, ' ', '')::BIGINT = trader_id")
-                    ->whereRaw("TO_CHAR(".$this->getTable().".created_at, 'YYYYMMDD HH24MISS') = transaction_date");
-                })
+                ->where('transaction_date', 'like', $this->created_at->format('Ymd').'%')
                 ->get()
+                ->filter( function($item) use($transactions) {
+                    return $transactions->where('transaction_date', $item->transaction_date)
+                        ->where('trader_id', $item->trader_id)
+                        ->isEmpty();
+                })
                 ->toArray()
             );
 
