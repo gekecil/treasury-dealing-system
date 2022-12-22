@@ -1,6 +1,10 @@
 @extends('layouts.master')
 
-@section('title', $sismontavarDeal->transaction_id.' - SISMONTAVAR')
+@section('title', $sismontavarDeal->transaction_id.' - SISMONTAVAR - Sales')
+
+@section('stylesheet')
+        <link rel="stylesheet" media="screen, print" href="/css/formplugins/select2/select2.bundle.css">
+@endsection
 
 @section('content')
 					<main id="js-page-content" role="main" class="page-content">
@@ -224,4 +228,9 @@
 					</div>
                     <!-- this overlay is activated only when mobile menu is triggered -->
                     <div class="page-content-overlay" data-action="toggle" data-class="mobile-nav-on"></div>
+@endsection
+
+@section('javascript')
+					<script src="/js/formplugins/inputmask/inputmask.bundle.js"></script>
+					<script src="/js/formplugins/select2/select2.bundle.js"></script>
 @endsection
