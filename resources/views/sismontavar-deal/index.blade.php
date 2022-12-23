@@ -82,7 +82,6 @@
 												<option value="TOD">TOD</option>
 												<option value="TOM">TOM</option>
 												<option value="Spot">Spot</option>
-												<option value="FWD">FWD</option>
 												<option value="SWAP">SWAP</option>
 											</select>
 										</div>
