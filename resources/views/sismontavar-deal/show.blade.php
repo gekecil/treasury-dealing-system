@@ -73,17 +73,17 @@
                                                                 <td class="fw-500">Transaction Status:</td>
                                                                 <td>Reported to BI</td>
                                                             </tr>
+@endif
                                                             <tr>
                                                                 <td class="fw-500">Response Status:</td>
                                                                 <td>{{
                                                                     (
                                                                         json_decode($sismontavarDeal->status_text)->Message ?? (
-                                                                            $sismontavarDeal->status_text
+                                                                            $sismontavarDeal->status_code
                                                                         )
                                                                     )
                                                                 }}</td>
                                                             </tr>
-@endif
                                                             <tr>
                                                                 <td class="fw-500">Time:</td>
                                                                 <td>{{ $sismontavarDeal->updated_at->toTimeString() }}</td>
