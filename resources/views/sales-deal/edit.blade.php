@@ -217,7 +217,7 @@
 															{{ $salesDeal->todOrTomOrSpotOrForward->name }}
 														</option>
 @foreach (
-	collect(['TOD', 'TOM', 'spot', 'forward'])->filter( function($item, $key) use($salesDeal) {
+	collect(['TOD', 'TOM', 'spot'])->filter( function($item, $key) use($salesDeal) {
 		return $item !== $salesDeal->todOrTomOrSpotOrForward->name;
 	}) as $value
 )

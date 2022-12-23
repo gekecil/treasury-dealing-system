@@ -82,7 +82,7 @@
 												<option value="TOD">TOD</option>
 												<option value="TOM">TOM</option>
 												<option value="Spot">Spot</option>
-												<option value="Forward">Forward</option>
+												<option value="FWD">FWD</option>
 												<option value="SWAP">SWAP</option>
 											</select>
 										</div>
@@ -256,15 +256,21 @@
 									},
 									{
 										title: 'Status',
-										data: 'status_text',
+										data: 'status_code',
 										className: 'text-center',
 										render: function(data, type, row, meta) {
-                                            try {
-                                                return JSON.parse(data).Message;
+											row.element = document.createElement('span');
 
-                                            } catch(e) {
-                                                return row.status_code;
+                                            if (data === 200) {
+                                                row.element.classList.add('badge', 'badge-success', 'badge-pill');
+                                                row.element.innerHTML = 'Success';
+
+                                            } else {
+                                                row.element.classList.add('badge', 'badge-primary', 'badge-pill');
+                                                row.element.innerHTML = 'Attention';
                                             }
+
+											return row.element.outerHTML;
 										}
 									}
 								],

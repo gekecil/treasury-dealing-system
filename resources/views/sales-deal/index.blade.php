@@ -559,7 +559,6 @@
 												<option value="TOD">TOD</option>
 												<option value="TOM">TOM</option>
 												<option value="spot">Spot</option>
-												<option value="forward">Forward</option>
 											</select>
 										</div>
 										<div class="form-group">
