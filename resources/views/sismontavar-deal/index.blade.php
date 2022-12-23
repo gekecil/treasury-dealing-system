@@ -259,11 +259,12 @@
 										data: 'status_text',
 										className: 'text-center',
 										render: function(data, type, row, meta) {
-                                            if (row.status_code != 200) {
+                                            try {
+                                                return JSON.parse(data).Message;
+
+                                            } catch(e) {
                                                 return row.status_code;
                                             }
-
-											return JSON.parse(data).Message;
 										}
 									}
 								],
