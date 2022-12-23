@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\SalesDeal;
-use App\SismontavarDeal;
 use App\ClosingRate;
 use App\Threshold;
 use Carbon\Carbon;
@@ -102,21 +101,6 @@ class SalesBlotterExcel extends Controller
             ->oldest()
             ->orderBy('id')
             ->get();
-
-		$unConfirmed = SalesDeal::where('created_at', '>', $salesDeal->first()->created_at->toDateTimeString())
-            ->where('created_at', '<', $salesDeal->last()->created_at->toDateTimeString())
-            ->where( function($query) {
-                $query->whereHas('specialRateDeal', function($query) {
-                    $query->where('confirmed', false);
-                })
-                ->orWhereHas('modificationUpdated', function($query) {
-                    $query->where('confirmed', false);
-                })
-                ->orWhereHas('salesDealFile', function($query) {
-                    $query->where('confirmed', false);
-                });
-            })
-            ->pluck('created_at');
 
 		$threshold = Threshold::latest();
 		$threshold = $threshold->exists() ? floatval($threshold->first()->threshold) : 0;
@@ -516,65 +500,11 @@ class SalesBlotterExcel extends Controller
 		$worksheet[$year]->getStyle('P3:P'.($countYear + 3))->getAlignment()->setHorizontal('left');
 		$worksheet[$year]->getStyle('Q3:T'.($countYear + 3))->getAlignment()->setHorizontal('center');
 
-		if ($user->is_head_office_dealer || $user->is_administrator || $user->is_super_administrator) {
-            $worksheet['sismontavar'] = $spreadsheet->createSheet();
-            $worksheet['sismontavar']->setTitle(ucwords('sismontavar data'));
-            $worksheet['sismontavar']->getStyle($alphabets->first().'2:'.$alphabets->last().'2')->getAlignment()->setHorizontal('center');
-            $worksheet['sismontavar']->getStyle($alphabets->first().'2:'.$alphabets->last().'2')->getFont()->setBold(true);
-
-            $sismontavarDeal = SismontavarDeal::whereYear('created_at', $year);
-
-            if ($request->filled('date_from')) {
-                $sismontavarDeal->whereDate('created_at', '>=', $request->input('date_from'));
-            }
-
-            if ($request->filled('date_to')) {
-                $sismontavarDeal->whereDate('created_at', '<=', $request->input('date_to'));
-            }
-
-            $sismontavarDeal = $sismontavarDeal->oldest()
-                ->get()
-                ->whenEmpty( function($collection) {
-                    return $collection->push(new SismontavarDeal(['sales_deal_id' => null]));
-                });
-
-            $sismontavarColumns = $sismontavarDeal->first()
-                ->makeHidden([
-                    'sales_deal_id',
-                    'status_code',
-                    'status_text',
-                    'created_at',
-                    'updated_at',
-                ])
-                ->toArray();
-
-            foreach (array_keys($sismontavarColumns) as $key => $value) {
-                $alphabet = $alphabets->get($key);
-                $value = Str::of($value)
-                    ->replaceMatches('/_id$/', function($match) {
-                        return strtoupper($match[0]);
-                    })
-                    ->replace('_', ' ');
-
-                $worksheet['sismontavar']->getCell($alphabet.'2')->setValue(ucwords($value));
-                $worksheet['sismontavar']->getColumnDimension($alphabet)->setAutoSize(true);
-                $worksheet['sismontavar']->calculateColumnWidths();
-                
-            }
-
-            $sismontavarDeal->each( function($item, $row) use($worksheet, $alphabets, $sismontavarColumns) {
-                foreach (array_keys($sismontavarColumns) as $key => $value) {
-                    $alphabet = $alphabets->get($key);
-                    $worksheet['sismontavar']->getCell($alphabet.((string)($row + 1 + 2)))->setValue($item->{$value});
-                }
-            });
-        }
-
 		$values->values()
 		->reverse()
 		->each( function($value, $key)
 			use(
-				$alphabets, $spreadsheet, $worksheet, $columns, $mergeCells, $threshold, $countToday, $user, $request, $yearly, $unConfirmed
+				$alphabets, $spreadsheet, $worksheet, $columns, $mergeCells, $threshold, $countToday, $user, $request, $yearly
 			) {
 			$count = $value->count();
 			$closingRate = ClosingRate::where('created_at', $value->first()->baseCurrencyClosingRate->created_at->toDateString())
@@ -744,7 +674,7 @@ class SalesBlotterExcel extends Controller
                 ->setFormatCode('_(* #,##0.00_);_(* (#,##0.00);_(* "-"_);_(@_)');
 			$worksheet[$day]->getStyle('P3:S'.($count + 3))->getAlignment()->setHorizontal('center');
 
-			$value->each( function($value, $row) use($alphabets, $spreadsheet, $worksheet, $count, $countCurrency, $cancellations, $key, $unConfirmed) {
+			$value->each( function($value, $row) use($alphabets, $spreadsheet, $worksheet, $count, $countCurrency, $cancellations, $key) {
                 $values = collect([
 					($row + 1),
 					$value->user->full_name,
@@ -796,14 +726,7 @@ class SalesBlotterExcel extends Controller
 					$values = collect([
 						$value->created_at->format('d-M-y'),
 
-						($value->specialRateDeal ? 'SR' : 'FX').$value->created_at->format('dmY').'-'.substr(
-                            '00'.(string) ($row + 1 + (
-                                $unConfirmed->where('dayOfYear', $value->created_at->dayOfYear)
-                                ->where('timestamp', '<', $value->created_at->timestamp)
-                                ->count()
-                            )),
-                            -3
-                        ),
+						($value->specialRateDeal ? 'SR' : 'FX').$value->created_at->format('dmY').'-'.$value->blotter_number),
 
 						"='".$value->created_at->format('j M')."'!B".($row + 3),
 						"='".$value->created_at->format('j M')."'!C".($row + 3),
