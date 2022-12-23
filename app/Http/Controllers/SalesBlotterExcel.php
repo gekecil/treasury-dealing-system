@@ -726,7 +726,7 @@ class SalesBlotterExcel extends Controller
 					$values = collect([
 						$value->created_at->format('d-M-y'),
 
-						($value->specialRateDeal ? 'SR' : 'FX').$value->created_at->format('dmY').'-'.$value->blotter_number),
+						(($value->specialRateDeal ? 'SR' : 'FX').$value->created_at->format('dmY').'-'.$value->blotter_number),
 
 						"='".$value->created_at->format('j M')."'!B".($row + 3),
 						"='".$value->created_at->format('j M')."'!C".($row + 3),
