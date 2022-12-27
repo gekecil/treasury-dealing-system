@@ -1204,24 +1204,28 @@
 									},
                                     dataSrc: function(json) {
 @if (request()->route()->named('sales-top-ten-obox.index'))
-                                        json.data = json.data.map((value) => {
-                                            if (value.currency_pair.base_currency_id === 1) {
-                                                value.usd_equivalent = parseFloat(value.amount);
+                                        json.data = json.data
+                                            .map((value) => {
+                                                if (value.currency_pair.base_currency_id === 1) {
+                                                    value.usd_equivalent = parseFloat(value.amount);
 
-                                            } else {
-                                                value.usd_equivalent = parseFloat(value.base_currency_closing_rate.mid_rate);
-                                                value.usd_equivalent *= parseFloat(value.amount);
-                                                value.usd_equivalent /= parseFloat(value.base_currency_closing_rate.world_currency_closing_mid_rate);
-                                            }
+                                                } else {
+                                                    value.usd_equivalent = parseFloat(value.base_currency_closing_rate.mid_rate);
+                                                    value.usd_equivalent *= parseFloat(value.amount);
+                                                    value.usd_equivalent /= parseFloat(
+                                                        value.base_currency_closing_rate.world_currency_closing_mid_rate
+                                                    );
+                                                }
 
-                                            return value;
-                                        })
+                                                return value;
+                                            });
 
                                         json.data = json.data
                                             .sort((x, y) => {
                                                 return y.usd_equivalent - x.usd_equivalent;
                                             })
                                             .filter(value => value.usd_equivalent >= 0)
+                                            .filter(value => !value.currency_pair.counter_currency)
                                             .slice(0, 10)
                                             .concat(
                                                 json.data
@@ -1229,9 +1233,9 @@
                                                     return y.usd_equivalent - x.usd_equivalent;
                                                 })
                                                 .filter(value => value.usd_equivalent < 0)
+                                                .filter(value => !value.currency_pair.counter_currency)
                                                 .slice(-10)
-                                            )
-                                            .filter(value => !value.currency_pair.counter_currency);
+                                            );
 
 @else
                                         $(document).find('[name="sales-limit"]').val(json.sales_limit);
@@ -1673,24 +1677,42 @@
 							$(e.currentTarget).find('input[name="amount"]').next().val('');
 							$(e.currentTarget).find('input[name="amount"]').next().trigger('input');
 
-                            $(e.currentTarget).find('input[name="interoffice-rate"]').get(0).dataset.minimum = '1';
-                            $(e.currentTarget).find('input[name="amount"]').get(0).dataset.minimum = '1';
+                            $(e.currentTarget).find('input[name="interoffice-rate"]').get(0).dataset.minimum = .0001;
+                            $(e.currentTarget).find('input[name="amount"]').get(0).dataset.minimum = .01;
 
                             switch (e.relatedTarget.children[0].innerHTML.trim().toLowerCase()) {
                                 case 'bank buy':
-                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = '1';
-                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum = $(e.currentTarget)
-                                        .find('input[name="interoffice-rate"]')
-                                        .val();
+                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = .0001;
+
+                                    if ($(e.currentTarget).find('input[name="interoffice-rate"]').val()) {
+                                        $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum = $(e.currentTarget)
+                                            .find('input[name="interoffice-rate"]')
+                                            .val();
+                                    }
+
+                                break;
+
+                                case 'bank sell':
+                                    if ($(e.currentTarget).find('input[name="interoffice-rate"]').val()) {
+                                        $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = $(e.currentTarget)
+                                            .find('input[name="interoffice-rate"]')
+                                            .val();
+                                    }
+
+                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum) {
+                                        delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
+                                    }
 
                                 break;
 
                                 default:
-                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = $(e.currentTarget)
-                                        .find('input[name="interoffice-rate"]')
-                                        .val();
+                                    if ('minimum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum) {
+                                        delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum;
+                                    }
 
-                                    delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
+                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum) {
+                                        delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
+                                    }
 
                             }
 
