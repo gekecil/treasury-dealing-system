@@ -1699,18 +1699,18 @@
                                             .val();
                                     }
 
-                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum) {
+                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
                                         delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
                                     }
 
                                 break;
 
                                 default:
-                                    if ('minimum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum) {
+                                    if ('minimum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
                                         delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum;
                                     }
 
-                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum) {
+                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
                                         delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
                                     }
 
