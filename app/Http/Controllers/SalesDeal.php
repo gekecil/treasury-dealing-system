@@ -235,7 +235,7 @@ class SalesDeal extends Controller
                 ],
                 'sales-limit' => [
                     'required',
-                    'gt:'.$usdEquivalent,
+                    'gte:'.$usdEquivalent,
                 ],
 				'currency_id' => [
 					'required',

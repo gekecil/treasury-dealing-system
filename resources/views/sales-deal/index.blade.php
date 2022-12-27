@@ -553,7 +553,7 @@
 											<input type="text" class="form-control" value="0" readonly>
 										</div>
 										<div class="form-group">
-											<label class="form-label" for="tod-tom-spot-forward">TOD/TOM/Spot/Forward</label>
+											<label class="form-label" for="tod-tom-spot-forward">TOD/TOM/Spot</label>
 											<select name="tod-tom-spot-forward" class="form-control" onkeydown="event.preventDefault()" required>
 												<option value>Choose</option>
 												<option value="TOD">TOD</option>
