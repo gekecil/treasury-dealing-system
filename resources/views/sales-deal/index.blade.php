@@ -1716,6 +1716,7 @@
 
                             }
 
+@if (request()->route()->named('sales-fx.index'))
                             if ($(e.currentTarget).find('input[name="sales-limit"]').val().length) {
                                 $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = $(e.currentTarget)
                                     .find('input[name="sales-limit"]')
@@ -1739,6 +1740,7 @@
 
                             }
 
+@endif
 						})
 
                         $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('hidden.bs.modal', function(e) {
