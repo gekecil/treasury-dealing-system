@@ -126,7 +126,9 @@ class SalesDeal extends Model
                 ->get()
                 ->reject( function($item) use($transactions) {
                     foreach ($transactions->toArray() as $value) {
-                        return ($value === $item->toArray());
+                        if ($value === $item->toArray()) {
+                            return true;
+                        }
                     }
 
                     return false;
