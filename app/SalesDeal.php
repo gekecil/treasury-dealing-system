@@ -123,6 +123,7 @@ class SalesDeal extends Model
         $transactions = $transactions->concat(
                 SismontavarDeal::select(['trader_id', 'transaction_date'])
                 ->where('transaction_date', 'like', $this->created_at->format('Ymd').'%')
+                ->orderBy('transaction_date')
                 ->get()
                 ->reject( function($item) use($transactions) {
                     foreach ($transactions->toArray() as $value) {
@@ -135,7 +136,6 @@ class SalesDeal extends Model
                 })
                 ->toArray()
             )
-            ->sortBy('transaction_date')
             ->values();
 
         $search = [

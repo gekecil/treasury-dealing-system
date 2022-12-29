@@ -112,6 +112,10 @@ class Controller extends BaseController
                 $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
             }
 
+            $sismontavarDeal->status_code = 0;
+
+            $sismontavarDeal->save();
+
             try {
                 $token = Http::asForm()
                     ->post(env('SISMONTAVAR_URL_ACCESS_TOKEN'), [
