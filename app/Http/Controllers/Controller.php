@@ -112,13 +112,13 @@ class Controller extends BaseController
                 $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
             }
 
-            $sismontavarDeal->status_code = 0;
-
             if (!$sismontavarDeal->exists) {
+                $sismontavarDeal->status_code = 0;
+
+                $sismontavarDeal->save();
+
                 $sismontavarDeal->transaction_id = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
             }
-
-            $sismontavarDeal->save();
 
             try {
                 $token = Http::asForm()
