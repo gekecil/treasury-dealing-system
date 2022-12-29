@@ -114,6 +114,10 @@ class Controller extends BaseController
 
             $sismontavarDeal->status_code = 0;
 
+            if (!$sismontavarDeal->exists) {
+                $sismontavarDeal->transaction_id = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
+            }
+
             $sismontavarDeal->save();
 
             try {
@@ -163,7 +167,7 @@ class Controller extends BaseController
                 $sismontavarDeal->save();
 
             } catch (\Exception $e) {
-                if (!$sismontavarDeal->exists) {
+                if (!$sismontavarDeal->exists || !$sismontavarDeal->status_code) {
                     $sismontavarDeal->status_code = 500;
                 }
 
