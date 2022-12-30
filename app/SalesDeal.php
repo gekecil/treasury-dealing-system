@@ -110,6 +110,7 @@ class SalesDeal extends Model
             ->select(['user_id', 'created_at'])
             ->whereDate('created_at', $this->created_at->toDateString())
             ->oldest()
+            ->orderBy('id')
             ->get()
             ->map( function($item) {
                 return [
@@ -128,14 +129,16 @@ class SalesDeal extends Model
                 });
             });
 
-        if ($sismontavarDeal->isNotEmpty()) {
-            while ($transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)->isNotEmpty()) {
-                $transactions = $transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)
-                    ->concat($sismontavarDeal->first()->toArray())
-                    ->concat($transactions->where('transaction_date', '>', $sismontavarDeal->first()->transaction_date)->toArray());
+        while (
+            $sismontavarDeal->isNotEmpty() && (
+                $transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)->isNotEmpty()
+            )
+        ) {
+            $transactions = $transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)
+                ->concat($sismontavarDeal->first()->toArray())
+                ->concat($transactions->where('transaction_date', '>', $sismontavarDeal->first()->transaction_date)->toArray());
 
-                $sismontavarDeal->forget($sismontavarDeal->keys()->first());
-            }
+            $sismontavarDeal->forget($sismontavarDeal->keys()->first());
         }
 
         if ($transactions->isNotEmpty()) {

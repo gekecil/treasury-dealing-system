@@ -45,17 +45,11 @@ class Controller extends BaseController
                 $confirmedBy = Str::beforeLast($confirmedBy, ' ');
             }
 
-            $transactionId = $salesDeal->transaction_id;
+            $sismontavarDeal = new SismontavarDeal;
 
-            if (!$transactionId) {
-                $transactionId = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
+            if ($salesDeal->transaction_id) {
+                $sismontavarDeal = SismontavarDeal::findOrFail($salesDeal->transaction_id);
             }
-
-            $sismontavarDeal = SismontavarDeal::select('transaction_id')
-                ->firstOrNew(
-                    ['transaction_id' => $transactionId],
-                    []
-                );
 
             $sismontavarDeal->transaction_date = $salesDeal->created_at->format('Ymd His');
             $sismontavarDeal->corporate_id = substr($salesDeal->account()->firstOrNew([], ['cif' => $salesDeal->cif])->cif, -4);
@@ -112,14 +106,13 @@ class Controller extends BaseController
                 $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
             }
 
-            if ($sismontavarDeal->transaction_id > 999) {
+            if (!$salesDeal->exists && !$sismontavarDeal->exists) {
+                $sismontavarDeal->transaction_id = $sismontavarDeal->trader_id;
                 $sismontavarDeal->status_code = 0;
 
                 $sismontavarDeal->save();
 
                 $sismontavarDeal->transaction_id = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
-
-                $sismontavarDeal->save();
             }
 
             try {
