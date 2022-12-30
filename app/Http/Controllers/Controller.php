@@ -111,9 +111,9 @@ class Controller extends BaseController
                 $sismontavarDeal->status_code = 0;
 
                 $sismontavarDeal->save();
-
-                $sismontavarDeal->transaction_id = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
             }
+
+            $sismontavarDeal->transaction_id = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
 
             try {
                 $token = Http::asForm()

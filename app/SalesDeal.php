@@ -127,7 +127,8 @@ class SalesDeal extends Model
                 return $transactions->search( function($salesDeal) use($item) {
                     return ($salesDeal === $item->toArray());
                 });
-            });
+            })
+            ->values();
 
         while (
             $sismontavarDeal->isNotEmpty() && (
@@ -136,7 +137,11 @@ class SalesDeal extends Model
         ) {
             $transactions = $transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)
                 ->concat($sismontavarDeal->first()->toArray())
-                ->concat($transactions->skipUntil($sismontavarDeal->first()->toArray())->skip(1)->toArray());
+                ->concat(
+                    $transactions->where('transaction_date', '>=', $sismontavarDeal->first()->transaction_date)
+                    ->skip(1)
+                    ->toArray()
+                );
 
             $sismontavarDeal->forget($sismontavarDeal->keys()->first());
         }
