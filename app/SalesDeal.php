@@ -109,28 +109,43 @@ class SalesDeal extends Model
         $transactions = $this->newQuery()
             ->select(['user_id', 'created_at'])
             ->whereDate('created_at', $this->created_at->toDateString())
-            ->get();
-
-        $transactions = $transactions->map( function($item) {
+            ->oldest()
+            ->get()
+            ->map( function($item) {
                 return [
                     'trader_id' => ((int) preg_replace('/\s+/', '', $item->user->nik)),
                     'transaction_date' => $item->created_at->format('Ymd His')
                 ];
             });
 
-        $transactions = $transactions->concat(
-                SismontavarDeal::select(['trader_id', 'transaction_date'])
-                ->where('transaction_date', 'like', $this->created_at->format('Ymd').'%')
-                ->get()
-                ->reject( function($item) use($transactions) {
-                    return $transactions->search( function($transaction) use($item) {
-                        return ($transaction === $item);
-                    });
-                })
-                ->toArray()
-            )
-            ->sortBy([['transaction_date'], ['trader_id']])
-            ->values();
+        $sismontavarDeal = SismontavarDeal::select(['trader_id', 'transaction_date'])
+            ->where('transaction_date', 'like', $this->created_at->format('Ymd').'%')
+            ->orderBy('transaction_date')
+            ->get()
+            ->reject( function($item) use($transactions) {
+                return $transactions->search( function($salesDeal) use($item) {
+                    return ($salesDeal === $item->toArray());
+                });
+            });
+
+        if ($sismontavarDeal->isNotEmpty()) {
+            while ($transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)->isNotEmpty()) {
+                $transactions = $transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)
+                    ->concat($sismontavarDeal->first()->toArray())
+                    ->concat($transactions->where('transaction_date', '>', $sismontavarDeal->first()->transaction_date)->toArray());
+
+                $sismontavarDeal->forget($sismontavarDeal->keys()->first());
+            }
+        }
+
+        if ($transactions->isNotEmpty()) {
+            $first = $transactions->first();
+
+            if ($sismontavarDeal->where('transaction_date', '<', $first['transaction_date'])->isNotEmpty()) {
+                $transactions = $sismontavarDeal->where('transaction_date', '<', $first['transaction_date'])
+                ->concat($transactions->toArray());
+            }
+        }
 
         $search = [
                 'trader_id' => ((int) preg_replace('/\s+/', '', $this->user->nik)),
