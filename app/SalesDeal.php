@@ -136,7 +136,7 @@ class SalesDeal extends Model
         ) {
             $transactions = $transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)
                 ->concat($sismontavarDeal->first()->toArray())
-                ->concat($transactions->where('transaction_date', '>', $sismontavarDeal->first()->transaction_date)->toArray());
+                ->concat($transactions->skipUntil($sismontavarDeal->first()->toArray())->skip(1)->toArray());
 
             $sismontavarDeal->forget($sismontavarDeal->keys()->first());
         }
