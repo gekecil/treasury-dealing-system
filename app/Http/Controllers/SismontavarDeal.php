@@ -79,6 +79,9 @@ class SismontavarDeal extends Controller
 
         if ($request->has('transaction-id') && $request->filled('transaction-id')) {
             $salesDeal->forceFill(['transaction_id' => $request->input('transaction-id')]);
+
+        } else {
+            $salesDeal->forceFill(['transaction_id' => (SismontavarDealModel::count() + 1 + 999)]);
         }
 
         $this->sismontavar($salesDeal);

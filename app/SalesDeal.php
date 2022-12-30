@@ -109,8 +109,6 @@ class SalesDeal extends Model
         $transactions = $this->newQuery()
             ->select(['user_id', 'created_at'])
             ->whereDate('created_at', $this->created_at->toDateString())
-            ->oldest()
-            ->orderBy('id')
             ->get();
 
         $transactions = $transactions->map( function($item) {
@@ -125,17 +123,13 @@ class SalesDeal extends Model
                 ->where('transaction_date', 'like', $this->created_at->format('Ymd').'%')
                 ->get()
                 ->reject( function($item) use($transactions) {
-                    foreach ($transactions->toArray() as $value) {
-                        if ($value === $item->toArray()) {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return $transactions->search( function($transaction) use($item) {
+                        return ($transaction === $item);
+                    });
                 })
                 ->toArray()
             )
-            ->sortBy('transaction_date')
+            ->sortBy([['transaction_date'], ['trader_id']])
             ->values();
 
         $search = [

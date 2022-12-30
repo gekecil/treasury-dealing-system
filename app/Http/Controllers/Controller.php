@@ -112,12 +112,14 @@ class Controller extends BaseController
                 $sismontavarDeal->{$key} = preg_replace("/(\!|\#|\$|\%|\^|\&|\*|\'|\(|\)|\?|\/|\;|\<|\>)/", "", $value);
             }
 
-            if (!$sismontavarDeal->exists) {
+            if ($sismontavarDeal->transaction_id > 999) {
                 $sismontavarDeal->status_code = 0;
 
                 $sismontavarDeal->save();
 
                 $sismontavarDeal->transaction_id = (($salesDeal->fx_sr).($salesDeal->created_at->format('dmy')).($salesDeal->blotter_number));
+
+                $sismontavarDeal->save();
             }
 
             try {
