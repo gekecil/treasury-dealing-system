@@ -138,8 +138,7 @@ class SalesDeal extends Model
             $transactions = $transactions->where('transaction_date', '<=', $sismontavarDeal->first()->transaction_date)
                 ->concat($sismontavarDeal->take(1)->toArray())
                 ->concat(
-                    $transactions->where('transaction_date', '>=', $sismontavarDeal->first()->transaction_date)
-                    ->skip(1)
+                    $transactions->where('transaction_date', '>', $sismontavarDeal->first()->transaction_date)
                     ->toArray()
                 );
 
