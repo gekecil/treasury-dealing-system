@@ -65,7 +65,7 @@ class ClosingRate extends Controller
 			);
 
 		$currency = $currency->map( function($item, $key) use($closingRate, $threshold, $market) {
-			if ($closingRate->where('currency_id', $item->id)->isNotEmpty() && $closingRate->where('currency_id', 1)->isNotEmpty()) {
+			if ($closingRate->where('currency_id', $item->id)->isNotEmpty()) {
 				$item->buying_rate = $closingRate->firstWhere('currency_id', $item->id)->buying_rate;
 				$item->selling_rate = $closingRate->firstWhere('currency_id', $item->id)->selling_rate;
 				$item->mid_rate = (string) ((floatval($item->buying_rate) + floatval($item->selling_rate)) / 2);
@@ -73,7 +73,8 @@ class ClosingRate extends Controller
 
 				if ($item->id === 1) {
 					$item->threshold = $threshold->threshold;
-				} elseif ($threshold->threshold) {
+
+				} elseif ($threshold->threshold && $closingRate->where('currency_id', 1)->isNotEmpty()) {
 					$item->threshold = (string) ($threshold->threshold * (
 						(
 							(
