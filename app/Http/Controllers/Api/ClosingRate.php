@@ -39,7 +39,7 @@ class ClosingRate extends Controller
 		$market = new Market;
 
         if ($this->request->filled('next_market_at')) {
-            $market = $market->whereDate('closing_at', $this->request->input('next_market_at'));
+            $market = $market->whereDate('closing_at', '<', $this->request->input('next_market_at'));
         }
 
         $market = $market->latest('closing_at')

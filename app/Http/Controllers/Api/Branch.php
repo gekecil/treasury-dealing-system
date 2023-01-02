@@ -34,17 +34,7 @@ class Branch extends Controller
         ]);
 
 		try {
-            $branch = DB::setPdo(
-                    new PDO(
-                        $arguments->get('Driver').':'.implode(';', array_map(function ($key) use ($arguments) {
-                            return sprintf('%s=%s', $key, $arguments->get($key));
-                        }, array_keys($arguments->only(['Server', 'Database', 'LoginTimeout'])->toArray()))),
-
-                        $config['username'],
-                        $config['password']
-                    )
-                )
-                ->table('StrukturCabang')
+            $branch = DB::connection('sqlsrv')->table('StrukturCabang')
                 ->select('Id as code', 'Company name as name', 'NamaRegion as region')
                 ->whereRaw("[Company name] not like '%".strtoupper('(tutup)')."'");
 
@@ -70,7 +60,7 @@ class Branch extends Controller
 
 		return response()->json([
 			'data' => $branch->map( function($item) {
-                    if ($item instanceof Branch) {
+                    if ($item instanceof BranchModel) {
                         $item = $item->toArray();
                     } else {
                         $item = ((array) $item);
