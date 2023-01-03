@@ -96,7 +96,7 @@
 											</select>
 										</div>
 										<div class="form-group">
-											<label class="form-label" for="base-currency">Base Currency</label>
+											<label class="form-label" for="base-currency">Currency Pairs</label>
 											<select name="currency-pair" class="form-control" required>
 												<option value>Choose</option>
 @foreach ($currencyPair as $value)

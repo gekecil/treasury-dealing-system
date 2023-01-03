@@ -56,7 +56,11 @@ class Controller extends BaseController
             $sismontavarDeal->corporate_name = $corporateName;
             $sismontavarDeal->platform = 'TDS';
             $sismontavarDeal->deal_type = ucwords($salesDeal->todOrTomOrSpotOrForward()->firstOrNew([], ['name' => $salesDeal->deal_type])->name);
-            $sismontavarDeal->direction = ucwords($salesDeal->buyOrSell()->firstOrNew([], ['name' => $salesDeal->direction])->name);
+            $sismontavarDeal->direction = $salesDeal->buyOrSell()
+                ->selectRaw('initcap(name) as name')
+                ->firstOrNew([], ['name' => $salesDeal->direction])
+                ->name;
+
             $sismontavarDeal->base_currency = $salesDeal->currencyPair
                 ->baseCurrency
                 ->primary_code;
