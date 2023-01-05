@@ -54,8 +54,6 @@ class SismontavarDeal extends Controller
      */
     public function store(Request $request)
     {
-        Auth::user()->save();
-
         $salesDeal = new SalesDeal;
 
         $salesDeal->fill([

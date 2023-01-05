@@ -189,8 +189,6 @@ class InterbankDeal extends Controller
 			]);
         }
 
-		Auth::user()->save();
-
 		return redirect()->back()->with('status', 'The Dealing Was Submitted!');
     }
 
@@ -265,8 +263,6 @@ class InterbankDeal extends Controller
                 ]
 			);
         }
-
-		Auth::user()->save();
 
 		return redirect()->action(class_basename($this).'@index')->with('status', 'The Interbank Deal Was Updated!');
     }

@@ -6,7 +6,6 @@ use App\SismontavarDeal;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Support\Facades\DB;
 
 class SismontavarDealPolicy
 {
@@ -39,12 +38,15 @@ class SismontavarDealPolicy
      */
     public function view(User $user, SismontavarDeal $sismontavarDeal)
     {
-        $branch = User::where(DB::raw("TRIM(REGEXP_REPLACE(nik, '\s+', '', 'g'))"), $sismontavarDeal->trader_id)
-            ->first()
-            ->branch()
-            ->firstOrNew([], ['code' => null]);
+        if (Carbon::hasFormat($sismontavarDeal->transaction_date, 'Ymd His')) {
+            $user->transaction_date = Carbon::createFromFormat('Ymd His', $sismontavarDeal->transaction_date);
+        }
 
-        return (($user->is_branch_office_dealer && ($user->branch_code === $branch->code)) || $user->is_head_office_dealer);
+        $salesDeal = $user->branch()->first()
+            ->salesDeal()
+            ->where('created_at', $user->transaction_date);
+
+        return (($user->is_branch_office_dealer && $salesDeal->exists()) || $user->is_head_office_dealer);
     }
 
     /**

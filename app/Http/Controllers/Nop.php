@@ -137,8 +137,6 @@ class Nop extends Controller
 			'note' => $request->input('note'),
 		]);
 
-		Auth::user()->save();
-
 		return redirect()->back()->with('status', 'The NOP Adjustment Was Submitted!');
     }
 
@@ -191,8 +189,6 @@ class Nop extends Controller
 			'note' => $request->input('note'),
 		])
 		->save();
-
-		Auth::user()->save();
 
 		return redirect()->back()->with('status', 'The NOP Adjustment Was Updated!');
     }
