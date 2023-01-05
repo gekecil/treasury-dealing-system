@@ -50,8 +50,8 @@
                                                             {{ $user->branch()->first()->region }}
                                                         </option>
 @endif
-@foreach ($regions->where('region', '!=', $user->branch()->firstOrNew([], ['region' => null])->region)->pluck('region')->unique()->sort() as $value)
-														<option value="{{ $value }}">{{ $value }}</option>
+@foreach ($regions->where('region', '!=', $user->branch()->firstOrNew([], ['region' => null])->region)->sortBy('region') as $value)
+														<option value="{{ $value->region }}">{{ $value->region }}</option>
 @endforeach
                                                     </select>
                                                 </div>

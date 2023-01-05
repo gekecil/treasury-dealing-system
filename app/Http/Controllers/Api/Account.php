@@ -22,46 +22,23 @@ class Account extends Controller
      */
     public function index()
     {
-		$account = AccountModel::select('*');
-		$recordsTotal = $account->count();
-		
-		if ($this->request->filled('search.value')) {
-			$account->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->request->input('search.value')).'%')
-            ->orWhere('cif', 'like', $this->request->input('search.value').'%');
-		}
-		
-		$recordsFiltered = $account->count();
-		
+        $account = new AccountModel;
+        $recordsTotal = $account->count();
+
 		if ($this->request->filled('query')) {
-			$account->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->request->input('query')).'%')
-				->skip(0)
-				->take(10)
-				->orderByRaw("char_length(name)");
-				
-			$account = $account->get()->makeHidden(['salesDeal'])->append(['monthly_usd_equivalent']);
+			$account = $this->fetch($this->accounts($this->request->input('query'), 10))
+                ->map( function($account) {
+                    return ((object) ['number' => $account->number, 'cif' => $account->cif, 'name' => $account->name]);
+                });
 
-            if (10 - $account->count()) {
-                try {
-                    $account = $account->concat(
-                            DB::connection('sqlsrv')
-                            ->table('STG_Account')
-                            ->select('ID_Nasabah as cif', 'No_Rekening as number', 'Nama_Nasabah as name')
-                            //->whereIn('Kategori', [6020, 6021, 6022, 6023, 6024, 6026])
-                            ->where(DB::raw("lower(No_Rekening + ' ' + Nama_Nasabah)"), 'like', '%'.strtolower($this->request->input('query')).'%')
-                            ->skip(0)
-                            ->take(10 - $account->count())
-                            ->orderByRaw("len(Nama_Nasabah)")
-                            ->get()
-                        );
+        } else {
+            $account = AccountModel::query();
 
-                } catch (\Exception $e) {
-                    //
-                }
+            if ($this->request->filled('search.value')) {
+                $account->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->request->input('search.value')).'%')
+                ->orWhere('cif', 'like', $this->request->input('search.value').'%');
             }
 
-            $account = $account->unique('number')->values();
-
-		} else {
             if ($this->request->has('order')) {
                 $order = $this->request->input('order.0');
                 $request = $this->request;
@@ -122,6 +99,8 @@ class Account extends Controller
                 ->append(['monthly_usd_equivalent']);
 
 		}
+
+        $recordsFiltered = $account->count();
 
 		return response()->json([
 			'draw' => $this->request->input('draw'),

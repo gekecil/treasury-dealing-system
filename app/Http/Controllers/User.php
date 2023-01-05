@@ -37,34 +37,14 @@ class User extends Controller
      */
     public function create()
     {
-        $regions;
-
-		try {
-            $regions = DB::connection('sqlsrv')->table('StrukturCabang')
-                ->select('NamaRegion as region')
-                ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
-                ->whereNotNull('NamaRegion')
-                ->get();
-
-        } catch (\Exception $e) {
-            $regions = Branch::select('region')
-                ->whereNotNull('region')
-                ->groupBy('region')
-                ->get();
-        }
-
-        $regions = $regions->map( function($item) {
-                if ($item instanceof Branch) {
-                    $item = $item->toArray();
-                } else {
-                    $item = ((array) $item);
-                }
-
-                return ((object) array_map('htmlspecialchars_decode', $item));
+        $regions = $this->regions();
+        $regions = $this->fetch($regions)
+            ->filter( function($item) {
+                return $item->region;
             });
 
 		$role = Role::oldest('id')->get();
-		
+
 		return view('user.create', [
 			'regions' => $regions,
 			'role' => $role
@@ -101,31 +81,10 @@ class User extends Controller
      */
     public function edit(UserModel $user)
     {
-        $regions;
-
-		try {
-            $regions = DB::connection('sqlsrv')->table('StrukturCabang')
-                ->select('Id as branch_code', 'NamaRegion as region', 'Company name as name')
-                ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
-                ->whereNotNull('NamaRegion')
-                ->orderBy('Company name')
-                ->get();
-
-        } catch (\Exception $e) {
-            $regions = Branch::select('code as branch_code', 'region', 'name')
-                ->whereNotNull('region')
-                ->orderBy('name')
-                ->get();
-        }
-
-        $regions = $regions->map( function($item) {
-                if ($item instanceof Branch) {
-                    $item = $item->toArray();
-                } else {
-                    $item = ((array) $item);
-                }
-
-                return ((object) array_map('htmlspecialchars_decode', $item));
+        $regions = $this->regions();
+        $regions = $this->fetch($regions)
+            ->filter( function($item) {
+                return $item->region;
             });
 
 		$role = Role::oldest('id')->get();

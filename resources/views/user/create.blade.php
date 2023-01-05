@@ -44,8 +44,8 @@
                                                     <label class="form-label" for="region">Region</label>
                                                     <select name="region" class="form-control" onkeydown="event.preventDefault()">
                                                         <option value>Choose</option>
-@foreach ($regions->pluck('region')->unique()->sort() as $value)
-														<option value="{{ $value }}">{{ $value }}</option>
+@foreach ($regions->sortBy('region') as $value)
+														<option value="{{ $value->region }}">{{ $value->region }}</option>
 @endforeach
                                                     </select>
                                                 </div>

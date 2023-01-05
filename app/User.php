@@ -92,26 +92,6 @@ class User extends Authenticatable
         );
     }
 
-	public function getStrukturCabangAttribute()
-    {
-        try {
-            return DB::connection('sqlsrv')
-                ->table('StrukturCabang')
-                ->where('Id', $this->branch_code)
-                ->get(['Company name as branch_name', 'NamaRegion as branch_region'])
-                ->map( function($item) {
-                    return ((object) array_map('htmlspecialchars_decode', ((array) $item)));
-                })
-                ->whenEmpty( function($collection) {
-                    return $collection->push((object) (['branch_name' => null, 'branch_region' => null]));
-                })
-                ->first();
-
-        } catch (\Exception $e) {
-            return $this->branch()->firstOrNew([], ['region' => null])->toArray();
-        }
-    }
-
 	public function getCommercialBankLimitAttribute()
     {
         return (($this->role_id && $this->role->limit) ? $this->role->limit->commercial_bank_limit : null);

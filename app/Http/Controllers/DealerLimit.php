@@ -22,62 +22,38 @@ class DealerLimit extends Controller
      */
     public function index()
     {
-		$branch;
+        $branches = $this->branches(strtoupper('kantor pusat'), '!=');
+        $branches = $this->fetch($branches)
+            ->filter( function($item) {
+                return ($item->code && $item->name && $item->region);
+            })
+            ->map( function($item, $key) {
+                $branch = Branch::latest('updated_at')->firstOrNew(
+                        [
+                            'code' => $item->code
+                        ],
+                        [
+                            'sales_limit' => null,
+                            'updated_at' => null,
+                        ]
+                    );
 
-		try {
-            $branch = DB::connection('sqlsrv')->table('StrukturCabang')
-                ->select('Id as code', 'Company name as name', 'NamaRegion as region')
-                ->whereRaw("lower(NamaRegion) != 'kantor pusat'")
-                ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
-                ->orderBy('NamaRegion')
-                ->get()
-                ->map( function($item, $key) {
-                    $branch = Branch::latest('updated_at')->firstOrNew(
-                            [
-                                'code' => $item->code
-                            ],
-                            [
-                                'sales_limit' => null,
-                                'updated_at' => null,
-                            ]
-                        );
+                $item->sales_limit = $branch->sales_limit;
+                $item->updated_at = $branch->updated_at;
 
-                    $item->sales_limit = $branch->sales_limit;
-                    $item->updated_at = $branch->updated_at;
-
-                    if ($branch->updated_at) {
-                        $item->updated_at = $branch->updated_at->toDayDateTimeString();
-                    }
-
-                    return $item;
-                });
-
-        } catch (\Exception $e) {
-            $branch = Branch::whereRaw("lower(region) != 'kantor pusat'")
-                ->latest('updated_at')
-                ->get()
-                ->map( function($item, $key) {
-                    $item->updated_at = $item->updated_at->toDayDateTimeString();
-
-                    return $item;
-                });
-        }
-
-        $branch = $branch->map( function($item) {
-                if ($item instanceof Branch) {
-                    $item = $item->toArray();
-                } else {
-                    $item = ((array) $item);
+                if ($branch->updated_at) {
+                    $item->updated_at = $branch->updated_at->toDayDateTimeString();
                 }
 
-                return ((object) array_map('htmlspecialchars_decode', $item));
-            });
+                return $item;
+            })
+            ->sortBy('region');
 
 		$role = Role::orderBy('id')->get();
 
         return view('dealer-limit.index', [
 			'role' => $role,
-			'branch' => $branch,
+			'branch' => $branches,
 		]);
     }
 

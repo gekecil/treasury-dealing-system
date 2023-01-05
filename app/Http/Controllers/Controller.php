@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\SismontavarDeal;
 use App\SismontavarOption;
+use App\Branch;
+use App\Account;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -175,5 +178,130 @@ class Controller extends BaseController
                 $sismontavarDeal->save();
             }
         }
+    }
+
+    protected function regions()
+    {
+        return DB::connection('sqlsrv')
+            ->table('StrukturCabang')
+            ->select('NamaRegion as region')
+            ->distinct()
+            ->where('Company name', 'not like', '%'.strtoupper('(tutup)'));
+    }
+
+    protected function branches($search, $operator = '=')
+    {
+        return DB::connection('sqlsrv')
+            ->table('StrukturCabang')
+            ->select(['Id as code', 'Company name as name', 'NamaRegion as region'])
+            ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
+            ->where('NamaRegion', $operator, $search);
+    }
+
+    public function branch($branchCode)
+    {
+        return DB::connection('sqlsrv')
+            ->table('StrukturCabang')
+            ->select(['Id as code', 'Company name as name', 'NamaRegion as region'])
+            ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
+            ->where('Id', $branchCode);
+    }
+
+    protected function accounts($search, $limit)
+    {
+        return DB::connection('sqlsrv')
+            ->table('STG_Account')
+            ->select([
+                'ID_Nasabah as cif',
+                'No_Rekening as number',
+                'Nama_Nasabah as name',
+                DB::raw("lower(No_Rekening + ' ' + Nama_Nasabah) as [concat(number, ' ', name)]"),
+                DB::raw("len(Nama_Nasabah) as [char_length(name)]"),
+            ])
+            //->whereIn('Kategori', [6020, 6021, 6022, 6023, 6024, 6026])
+            ->where(DB::raw("lower(No_Rekening + ' ' + Nama_Nasabah)"), 'like', '%'.strtolower($search).'%')
+            ->orderByRaw("len(Nama_Nasabah)")
+            ->take($limit);
+    }
+
+    public function fetch($connection)
+    {
+        try {
+            return $connection->get()
+                ->map( function($item) {
+                    return ((object) array_map('htmlspecialchars_decode', ((array) $item)));
+                });
+
+        } catch (\Exception $e) {
+            switch ($connection->from) {
+                case 'STG_Account':
+                    $connection->model = new Account;
+                    break;
+
+                default:
+                    $connection->model = new Branch;
+            }
+
+            $connection->columns = collect($connection->columns)
+                ->mapWithKeys( function($column) {
+                    if (is_object($column)) {
+                        return [
+                            ((string) Str::of($column->getValue())->before(' as ')) => DB::raw(
+                                (string) Str::of($column->getValue())->afterLast(' as ')->replace('[', '')->replace(']', '')
+                            )
+                        ];
+                    }
+
+                    return [((string) Str::of($column)->before(' as ')) => ((string) Str::of($column)->afterLast(' as '))];
+                })
+                ->toArray();
+
+            $connection->model = $connection->model->select($connection->columns);
+
+            if ($connection->distinct) {
+                $connection->model->distinct();
+            }
+
+            if ($connection->wheres) {
+                foreach ($connection->wheres as $value) {
+                    if (is_object($value['column'])) {
+                        $value['column'] = $value['column']->getValue();
+                    }
+
+                    if (isset($connection->columns[$value['column']])) {
+                        switch ($value['boolean']) {
+                            case 'or':
+                                $connection->model->orWhere($connection->columns[$value['column']], $value['operator'], $value['value']);
+                                break;
+
+                            default:
+                                $connection->model->where($connection->columns[$value['column']], $value['operator'], $value['value']);
+                        }
+                    }
+                }
+            }
+
+            if ($connection->orders) {
+                foreach ($connection->orders as $value) {
+                    if (isset($connection->orders['column'])) {
+                        $connection->model->orderBy($connection->columns[$value['column']], $value['direction']);
+
+                    } elseif (isset($connection->orders['sql'])) {
+                        $connection->model->orderBy($connection->columns[$value['sql']]);
+                    }
+                }
+            }
+
+            if ($connection->limit) {
+                $connection->model->take($connection->limit);
+            }
+
+            return $connection->model->get()
+                ->map( function($item) {
+                    return ((object) array_map('htmlspecialchars_decode', $item->toArray()));
+                });
+        }
+
+        return ((object) []);
     }
 }

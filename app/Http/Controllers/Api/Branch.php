@@ -23,52 +23,17 @@ class Branch extends Controller
      */
     public function index()
     {
-        $branch;
-        $config = config('database.connections.sqlsrv');
-
-        $arguments = collect([
-            'Driver' => $config['driver'],
-            'Server' => $config['host'],
-            'Database' => $config['database'],
-            'LoginTimeout' => 5,
-        ]);
-
-		try {
-            $branch = DB::connection('sqlsrv')->table('StrukturCabang')
-                ->select('Id as code', 'Company name as name', 'NamaRegion as region')
-                ->whereRaw("[Company name] not like '%".strtoupper('(tutup)')."'");
-
-            if ($this->request->has('region')) {
-                $branch->where('NamaRegion', $this->request->input('region'));
-            }
-
-            $branch = $branch->whereNotNull('NamaRegion')
-            ->whereNotNull('RegionKode')
-			->distinct()
-			->get();
-
-        } catch (\Exception $e) {
-            $branch = BranchModel::select('code', 'name', 'region')
-                ->whereNotNull('region');
-            
-            if ($this->request->has('region')) {
-                $branch->where('region', $this->request->input('region'));
-            }
-
-            $branch = $branch->get();
-        }
+        $branches = $this->branches($this->request->input('region'));
+        $branches = $this->fetch($branches)
+            ->filter( function($item) {
+                return ($item->code && $item->name && $item->region);
+            })
+            ->sortBy('name')
+            ->values()
+            ->toArray();
 
 		return response()->json([
-			'data' => $branch->map( function($item) {
-                    if ($item instanceof BranchModel) {
-                        $item = $item->toArray();
-                    } else {
-                        $item = ((array) $item);
-                    }
-
-                    return ((object) array_map('htmlspecialchars_decode', $item));
-                })
-                ->toArray()
+			'data' => $branches
 		]);
     }
 

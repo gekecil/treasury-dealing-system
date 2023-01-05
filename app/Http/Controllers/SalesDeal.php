@@ -45,36 +45,17 @@ class SalesDeal extends Controller
             $this->authorize('update', new SalesDealModel);
         }
 
-        $regions;
-
-		try {
-            $regions = DB::connection('sqlsrv')->table('StrukturCabang')
-                ->select('NamaRegion as region')
-                ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
-                ->whereNotNull('NamaRegion')
-                ->get();
-
-        } catch (\Exception $e) {
-            $regions = Branch::select('region')
-                ->whereNotNull('region')
-                ->get();
-        }
-
-        $regions = $regions->map( function($item) {
-                if ($item instanceof Branch) {
-                    $item = $item->toArray();
-                } else {
-                    $item = ((array) $item);
-                }
-
-                return ((object) array_map('htmlspecialchars_decode', $item));
+        $regions = $this->regions();
+        $regions = $this->fetch($regions)
+            ->filter( function($item) {
+                return $item->region;
             });
 
-		$market = Market::whereDate('closing_at', '<=', Carbon::today()->toDateString())
+        $market = Market::whereDate('closing_at', '<=', Carbon::today()->toDateString())
             ->latest('closing_at')
             ->first();
 
-		$marketTrashed = null;
+        $marketTrashed = null;
 
         if ($market && $market->closing_at->lessThanOrEqualTo($market->opening_at)) {
             $marketTrashed = Market::onlyTrashed()
@@ -105,11 +86,11 @@ class SalesDeal extends Controller
             });
 
         return view('sales-deal.index', [
-			'market' => $market,
-			'marketTrashed' => $marketTrashed,
-			'regions' => $regions,
-			'lhbuRemarksCode' => $lhbuRemarksCode,
-			'lhbuRemarksKind' => $lhbuRemarksKind,
+            'market' => $market,
+            'marketTrashed' => $marketTrashed,
+            'regions' => $regions,
+            'lhbuRemarksCode' => $lhbuRemarksCode,
+            'lhbuRemarksKind' => $lhbuRemarksKind,
 		]);
     }
 
@@ -428,29 +409,11 @@ class SalesDeal extends Controller
      */
     public function edit(SalesDealModel $salesDeal)
     {
-        $regions;
 
-		try {
-            $regions = DB::connection('sqlsrv')->table('StrukturCabang')
-                ->select('NamaRegion as region')
-                ->where('Company name', 'not like', '%'.strtoupper('(tutup)'))
-                ->whereNotNull('NamaRegion')
-                ->get();
-
-        } catch (\Exception $e) {
-            $regions = Branch::select('region')
-                ->whereNotNull('region')
-                ->get();
-        }
-
-        $regions = $regions->map( function($item) {
-                if ($item instanceof Branch) {
-                    $item = $item->toArray();
-                } else {
-                    $item = ((array) $item);
-                }
-
-                return ((object) array_map('htmlspecialchars_decode', $item));
+        $regions = $this->regions();
+        $regions = $this->fetch($regions)
+            ->filter( function($item) {
+                return $item->region;
             });
 
         $threshold = Threshold::latest();
