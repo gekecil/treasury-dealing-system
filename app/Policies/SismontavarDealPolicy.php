@@ -38,15 +38,14 @@ class SismontavarDealPolicy
      */
     public function view(User $user, SismontavarDeal $sismontavarDeal)
     {
-        if (Carbon::hasFormat($sismontavarDeal->transaction_date, 'Ymd His')) {
-            $user->transaction_date = Carbon::createFromFormat('Ymd His', $sismontavarDeal->transaction_date);
+        if ($user->is_branch_office_dealer && Carbon::hasFormat($sismontavarDeal->transaction_date, 'Ymd His')) {
+            return $user->branch()->first()
+                ->salesDeal()
+                ->where('created_at', Carbon::createFromFormat('Ymd His', $sismontavarDeal->transaction_date))
+                ->exists();
         }
 
-        $salesDeal = $user->branch()->first()
-            ->salesDeal()
-            ->where('created_at', $user->transaction_date);
-
-        return (($user->is_branch_office_dealer && $salesDeal->exists()) || $user->is_head_office_dealer);
+        return (($user->is_branch_office_dealer && $salesDeal) || $user->is_head_office_dealer);
     }
 
     /**
