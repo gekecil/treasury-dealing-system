@@ -35,11 +35,17 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 	->name('sign-out');
 
 	Route::resource('interbank-dealing', 'InterbankDeal')
+	->except([
+		'create', 'destroy'
+	])
 	->parameters([
 		'interbank-dealing' => 'interbankDeal'
 	]);
 
 	Route::resource('interbank-nop', 'Nop')
+	->only([
+		'index', 'store', 'update'
+	])
 	->parameters([
 		'interbank-nop' => 'nopAdjustment'
 	]);
@@ -127,7 +133,10 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 
 	Route::post('sales-blotter-excel', 'SalesBlotterExcel')->name('sales-blotter.excel');
 
-	Route::resource('currencies', 'Currency');
+	Route::resource('currencies', 'Currency')
+	->only([
+		'index', 'store', 'destroy'
+	]);
 
 	Route::resource('closing-rates', 'ClosingRate')
 	->only([
@@ -137,11 +146,17 @@ Route::middleware(['oauth2', 'refresh.token'])->group( function() {
 		'closing-rates' => 'closingRate'
 	]);
 
-	Route::resource('accounts', 'Account');
+	Route::resource('accounts', 'Account')
+	->only([
+		'index', 'store', 'destroy'
+	]);
 
 	Route::resource('news', 'News');
 
-	Route::resource('users', 'User');
+	Route::resource('users', 'User')
+	->except([
+		'store', 'show', 'update'
+	]);
 
 	Route::resource('settings-threshold', 'Threshold')
 	->only([
