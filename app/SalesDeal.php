@@ -123,10 +123,8 @@ class SalesDeal extends Model
             ->where('transaction_date', 'like', $this->created_at->format('Ymd').'%')
             ->orderBy('transaction_date')
             ->get()
-            ->reject( function($item) use($transactions) {
-                return $transactions->search( function($salesDeal) use($item) {
-                    return ($salesDeal === $item->toArray());
-                });
+            ->filter( function($item) use($transactions) {
+                return ($transactions->search($item->toArray()) === false);
             })
             ->values();
 
@@ -159,9 +157,7 @@ class SalesDeal extends Model
                 'transaction_date' => $this->created_at->format('Ymd His')
             ];
 
-        $blotterNumber = $transactions->search( function($item) use($search) {
-                return ($item === $search);
-            });
+        $blotterNumber = $transactions->search($search);
 
         if ($blotterNumber === false) {
             $blotterNumber = $transactions->count();
