@@ -25,11 +25,20 @@ class Account extends Controller
         $account = new AccountModel;
         $recordsTotal = $account->count();
 
-		if ($this->request->filled('query')) {
-			$account = $this->fetch($this->accounts($this->request->input('query'), 10))
+        if ($this->request->filled('query')) {
+            $account = $this->fetch($this->accounts($this->request->input('query'), 10))
                 ->map( function($account) {
                     return ((object) ['number' => $account->number, 'cif' => $account->cif, 'name' => $account->name]);
                 });
+
+            $account = $account->concat(
+                    AccountModel::select(['number', 'cif', 'name'])
+                    ->whereNotIn('number', $account->pluck('number')->toArray())
+                    ->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->input('query')).'%')
+                    ->orderByRaw('char_length(name)')
+                    ->take(1)
+                    ->get()
+                );
 
         } else {
             $account = AccountModel::query();
@@ -98,16 +107,16 @@ class Account extends Controller
             $account = $account->makeHidden(['salesDeal'])
                 ->append(['monthly_usd_equivalent']);
 
-		}
+        }
 
         $recordsFiltered = $account->count();
 
-		return response()->json([
-			'draw' => $this->request->input('draw'),
-			'recordsTotal' => $recordsTotal,
-			'recordsFiltered' => $recordsFiltered,
-			'data' => $account->toArray(),
-		]);
+        return response()->json([
+            'draw' => $this->request->input('draw'),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $account->toArray(),
+        ]);
     }
 
     /**
