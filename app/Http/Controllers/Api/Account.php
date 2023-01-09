@@ -34,7 +34,7 @@ class Account extends Controller
             $account = $account->concat(
                     AccountModel::select(['number', 'cif', 'name'])
                     ->whereNotIn('number', $account->pluck('number')->toArray())
-                    ->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->input('query')).'%')
+                    ->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->request->input('query')).'%')
                     ->orderByRaw('char_length(name)')
                     ->take(1)
                     ->get()
