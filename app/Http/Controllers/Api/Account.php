@@ -39,7 +39,7 @@ class Account extends Controller
                 ->flatMap( function($accounts) {
                     $accounts->monthly_usd_equivalent = AccountModel::firstOrNew(['number' => $accounts->number])->monthly_usd_equivalent;
 
-                    return ((object) collect((array) $accounts)->only(['number', 'cif', 'name', 'monthly_usd_equivalent']));
+                    return ((object) collect((array) $accounts)->only(['number', 'cif', 'name', 'monthly_usd_equivalent'])->toArray());
                 });
 
         } else {
