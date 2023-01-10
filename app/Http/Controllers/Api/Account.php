@@ -26,10 +26,7 @@ class Account extends Controller
         $recordsTotal = $account->count();
 
         if ($this->request->filled('query')) {
-            $account = $this->fetch($this->accounts($this->request->input('query'), 10))
-                ->map( function($account) {
-                    return ((object) ['number' => $account->number, 'cif' => $account->cif, 'name' => $account->name]);
-                });
+            $account = $this->fetch($this->accounts($this->request->input('query'), 10));
 
             $account = $account->concat(
                     AccountModel::select(['number', 'cif', 'name'])
@@ -38,7 +35,12 @@ class Account extends Controller
                     ->orderByRaw('char_length(name)')
                     ->take(1)
                     ->get()
-                );
+                )
+                ->flatMap( function($accounts) {
+                    $accounts->monthly_usd_equivalent = AccountModel::firstOrNew(['number' => $accounts->number])->monthly_usd_equivalent;
+
+                    return ((object) collect((array) $accounts)->only(['number', 'cif', 'name', 'monthly_usd_equivalent']));
+                });
 
         } else {
             $account = AccountModel::query();
