@@ -1753,10 +1753,6 @@
 
 							$(e.currentTarget).find('input[name="amount"]').next().val('');
 							$(e.currentTarget).find('input[name="amount"]').next().trigger('input');
-
-                            $(e.currentTarget).find('[aria-describedby^="tooltip"]').each( function(element) {
-                                element.tooltip('hide');
-                            });
                         })
 
 						$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[type="submit"]').on('focus', function(e) {

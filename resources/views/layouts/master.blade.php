@@ -1198,7 +1198,6 @@
                         $(e.currentTarget).closest('form').find('[name="account-cif"]').val(e.params.data.cif);
                         $(e.currentTarget).closest('form').find('[name="account-name"]').val(e.params.data.name);
 
-                        e.currentTarget.threshold = $(e.currentTarget).closest('form').find('[name=threshold]').val();
                         e.currentTarget.base_currency_code = $(e.currentTarget).closest('form').find('[name="base-primary-code"]').val();
                         e.currentTarget.counter_currency_code = $(e.currentTarget).closest('form').find('[name="counter-primary-code"]').val();
                         e.currentTarget.world_currency_code = $(e.currentTarget).closest('form').find('[name="world-currency-code"]').val();
@@ -1207,46 +1206,30 @@
                         e.currentTarget.world_currency_closing_rate = $(e.currentTarget).closest('form').find('[name="world-currency-closing-rate"]').val();
                         e.currentTarget.amount = $(e.currentTarget).closest('form').find('[name="amount"]');
                         e.currentTarget.account_cif = $(e.currentTarget).closest('form').find('[name="account-cif"]');
+                        e.currentTarget.threshold = $(e.currentTarget).closest('form').find('[name=threshold]').val();
+
+                        if (e.currentTarget.threshold) {
+                            e.currentTarget.threshold = parseFloat(e.currentTarget.threshold);
+                        }
 
                         if (!e.currentTarget.counter_currency_code && (e.currentTarget.buy_sell !== 'bank buy')) {
-                            e.params.data.final_monthly_usd_equivalent = 0;
+                            e.params.data.final_monthly_usd_equivalent = e.params.data.monthly_usd_equivalent;
 
-                            if (e.params._type === 'select') {
-                                if (!e.params.data.monthly_usd_equivalent) {
-                                    e.params.data.monthly_usd_equivalent = 0;
-                                }
-
-                                if ($(document).find('label[for=monthly-usd-equivalent]').parent().children().get(1).dataset.monthlyUsdEquivalent) {
-                                    $(document).find('label[for=monthly-usd-equivalent]').parent().children().get(1).dataset.monthlyUsdEquivalent = (
-                                        e.params.data.monthly_usd_equivalent
-                                    )
-                                }
-
-                            } else {
-                                e.params.data.monthly_usd_equivalent = 0;
-                                
-                                if ($(document).find('label[for=monthly-usd-equivalent]').parent().children().get(1).dataset.monthlyUsdEquivalent) {
-                                    e.params.data.monthly_usd_equivalent += (
-                                        parseFloat(
-                                            $(document).find('label[for=monthly-usd-equivalent]').parent().children().get(1)
-                                            .dataset
-                                            .monthlyUsdEquivalent
-                                        )
-                                    );
-                                }
+                            if ($(document).find('label[for=monthly-usd-equivalent]').siblings(':input').length) {
+                                $(document).find('label[for=monthly-usd-equivalent]').siblings(':input').get(0).dataset.monthlyUsdEquivalent = (
+                                    e.params.data.final_monthly_usd_equivalent
+                                )
                             }
 
                             if (e.currentTarget.amount.val()) {
                                 e.params.data.final_monthly_usd_equivalent += (
-                                    e.params.data.monthly_usd_equivalent + (
-                                        (e.currentTarget.base_currency_code === e.currentTarget.world_currency_code) ? (
-                                            Math.abs(parseFloat(e.currentTarget.amount.val()))
-                                        ) : (
-                                            Math.abs(
-                                                parseFloat(e.currentTarget.base_currency_closing_rate) * (
-                                                    parseFloat(e.currentTarget.amount.val()) / parseFloat(
-                                                        e.currentTarget.world_currency_closing_rate
-                                                    )
+                                    (e.currentTarget.base_currency_code === e.currentTarget.world_currency_code) ? (
+                                        Math.abs(parseFloat(e.currentTarget.amount.val()))
+                                    ) : (
+                                        Math.abs(
+                                            parseFloat(e.currentTarget.base_currency_closing_rate) * (
+                                                parseFloat(e.currentTarget.amount.val()) / parseFloat(
+                                                    e.currentTarget.world_currency_closing_rate
                                                 )
                                             )
                                         )
@@ -1261,11 +1244,11 @@
                             {
                                 e.params.data.final_monthly_usd_equivalent -= (
                                     (e.currentTarget.base_currency_code === e.currentTarget.world_currency_code) ? (
-                                        Math.abs(parseFloat(e.currentTarget.amount.parent().children().get(1).dataset.amount))
+                                        Math.abs(parseFloat(e.currentTarget.amount.get(0).dataset.amount))
                                     ) : (
                                         Math.abs(
                                             parseFloat(e.currentTarget.base_currency_closing_rate) * (
-                                                parseFloat(e.currentTarget.amount.parent().children().get(1).dataset.amount) / (
+                                                parseFloat(e.currentTarget.amount.get(0).dataset.amount) / (
                                                     parseFloat(e.currentTarget.world_currency_closing_rate)
                                                 )
                                             )
@@ -1274,11 +1257,13 @@
                                 );
                             }
 
-                            $(document).find('label[for=monthly-usd-equivalent]').next().val(
+                            $(document).find('label[for=monthly-usd-equivalent]')
+                            .siblings(':input')
+                            .val(
                                 e.params.data.final_monthly_usd_equivalent.toLocaleString('en-US')
                             );
 
-                            if (e.params.data.final_monthly_usd_equivalent > parseFloat(e.currentTarget.threshold)) {
+                            if (e.currentTarget.amount.val() && (e.params.data.final_monthly_usd_equivalent > e.currentTarget.threshold)) {
                                 $(e.currentTarget).next().tooltip('dispose');
 
                                 $(e.currentTarget).next().tooltip({
