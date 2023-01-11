@@ -891,9 +891,9 @@
                 data: function (params) {
                     params.query = {
                         api_token: $(document).find('meta[name="api-token"]').attr('content'),
-                        @if (request()->route()->named('interbank-dealing.index'))
+@if (request()->route()->named('interbank-dealing.index'))
                         is_interbank_deal: true,
-                        @endif
+@endif
                         query : params.term
                     }
 
@@ -1199,8 +1199,8 @@
                         $(e.currentTarget).closest('form').find('[name="account-name"]').val(e.params.data.name);
 
                         e.currentTarget.threshold = $(e.currentTarget).closest('form').find('[name=threshold]').val();
-                        e.currentTarget.base_currency_code = $(e.currentTarget).closest('form').find('[name="base-currency-code"]').val();
-                        e.currentTarget.counter_currency_code = $(e.currentTarget).closest('form').find('[name="counter-currency-code"]').val();
+                        e.currentTarget.base_currency_code = $(e.currentTarget).closest('form').find('[name="base-primary-code"]').val();
+                        e.currentTarget.counter_currency_code = $(e.currentTarget).closest('form').find('[name="counter-primary-code"]').val();
                         e.currentTarget.world_currency_code = $(e.currentTarget).closest('form').find('[name="world-currency-code"]').val();
                         e.currentTarget.buy_sell = $(e.currentTarget).closest('form').find('[name="buy-sell"]').val().trim().toLowerCase();
                         e.currentTarget.base_currency_closing_rate = $(e.currentTarget).closest('form').find('[name="base-currency-closing-rate"]').val();
@@ -1480,7 +1480,7 @@
                 e.currentTarget.world_currency_code = $('[name="world-currency-code"]').val();
 
                 e.currentTarget.usd_equivalent = (
-                    ($('[name="base-currency-code"]').val() === e.currentTarget.world_currency_code) ? (
+                    ($('[name="base-primary-code"]').val() === e.currentTarget.world_currency_code) ? (
                         e.currentTarget.amount
                     ) : (
                         Math.abs(
@@ -1539,7 +1539,7 @@
                 e.currentTarget.amount = $(e.currentTarget).closest('form').find('[name="amount"]').val();
                 e.currentTarget.base_currency_closing_rate = $(e.currentTarget).closest('form').find('[name="base-currency-closing-rate"]').val();
                 e.currentTarget.world_currency_closing_rate = $(e.currentTarget).closest('form').find('[name="world-currency-closing-rate"]').val();
-                e.currentTarget.base_currency_code = $(e.currentTarget).closest('form').find('[name="base-currency-code"]').val();
+                e.currentTarget.base_currency_code = $(e.currentTarget).closest('form').find('[name="base-primary-code"]').val();
                 e.currentTarget.world_currency_code = $(e.currentTarget).closest('form').find('[name="world-currency-code"]').val();
 
                 e.currentTarget.usd_equivalent = (
