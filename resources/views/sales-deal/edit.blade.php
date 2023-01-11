@@ -65,9 +65,9 @@
 												@csrf
 												
 												<input type="hidden" name="threshold" value="{{ $threshold }}">
-												<input type="hidden" name="base-currency-code" value="{{ $salesDeal->currencyPair->baseCurrency->currency_code }}">
-												<input type="hidden" name="counter-currency-code" value="{{
-                                                    $salesDeal->currencyPair->counterCurrency()->firstOrNew([], ['currency_code', null])->currency_code
+												<input type="hidden" name="base-primary-code" value="{{ $salesDeal->currencyPair->baseCurrency->primary_code }}">
+												<input type="hidden" name="counter-primary-code" value="{{
+                                                    $salesDeal->currencyPair->counterCurrency()->firstOrNew([], ['primary_code', null])->primary_code
                                                 }}">
 												<input type="hidden" name="branch-name" value="{{ $salesDeal->branch->name }}">
 @if (auth()->user()->is_branch_office_dealer)
