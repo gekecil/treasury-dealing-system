@@ -194,7 +194,7 @@
 													<label class="form-label" for="base-amount">
 														Base Amount
 													</label>
-													<input type="hidden" name="amount" value="{{ $salesDeal->amount }}" required>
+													<input type="hidden" name="amount" value="{{ $salesDeal->amount }}" data-amount="{{ $salesDeal->amount }}" required>
 													<input type="text" class="form-control" value="{{
                                                         number_format($salesDeal->amount, 2)
                                                     }}" readonly>
