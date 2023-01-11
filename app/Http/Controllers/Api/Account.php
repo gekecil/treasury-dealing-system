@@ -36,10 +36,15 @@ class Account extends Controller
                     ->take(1)
                     ->get()
                 )
-                ->map( function($account) {
-                    $account->monthly_usd_equivalent = AccountModel::firstOrNew(['number' => $account->number])->monthly_usd_equivalent;
+                ->map( function($item) {
+                    $attributes = ['number', 'cif', 'name'];
+                    $account = AccountModel::firstOrNew(['number' => $item->number]);
 
-                    return ((object) collect((array) $account)->only(['number', 'cif', 'name', 'monthly_usd_equivalent'])->toArray());
+                    foreach ($attributes as $attribute) {
+                        $account->$attribute = $item->$attribute;
+                    }
+
+                    return $account->only(array_merge($attributes, ['monthly_usd_equivalent']));
                 });
 
         } else {
