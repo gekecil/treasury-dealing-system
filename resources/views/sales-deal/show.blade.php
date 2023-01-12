@@ -509,7 +509,7 @@
         ) && $salesDeal->created_at->isToday()
     ) || (
         $salesDeal->modificationUpdated && !$salesDeal->modificationUpdated->confirmed && (
-            auth()->user()->can('update', $salesDeal->modificationUpdated
+            auth()->user()->can('update', $salesDeal->modificationUpdated)
         )
     ) || (
         $salesDeal->salesDealFile && !$salesDeal->salesDealFile->confirmed && auth()->user()->can('update', $salesDeal->salesDealFile)
