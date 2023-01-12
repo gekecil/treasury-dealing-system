@@ -501,16 +501,19 @@
                             </div>
 						</div>
 @if (
-	($salesDeal->specialRateDeal && !$salesDeal->specialRateDeal->confirmed && auth()->user()->can('update', $salesDeal->specialRateDeal) && (
-        !$salesDeal->salesDealRate || (
-            $currencyPair->exists()
+    (
+        $salesDeal->specialRateDeal && !$salesDeal->specialRateDeal->confirmed && auth()->user()->can('update', $salesDeal->specialRateDeal) && (
+            !$salesDeal->salesDealRate || (
+                $currencyPair->exists()
+            )
+        ) && $salesDeal->created_at->isToday()
+    ) || (
+        $salesDeal->modificationUpdated && !$salesDeal->modificationUpdated->confirmed && (
+            auth()->user()->can('update', $salesDeal->modificationUpdated
         )
-    )) || (
-		$salesDeal->modificationUpdated && !$salesDeal->modificationUpdated->confirmed && auth()->user()
-			->can('update', $salesDeal->modificationUpdated)
-	) || (
-		$salesDeal->salesDealFile && !$salesDeal->salesDealFile->confirmed && auth()->user()->can('update', $salesDeal->salesDealFile)
-	)
+    ) || (
+        $salesDeal->salesDealFile && !$salesDeal->salesDealFile->confirmed && auth()->user()->can('update', $salesDeal->salesDealFile)
+    )
 )
 						<div class="row">
                             <div class="col-12">
@@ -523,12 +526,10 @@
 												@csrf
 												
 												<input type="hidden" name="route-name" value="{{ request()->route()->getName() }}">
-@if ($salesDeal->created_at->isToday())
 												<button type="button" class="btn btn-lg btn-default" data-toggle="modal" data-target="#modal-alert">
 													<span class="fal fa-check mr-1"></span>
 													Authorize
 												</button>
-@endif
 											</form>
 										</div>
 									</div>
