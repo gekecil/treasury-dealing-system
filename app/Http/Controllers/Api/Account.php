@@ -55,7 +55,7 @@ class Account extends Controller
                 $account->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->request->input('search.value')).'%')
                 ->orWhere('cif', 'like', $this->request->input('search.value').'%');
 
-                $recordsFiltered = $recordsTotal;
+                $recordsFiltered = $account->count();
             }
 
             if ($this->request->has('order')) {
