@@ -24,6 +24,7 @@ class Account extends Controller
     {
         $account = new AccountModel;
         $recordsTotal = $account->count();
+        $recordsFiltered = $recordsTotal;
 
         if ($this->request->filled('query')) {
             $account = $this->fetch($this->accounts($this->request->input('query'), 10));
@@ -48,11 +49,13 @@ class Account extends Controller
                 });
 
         } else {
-            $account = AccountModel::query();
+            $account = $account->query();
 
             if ($this->request->filled('search.value')) {
                 $account->where(DB::raw('lower(name)'), 'like', '%'.strtolower($this->request->input('search.value')).'%')
                 ->orWhere('cif', 'like', $this->request->input('search.value').'%');
+
+                $recordsFiltered = $recordsTotal;
             }
 
             if ($this->request->has('order')) {
@@ -115,8 +118,6 @@ class Account extends Controller
                 ->append(['monthly_usd_equivalent']);
 
         }
-
-        $recordsFiltered = $account->count();
 
         return response()->json([
             'draw' => $this->request->input('draw'),

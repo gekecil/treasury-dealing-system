@@ -27,7 +27,7 @@ class OAuthUserWrapper
                 'nik' => data_get($user->toArray(), 'preferred_username'),
             ]);
 
-        if ($userModel->isDirty(['first_name', 'last_name', 'nik'])) {
+        if ($userModel->exists && $userModel->isDirty(['first_name', 'last_name', 'nik'])) {
             $userModel->save();
         }
 
