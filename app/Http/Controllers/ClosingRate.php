@@ -39,8 +39,19 @@ class ClosingRate extends Controller
                 return new Market(['closing_at' => Carbon::today()->toDateString()]);
             });
 
+        $now = Carbon::now();
+
+        $close = Market::whereDate('closing_at', '<=', Carbon::today()->toDateString())
+            ->latest('closing_at')
+            ->firstOr( function() {
+                return new Market(['closing_at' => Carbon::today()->toDateString()]);
+            })
+            ->closing_at;
+
         return view('closing-rate.index', [
             'market' => $market,
+            'now' => $now,
+            'close' => $close,
         ]);
     }
 

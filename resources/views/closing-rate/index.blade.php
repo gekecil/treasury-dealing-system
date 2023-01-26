@@ -147,7 +147,7 @@
                                 lengthChange: false,
                                 bInfo: false,
                                 order: [],
-@if(auth()->user()->can('create', 'App\ClosingRate') && $market->closing_at->startOfDay()->isFuture())
+@if(auth()->user()->can('create', 'App\ClosingRate') && $market->closing_at->startOfDay()->isFuture() && $now->isAfter($close))
                                 select: {
                                     style: 'single'
                                 },
@@ -255,7 +255,7 @@
                                     infoFiltered: ''
                                 },
                                 createdRow: function(row, data, dataIndex) {
-@if(auth()->user()->can('create', 'App\ClosingRate') && $market->closing_at->startOfDay()->isFuture())
+@if(auth()->user()->can('create', 'App\ClosingRate') && $market->closing_at->startOfDay()->isFuture() && $now->isAfter($close))
                                     $(row).addClass('pointer');
 
 @endif
