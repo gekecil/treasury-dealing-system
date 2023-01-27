@@ -128,7 +128,7 @@
 									<div class="modal-body">
 										<div class="form-group">
 											<label class="form-label" for="currency-id">Currency Code</label>
-											<select name="currency-code" class="form-control" required>
+											<select name="base-primary-code" class="form-control" required>
 												<option value>Choose</option>
 @foreach($currency as $value)
 												<option value="{{ $value->currency_code }}">{{ $value->currency_code }}</option>
@@ -172,7 +172,7 @@
 									<div class="modal-body">
 										<div class="form-group">
 											<label class="form-label" for="currency-id-update">Currency Code</label>
-											<select name="currency-code" class="form-control" required>
+											<select name="base-primary-code" class="form-control" required>
 												<option value>Choose</option>
 @foreach($currency as $value)
 												<option value="{{ $value->currency_code }}">{{ $value->currency_code }}</option>
@@ -824,11 +824,11 @@
 						
 						$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('show.bs.modal', function(e) {
 							if ($(e.currentTarget).is('.modal:not(.js-modal-settings):not(.modal-alert):eq(1)')) {
-								$(e.currentTarget).find('select[name="currency-code"]').find('option').remove();
+								$(e.currentTarget).find('select[name="base-primary-code"]').find('option').remove();
 								
-								$('.modal:not(.js-modal-settings):not(.modal-alert)').eq(0).find('select[name="currency-code"]').find('option')
+								$('.modal:not(.js-modal-settings):not(.modal-alert)').eq(0).find('select[name="base-primary-code"]').find('option')
 									.each( function(key, element) {
-										$(e.currentTarget).find('select[name="currency-code"]').append((new Option(element.innerHTML, element.value)).outerHTML);
+										$(e.currentTarget).find('select[name="base-primary-code"]').append((new Option(element.innerHTML, element.value)).outerHTML);
 									})
 									
 								e.data = dtAdvance.row({
@@ -845,13 +845,13 @@
 								$(e.currentTarget).find('input[name="amount"]').next().trigger('input');
 								$(e.currentTarget).find('textarea[name="note"]').val(e.data.note);
 								
-								if ($(e.currentTarget).find('select[name="currency-code"]').find('option[value="' + e.data.currency.currency_code + '"]').length) {
-									$(e.currentTarget).find('select[name="currency-code"]')
+								if ($(e.currentTarget).find('select[name="base-primary-code"]').find('option[value="' + e.data.currency.currency_code + '"]').length) {
+									$(e.currentTarget).find('select[name="base-primary-code"]')
 									.find('option[value="' + e.data.currency.currency_code + '"]')
 									.prop('selected', true);
 									
 								} else {
-									e.currentTarget.querySelector('select[name="currency-code"]').appendChild(
+									e.currentTarget.querySelector('select[name="base-primary-code"]').appendChild(
 										new Option(e.data.currency.currency_code, e.data.currency.currency_code, true, true)
 									);
 								}

@@ -161,8 +161,8 @@
 								<form action="{{ route('interbank-dealing.store') }}" method="post">
 									@csrf
 									
-									<input type="hidden" name="base-currency-code" required>
-									<input type="hidden" name="counter-currency-code" required>
+									<input type="hidden" name="base-primary-code" required>
+									<input type="hidden" name="counter-primary-code" required>
 									<input type="hidden" name="buy-sell" required>
 									<input type="hidden" name="commercial-bank-limit">
 									<input type="hidden" name="base-currency-closing-rate">
@@ -582,11 +582,11 @@
 							$(e.currentTarget).find('.modal-header .modal-title small').addClass('m-0', 'text-muted')
 								.text(e.relatedTarget.closest('.card').querySelector('.card-title strong').innerHTML);
 
-							$(e.currentTarget).find('input[name="base-currency-code"]').val(
+							$(e.currentTarget).find('input[name="base-primary-code"]').val(
 								e.relatedTarget.closest('[class^=col-sm]').dataset.baseCurrencyCode
 							);
 
-							$(e.currentTarget).find('input[name="counter-currency-code"]').val(
+							$(e.currentTarget).find('input[name="counter-primary-code"]').val(
 								e.relatedTarget.closest('[class^=col-sm]').dataset.counterCurrencyCode
 							);
 

@@ -82,7 +82,15 @@ class Nop extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'currency-code' => 'required|min:3|max:3',
+            'currency-code' => [
+                'required',
+                'min:3',
+                'max:3',
+                Rule::exists((new Currency)->getTable(), 'primary_code')
+                ->where(function ($query) use($request) {
+                    $query->where('id', ($this->baseCurrencyClosingRate($request)->currency_id));
+                }),
+            ],
         ]);
 
         $today = Carbon::today();
@@ -96,42 +104,8 @@ class Nop extends Controller
 				->id
             ),
 
-			'base_currency_closing_rate_id' => (
-                ClosingRate::where( function($query) use($today) {
-                    $market = Market::whereDate('opening_at', '<=', $today->toDateString())
-                        ->latest('updated_at');
-
-                    $market->when(
-                        $market->get()->where('opening_at.dayOfYear', $today->dayOfYear)->where('opening_at.year', $today->year)->first(),
-                        function($query, $market) {
-                            return $query->whereDate('opening_at', '<', $market->opening_at->toDateString());
-
-                        }, function($query) use($today) {
-                            return $query->whereDate('opening_at', $today->toDateString());
-                        }
-                    );
-
-                    $market = $market->firstOr( function() {
-                            $market = new Market;
-                            $date = Carbon::yesterday();
-
-                            while ($date->isWeekend()) {
-                                $date = $date->subDay();
-                            }
-
-                            return $market->fill(['opening_at' => $date->toDateTimeString()]);
-                        });
-
-                    $query->where('created_at', $market->opening_at->toDateString())
-                    ->orWhere('created_at', $today->toDateString());
-                })
-                ->whereHas('currency', function($query) use($request) {
-                    $query->where('primary_code', $request->input('currency-code'));
-                })
-                ->latest()
-                ->first()
-				->id
-            ),
+			'base_currency_closing_rate_id' => $this->baseCurrencyClosingRate($request)
+                ->id,
 
 			'amount' => ($request->input('amount') ?: 0),
 			'note' => $request->input('note'),

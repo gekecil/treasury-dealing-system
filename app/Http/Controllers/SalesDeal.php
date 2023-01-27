@@ -112,72 +112,17 @@ class SalesDeal extends Controller
      */
     public function store(Request $request)
     {
+        $baseCurrencyClosingRate = $this->baseCurrencyClosingRate($request);
+
         $request->validate([
             'base-primary-code' => [
                 'required',
                 Rule::exists((new Currency)->getTable(), 'primary_code')
                 ->where(function ($query) use($request) {
-                    $query->where('id', (
-                        ClosingRate::where('currency_id', (
-                            Currency::whereNull('secondary_code')
-                            ->firstOrNew(
-                                ['primary_code' => $request->input('base-primary-code')],
-                                ['id' => null]
-                            )
-                            ->id
-                        ))->firstOrNew(
-                            [
-                                'created_at' => Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
-                                    ->latest('closing_at')
-                                    ->firstOr( function() {
-                                        $market = Market::select('closing_at')
-                                            ->latest('closing_at')
-                                            ->first();
-
-                                        while ($market->closing_at->isWeekend()) {
-                                            $market->closing_at = $market->closing_at->subDay();
-                                        }
-
-                                        return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
-                                    })
-                                    ->closing_at
-                                    ->toDateString()
-                            ],
-                            [
-                                'currency_id' => null
-                            ]
-                        )
-                        ->currency_id
-                    ));
+                    $query->where('id', $baseCurrencyClosingRate->currency_id));
                 }),
             ],
         ]);
-
-        $baseCurrencyClosingRateId = ClosingRate::firstWhere([
-                'currency_id' => Currency::whereNull('secondary_code')
-                    ->firstOrNew(
-                        ['primary_code' => $request->input('base-primary-code')],
-                        ['id' => null]
-                    )
-                    ->id,
-
-                'created_at' => Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
-                    ->latest('closing_at')
-                    ->firstOr( function() {
-                        $market = Market::select('closing_at')
-                            ->latest('closing_at')
-                            ->first();
-
-                        while ($market->closing_at->isWeekend()) {
-                            $market->closing_at = $market->closing_at->subDay();
-                        }
-
-                        return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
-                    })
-                    ->closing_at
-                    ->toDateString(),
-            ])
-            ->id;
 
         try {
 			$decrypted = Crypt::decryptString($request->input('encrypted-query-string'));
@@ -203,7 +148,7 @@ class SalesDeal extends Controller
 
             if (Currency::where('primary_code', $request->input('base-primary-code'))->first()->id != 1) {
                 $usdEquivalent = new SalesDealModel([
-                        'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
+                        'base_currency_closing_rate_id' => $baseCurrencyClosingRate->id,
                         'amount' => ($request->input('amount') ?: 0)
                     ]);
 
@@ -312,7 +257,7 @@ class SalesDeal extends Controller
 			'account_id' => $account->id,
 			'branch_id' => $branch->id,
 			'currency_pair_id' => $request->input('currency_id'),
-			'base_currency_closing_rate_id' => $baseCurrencyClosingRateId,
+			'base_currency_closing_rate_id' => $baseCurrencyClosingRate->id,
 			'interoffice_rate' => ($request->input('interoffice_rate') ?: 0),
 			'customer_rate' => ($request->input('customer-rate') ?: 0),
 

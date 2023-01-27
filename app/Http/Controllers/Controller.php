@@ -6,6 +6,10 @@ use App\SismontavarDeal;
 use App\SismontavarOption;
 use App\Branch;
 use App\Account;
+use App\ClosingRate;
+use App\Currency;
+use App\Market;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -303,5 +307,39 @@ class Controller extends BaseController
         }
 
         return ((object) []);
+    }
+
+    public function baseCurrencyClosingRateId($request)
+    {
+        return ClosingRate::firstOrNew(
+                [
+                    'currency_id' => Currency::whereNull('secondary_code')
+                        ->firstOrNew(
+                            ['primary_code' => $request->input('base-primary-code')],
+                            ['id' => null]
+                        )
+                        ->id,
+
+                    'created_at' => Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
+                        ->latest('closing_at')
+                        ->firstOr( function() {
+                            $market = Market::select('closing_at')
+                                ->latest('closing_at')
+                                ->first();
+
+                            while ($market->closing_at->isWeekend()) {
+                                $market->closing_at = $market->closing_at->subDay();
+                            }
+
+                            return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
+                        })
+                        ->closing_at
+                        ->toDateString(),
+                ],
+                [
+                    'id' => null,
+                    'currency_id' => null,
+                ],
+            );
     }
 }

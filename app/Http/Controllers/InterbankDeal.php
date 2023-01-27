@@ -57,42 +57,11 @@ class InterbankDeal extends Controller
             'counterparty' => 'required',
             'buy-sell' => 'required',
             'tod-tom-spot-forward' => 'required',
-            'base-currency-code' => [
+            'base-primary-code' => [
                 'required',
                 Rule::exists((new Currency)->getTable(), 'primary_code')
                 ->where(function ($query) use($request) {
-                    $query->where('id', (
-                        ClosingRate::where('currency_id', (
-                            Currency::whereNull('secondary_code')
-                            ->firstOrNew(
-                                ['primary_code' => $request->input('base-currency-code')],
-                                ['id' => null]
-                            )
-                            ->id
-                        ))->firstOrNew(
-                            [
-                                'created_at' =>  Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
-                                    ->latest('closing_at')
-                                    ->firstOr( function() {
-                                        $market = Market::select('closing_at')
-                                            ->latest('closing_at')
-                                            ->first();
-
-                                        while ($market->closing_at->isWeekend()) {
-                                            $market->closing_at = $market->closing_at->subDay();
-                                        }
-
-                                        return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
-                                    })
-                                    ->closing_at
-                                    ->toDateString(),
-                            ],
-                            [
-                                'currency_id' => null
-                            ]
-                        )
-                        ->currency_id
-                    ));
+                    $query->where('id', ($this->baseCurrencyClosingRate($request)->currency_id));
                 }),
             ],
         ]);
@@ -108,12 +77,12 @@ class InterbankDeal extends Controller
 			'currency_pair_id' => (
                 CurrencyPair::where( function($query) use($request) {
                     $query->whereHas('baseCurrency', function($query) use($request) {
-                        $query->where('primary_code', $request->input('base-currency-code'));
+                        $query->where('primary_code', $request->input('base-primary-code'));
                     });
 
-                    if ($request->filled('counter-currency-code')) {
+                    if ($request->filled('counter-primary-code')) {
                         $query->whereHas('counterCurrency', function($query) use($request) {
-                            $query->where('primary_code', $request->input('counter-currency-code'));
+                            $query->where('primary_code', $request->input('counter-primary-code'));
                         });
 
                     } else {
@@ -124,33 +93,8 @@ class InterbankDeal extends Controller
 				->id
             ),
 
-			'base_currency_closing_rate_id' => (
-                ClosingRate::firstWhere([
-                    'currency_id' => Currency::whereNull('secondary_code')
-                        ->firstOrNew(
-                            ['primary_code' => $request->input('base-currency-code')],
-                            ['id' => null]
-                        )
-                        ->id,
-
-                    'created_at' =>  Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
-                        ->latest('closing_at')
-                        ->firstOr( function() {
-                            $market = Market::select('closing_at')
-                                ->latest('closing_at')
-                                ->first();
-
-                            while ($market->closing_at->isWeekend()) {
-                                $market->closing_at = $market->closing_at->subDay();
-                            }
-
-                            return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
-                        })
-                        ->closing_at
-                        ->toDateString(),
-                ])
-				->id
-            ),
+			'base_currency_closing_rate_id' => $this->baseCurrencyClosingRate($request)
+				->id,
 
 			'interoffice_rate' => ($request->input('interoffice-rate') ?: 0),
 
