@@ -8,195 +8,176 @@
 @endsection
 
 @section('content')
-					<!-- BEGIN Page Content -->
-                    <!-- the #js-page-content id is needed for some plugins to initialize -->
-                    <main id="js-page-content" role="main" class="page-content">
-                        <ol class="breadcrumb page-breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ config('app.name') }}</a></li>
-                            <li class="breadcrumb-item"><a href="#interbank">Interbank</a></li>
-                            <li class="breadcrumb-item active">NOP</li>
-                            <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
-                        </ol>
-						<div class="subheader">
-                            <h1 class="subheader-title">
-                                <i class='subheader-icon ni ni-wallet'></i> NOP
-                            </h1>
-                        </div>
+            <!-- BEGIN Page Content -->
+            <!-- the #js-page-content id is needed for some plugins to initialize -->
+            <main id="js-page-content" role="main" class="page-content">
+                <ol class="breadcrumb page-breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ config('app.name') }}</a></li>
+                    <li class="breadcrumb-item"><a href="#interbank">Interbank</a></li>
+                    <li class="breadcrumb-item active">NOP</li>
+                    <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
+                </ol>
+                <div class="subheader">
+                    <h1 class="subheader-title"><i class='subheader-icon ni ni-wallet'></i> NOP</h1>
+                </div>
 @if (session('status'))
-						<div id="alert-dismissible" class="panel-container show">
-							<div class="panel-content">
-								<div class="alert alert-success alert-dismissible fade show" role="alert">
-									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-										<span aria-hidden="true"><i class="fal fa-times"></i></span>
-									</button>
-									<strong>Well Done!</strong> {{ session('status') }}
-								</div>
-							</div>
-						</div>
+                <div id="alert-dismissible" class="panel-container show">
+                    <div class="panel-content">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                            </button>
+                            <strong>Well Done!</strong> {{ session('status') }}
+                        </div>
+                    </div>
+                </div>
 @endif
-						<div class="row">
-                            <div class="col-xl-12">
-                                <div id="panel-nop-index" class="panel">
-                                    <div class="panel-hdr bg-faded">
-                                        <h2>
-											NOP <span class="fw-300"><i>Table</i></span>
-										</h2>
-										<div class="panel-toolbar">
-                                            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
-											<button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
-											<button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div id="panel-nop-index" class="panel">
+                            <div class="panel-hdr bg-faded">
+                                <h2>NOP <span class="fw-300"><i>Table</i></span></h2>
+                                <div class="panel-toolbar">
+                                    <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                                    <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                                    <button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                                </div>
+                            </div>
+                            <div class="panel-container show">
+                                <div class="panel-content">
+                                    <form action="{{ route('interbank-nop.excel') }}" method="post" target="_blank">
+                                        @csrf
+                                        
+                                        <div class="form-row d-flex justify-content-between align-items-center mb-3">
+                                            <div class="form-group col-md-6 mb-0">
+                                                <label class="form-label" for="datepicker-from">Date from</label>
+                                                <div class="input-group">
+                                                    <input type="text" name="date_from" class="form-control datepicker" placeholder="Select date" data-date-end-date="{{ \Carbon\Carbon::today()->toDateString() }}" readonly>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text fs-xl">
+                                                            <i class="fal fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6 mb-0">
+                                                <label class="form-label" for="datepicker-to">to</label>
+                                                <div class="input-group">
+                                                    <input type="text" name="date_to" class="form-control datepicker" placeholder="Select date" data-date-end-date="{{ \Carbon\Carbon::today()->toDateString() }}" readonly>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text fs-xl">
+                                                            <i class="fal fa-calendar"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="panel-container show">
-                                        <div class="panel-content">
-											<form action="{{ route('interbank-nop.excel') }}" method="post" target="_blank">
-												@csrf
-												
-												<div class="form-row d-flex justify-content-between align-items-center mb-3">
-													<div class="form-group col-md-6 mb-0">
-														<label class="form-label" for="datepicker-from">Date from</label>
-                                                        <div class="input-group">
-                                                            <input type="text" name="date_from" class="form-control datepicker" placeholder="Select date" data-date-end-date="{{
-                                                                \Carbon\Carbon::today()->toDateString()
-                                                            }}" readonly>
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text fs-xl">
-                                                                    <i class="fal fa-calendar"></i>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-													</div>
-													<div class="form-group col-md-6 mb-0">
-														<label class="form-label" for="datepicker-to">to</label>
-                                                        <div class="input-group">
-                                                            <input type="text" name="date_to" class="form-control datepicker" placeholder="Select date" data-date-end-date="{{
-                                                                \Carbon\Carbon::today()->toDateString()
-                                                            }}" readonly>
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text fs-xl">
-                                                                    <i class="fal fa-calendar"></i>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-													</div>
-												</div>
-												<button type="button" class="d-none" data-toggle="modal" data-target="#modal-alert"></button>
-											</form>
-											<table id="dt-nop" class="table table-bordered table-hover table-striped w-100"></table>
-                                        </div>
-                                    </div>
+                                        <button type="button" class="d-none" data-toggle="modal" data-target="#modal-alert"></button>
+                                    </form>
+                                    <table id="dt-nop" class="table table-bordered table-hover table-striped w-100"></table>
                                 </div>
                             </div>
                         </div>
-						<div class="row">
-                            <div class="col-xl-12">
-                                <div id="panel-nop-adjustment-index" class="panel">
-                                    <div class="panel-hdr bg-faded">
-                                        <h2>
-											NOP Adjustment <span class="fw-300"><i>Table</i></span>
-										</h2>
-										<div class="panel-toolbar">
-                                            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
-											<button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
-											<button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
-                                        </div>
-                                    </div>
-                                    <div class="panel-container show">
-                                        <div class="panel-content">
-											<table id="dt-advance" class="table table-bordered table-hover table-striped w-100"></table>
-                                        </div>
-                                    </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div id="panel-nop-adjustment-index" class="panel">
+                            <div class="panel-hdr bg-faded">
+                                <h2>NOP Adjustment <span class="fw-300"><i>Table</i></span></h2>
+                                <div class="panel-toolbar">
+                                    <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                                    <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                                    <button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                                </div>
+                            </div>
+                            <div class="panel-container show">
+                                <div class="panel-content">
+                                    <table id="dt-advance" class="table table-bordered table-hover table-striped w-100"></table>
                                 </div>
                             </div>
                         </div>
-					</main>
-					<!-- Modal default-->
-					<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<form action="{{ route('interbank-nop.store') }}" method="post">
-									@csrf
-									
-									<div class="modal-header">
-										<h4 class="modal-title">
-											Add NOP Adjustment
-										</h4>
-										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true"><i class="fal fa-times"></i></span>
-										</button>
-									</div>
-									<div class="modal-body">
-										<div class="form-group">
-											<label class="form-label" for="currency-id">Currency Code</label>
-											<select name="base-primary-code" class="form-control" required>
-												<option value>Choose</option>
+                    </div>
+                </div>
+            </main>
+            <!-- Modal default-->
+            <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action="{{ route('interbank-nop.store') }}" method="post">
+                            @csrf
+                            
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add NOP Adjustment</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="form-label" for="currency-id">Currency Code</label>
+                                    <select name="base-primary-code" class="form-control" required>
+                                        <option value>Choose</option>
 @foreach($currency as $value)
-												<option value="{{ $value->currency_code }}">{{ $value->currency_code }}</option>
+                                        <option value="{{ $value->currency_code }}">{{ $value->currency_code }}</option>
 @endforeach
-											</select>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="amount">Amount of Deviation</label>
-											<input type="hidden" name="amount" id="amount-of-deviation" required>
-											<input type="text" class="form-control" autocomplete="off" required>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="note">Note</label>
-											<textarea name="note" class="form-control" rows="5" required></textarea>
-										</div>
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-										<button type="submit" class="btn btn-primary">Submit</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-					<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<form action method="post">
-									@csrf
-									
-									@method(strtoupper('patch'))
-									
-									<div class="modal-header">
-										<h4 class="modal-title">
-											Edit NOP Adjustment
-										</h4>
-										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true"><i class="fal fa-times"></i></span>
-										</button>
-									</div>
-									<div class="modal-body">
-										<div class="form-group">
-											<label class="form-label" for="currency-id-update">Currency Code</label>
-											<select name="base-primary-code" class="form-control" required>
-												<option value>Choose</option>
-@foreach($currency as $value)
-												<option value="{{ $value->currency_code }}">{{ $value->currency_code }}</option>
-@endforeach
-											</select>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="amount-update">Amount of Deviation</label>
-											<input type="hidden" name="amount" id="amount-of-deviation-update" required>
-											<input type="text" class="form-control" autocomplete="off" required>
-										</div>
-										<div class="form-group">
-											<label class="form-label" for="note-update">Note</label>
-											<textarea name="note" class="form-control" rows="5" required></textarea>
-										</div>
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-										<button type="submit" class="btn btn-primary">Submit</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="amount">Amount of Deviation</label>
+                                    <input type="hidden" name="amount" id="amount-of-deviation" required>
+                                    <input type="text" class="form-control" autocomplete="off" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="note">Note</label>
+                                    <textarea name="note" class="form-control" rows="5" required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action method="post">
+                            @csrf
+                            
+                            @method(strtoupper('patch'))
+                            
+                            <div class="modal-header">
+                                <h4 class="modal-title">Edit NOP Adjustment</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label class="form-label" for="currency-id-update">Currency Code</label>
+                                    <input type="text" name="base-primary-code" class="form-control" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="amount-update">Amount of Deviation</label>
+                                    <input type="hidden" name="amount" id="amount-of-deviation-update" required>
+                                    <input type="text" class="form-control" autocomplete="off" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="note-update">Note</label>
+                                    <textarea name="note" class="form-control" rows="5" required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 @endsection
 
 @section('javascript')
@@ -822,40 +803,21 @@
 							
 						})
 						
-						$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('show.bs.modal', function(e) {
-							if ($(e.currentTarget).is('.modal:not(.js-modal-settings):not(.modal-alert):eq(1)')) {
-								$(e.currentTarget).find('select[name="base-primary-code"]').find('option').remove();
-								
-								$('.modal:not(.js-modal-settings):not(.modal-alert)').eq(0).find('select[name="base-primary-code"]').find('option')
-									.each( function(key, element) {
-										$(e.currentTarget).find('select[name="base-primary-code"]').append((new Option(element.innerHTML, element.value)).outerHTML);
-									})
-									
-								e.data = dtAdvance.row({
-									selected: true
-								});
-								
-								e.data = e.data.data();
-								
-								$(e.currentTarget).find('form').attr('action', (
-									$('.modal:not(.js-modal-settings):not(.modal-alert)').eq(0).find('form').attr('action').concat('/').concat(e.data.id)
-								));
-								
-								$(e.currentTarget).find('input[name="amount"]').next().val(e.data.amount);
-								$(e.currentTarget).find('input[name="amount"]').next().trigger('input');
-								$(e.currentTarget).find('textarea[name="note"]').val(e.data.note);
-								
-								if ($(e.currentTarget).find('select[name="base-primary-code"]').find('option[value="' + e.data.currency.currency_code + '"]').length) {
-									$(e.currentTarget).find('select[name="base-primary-code"]')
-									.find('option[value="' + e.data.currency.currency_code + '"]')
-									.prop('selected', true);
-									
-								} else {
-									e.currentTarget.querySelector('select[name="base-primary-code"]').appendChild(
-										new Option(e.data.currency.currency_code, e.data.currency.currency_code, true, true)
-									);
-								}
-							}
+						$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').eq(1).on('show.bs.modal', function(e) {
+                            e.data = dtAdvance.row({
+                                selected: true
+                            });
+                            
+                            e.data = e.data.data();
+                            
+                            $(e.currentTarget).find('form').attr('action', (
+                                $('.modal:not(.js-modal-settings):not(.modal-alert)').eq(0).find('form').attr('action').concat('/').concat(e.data.id)
+                            ));
+                            
+                            $(e.currentTarget).find('input[name="base-primary-code"]').val(e.data.currency.currency_code);
+                            $(e.currentTarget).find('input[name="amount"]').next().val(e.data.amount);
+                            $(e.currentTarget).find('input[name="amount"]').next().trigger('input');
+                            $(e.currentTarget).find('textarea[name="note"]').val(e.data.note);
 						})
 						
 						$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('hidden.bs.modal', function(e) {

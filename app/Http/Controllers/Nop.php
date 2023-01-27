@@ -143,34 +143,14 @@ class Nop extends Controller
      */
     public function update(Request $request, NopAdjustment $nopAdjustment)
     {
-        $request->validate([
-            'base-primary-code' => [
-                'required',
-                'min:3',
-                'max:3',
-                Rule::exists((new Currency)->getTable(), 'primary_code')
-                ->where(function ($query) use($request) {
-                    $query->where('id', ($this->baseCurrencyClosingRate($request)->currency_id));
-                }),
-            ],
-        ]);
+        $nopAdjustment->fill([
+            'user_id' => Auth::id(),
+            'amount' => ($request->input('amount') ?: 0),
+            'note' => $request->input('note'),
+        ])
+        ->save();
 
-		$nopAdjustment->fill([
-			'user_id' => Auth::id(),
-
-            'currency_id' => (
-                Currency::withTrashed()
-                ->whereNull('secondary_code')
-				->firstWhere('primary_code', $request->input('base-primary-code'))
-				->id
-            ),
-
-			'amount' => ($request->input('amount') ?: 0),
-			'note' => $request->input('note'),
-		])
-		->save();
-
-		return redirect()->back()->with('status', 'The NOP Adjustment Was Updated!');
+        return redirect()->back()->with('status', 'The NOP Adjustment Was Updated!');
     }
 
     /**
