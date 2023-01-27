@@ -309,7 +309,7 @@ class Controller extends BaseController
         return ((object) []);
     }
 
-    public function baseCurrencyClosingRateId($request)
+    protected function baseCurrencyClosingRate($request)
     {
         return ClosingRate::firstOrNew(
                 [
