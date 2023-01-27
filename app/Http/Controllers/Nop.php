@@ -35,7 +35,9 @@ class Nop extends Controller
                     ->latest('closing_at')
                     ->groupByRaw('closing_at::date')
                     ->skip(1)
-                    ->firstOr( function() use($market) {
+                    ->firstOr( function() {
+                        $market = new Market(['closing_at' => Carbon::yesterday()]);
+
                         while ($market->closing_at->isWeekend()) {
                             $market->closing_at = $market->closing_at->subDay();
                         }
