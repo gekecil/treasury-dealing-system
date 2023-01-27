@@ -320,12 +320,16 @@ class Controller extends BaseController
                         )
                         ->id,
 
-                    'created_at' => Market::whereDate('closing_at', '<', Carbon::today()->toDateString())
+                    'created_at' => Market::where( function($query) {
+                            if (Market::whereDate('closing_at', Carbon::today()->toDateString())->exists()) {
+                                $query->whereDate('closing_at', '<', Carbon::today()->toDateString());
+                            } else {
+                                $query->whereDate('id', null);
+                            }
+                        })
                         ->latest('closing_at')
                         ->firstOr( function() {
-                            $market = Market::select('closing_at')
-                                ->latest('closing_at')
-                                ->first();
+                            $market = new Market(['closing_at' => Carbon::yesterday()]);
 
                             while ($market->closing_at->isWeekend()) {
                                 $market->closing_at = $market->closing_at->subDay();

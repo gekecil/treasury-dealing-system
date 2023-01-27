@@ -28,25 +28,30 @@ class Nop extends Controller
         $today = Carbon::today();
 
         $currency = Currency::whereHas('closingRate', function($query) use($today) {
-				$query->where(
-                    'created_at',
-                    Market::selectRaw('closing_at::date')
-                    ->whereDate('closing_at', '<=', $today->toDateString())
-                    ->latest('closing_at')
-                    ->groupByRaw('closing_at::date')
-                    ->skip(1)
-                    ->firstOr( function() {
-                        $market = new Market(['closing_at' => Carbon::yesterday()]);
+				if (Market::whereDate('closing_at', $today->toDateString())->exists()) {
+                    $query->where(
+                        'created_at',
+                        Market::selectRaw('closing_at::date')
+                        ->whereDate('closing_at', '<=', $today->toDateString())
+                        ->latest('closing_at')
+                        ->groupByRaw('closing_at::date')
+                        ->skip(1)
+                        ->firstOr( function() {
+                            $market = new Market(['closing_at' => Carbon::yesterday()]);
 
-                        while ($market->closing_at->isWeekend()) {
-                            $market->closing_at = $market->closing_at->subDay();
-                        }
+                            while ($market->closing_at->isWeekend()) {
+                                $market->closing_at = $market->closing_at->subDay();
+                            }
 
-                        return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
-                    })
-                    ->closing_at
-                    ->toDateString()
-                );
+                            return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
+                        })
+                        ->closing_at
+                        ->toDateString()
+                    );
+
+                } else {
+                    $query->where('id', null);
+                }
 			})
 			->orderBy('id')
 			->get('primary_code as currency_code');
