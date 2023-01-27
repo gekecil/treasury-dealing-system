@@ -28,32 +28,23 @@ class Nop extends Controller
         $today = Carbon::today();
 
         $currency = Currency::whereHas('closingRate', function($query) use($today) {
-                $market = Market::whereDate('opening_at', '<=', $today->toDateString())
-                    ->latest('updated_at');
-
-                $market->when(
-                    $market->get()->where('opening_at.dayOfYear', $today->dayOfYear)->where('opening_at.year', $today->year)->first(),
-                    function($query, $market) {
-                        return $query->whereDate('opening_at', '<', $market->opening_at->toDateString());
-
-                    }, function($query) use($today) {
-                        return $query->whereDate('opening_at', $today->toDateString());
-                    }
-                );
-
-                $market = $market->firstOr( function() {
-                        $market = new Market;
-                        $date = Carbon::yesterday();
-
-                        while ($date->isWeekend()) {
-                            $date = $date->subDay();
+				$query->where(
+                    'created_at',
+                    Market::selectRaw('closing_at::date')
+                    ->whereDate('closing_at', '<=', $today->toDateString())
+                    ->latest('closing_at')
+                    ->groupByRaw('closing_at::date')
+                    ->skip(1)
+                    ->firstOr( function() use($market) {
+                        while ($market->closing_at->isWeekend()) {
+                            $market->closing_at = $market->closing_at->subDay();
                         }
 
-                        return $market->fill(['opening_at' => $date->toDateTimeString()]);
-                    });
-
-				$query->where('created_at', $market->opening_at->toDateString())
-                ->orWhere('created_at', $today->toDateString());
+                        return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
+                    })
+                    ->closing_at
+                    ->toDateString()
+                );
 			})
 			->orderBy('id')
 			->get('primary_code as currency_code');
