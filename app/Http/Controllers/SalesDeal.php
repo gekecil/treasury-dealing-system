@@ -118,7 +118,7 @@ class SalesDeal extends Controller
             'base-primary-code' => [
                 'required',
                 Rule::exists((new Currency)->getTable(), 'primary_code')
-                ->where(function ($query) use($request) {
+                ->where(function ($query) use($baseCurrencyClosingRate) {
                     $query->where('id', $baseCurrencyClosingRate->currency_id);
                 }),
             ],
