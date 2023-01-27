@@ -49,7 +49,7 @@ class ClosingRate extends Controller
 
 		$closingRate = ClosingRateModel::whereIn('currency_id', $currency->pluck('id'));
 
-		if ($market->closing_at->isFuture() || $this->request->user()->can('create', Market::class)) {
+		if ($market->closing_at->isFuture()) {
 			$closingRate->where('created_at', '<', $market->closing_at->toDateString());
 		}
 
