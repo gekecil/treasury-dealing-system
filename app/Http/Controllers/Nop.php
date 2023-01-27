@@ -75,7 +75,7 @@ class Nop extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'currency-code' => [
+            'base-primary-code' => [
                 'required',
                 'min:3',
                 'max:3',
@@ -93,7 +93,7 @@ class Nop extends Controller
 			'currency_id' => (
                 Currency::withTrashed()
                 ->whereNull('secondary_code')
-				->firstWhere('primary_code', $request->input('currency-code'))
+				->firstWhere('primary_code', $request->input('base-primary-code'))
 				->id
             ),
 
@@ -139,7 +139,15 @@ class Nop extends Controller
     public function update(Request $request, NopAdjustment $nopAdjustment)
     {
         $request->validate([
-            'currency-code' => 'required|min:3|max:3',
+            'base-primary-code' => [
+                'required',
+                'min:3',
+                'max:3',
+                Rule::exists((new Currency)->getTable(), 'primary_code')
+                ->where(function ($query) use($request) {
+                    $query->where('id', ($this->baseCurrencyClosingRate($request)->currency_id));
+                }),
+            ],
         ]);
 
 		$nopAdjustment->fill([
@@ -148,7 +156,7 @@ class Nop extends Controller
             'currency_id' => (
                 Currency::withTrashed()
                 ->whereNull('secondary_code')
-				->firstWhere('primary_code', $request->input('currency-code'))
+				->firstWhere('primary_code', $request->input('base-primary-code'))
 				->id
             ),
 
