@@ -82,8 +82,6 @@ class Nop extends Controller
         $request->validate([
             'base-primary-code' => [
                 'required',
-                'min:3',
-                'max:3',
                 Rule::exists((new Currency)->getTable(), 'primary_code')
                 ->where(function ($query) use($request) {
                     $query->where('id', ($this->baseCurrencyClosingRate($request)->currency_id));

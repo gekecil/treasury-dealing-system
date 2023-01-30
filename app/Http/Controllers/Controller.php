@@ -311,39 +311,36 @@ class Controller extends BaseController
 
     protected function baseCurrencyClosingRate($request)
     {
-        return ClosingRate::firstOrNew(
-                [
-                    'currency_id' => Currency::whereNull('secondary_code')
-                        ->firstOrNew(
-                            ['primary_code' => $request->input('base-primary-code')],
-                            ['id' => null]
-                        )
-                        ->id,
+        return ClosingRate::where([
+                'currency_id' => Currency::whereNull('secondary_code')
+                    ->firstOrNew(
+                        ['primary_code' => $request->input('base-primary-code')],
+                        ['id' => null]
+                    )
+                    ->id,
 
-                    'created_at' => Market::where( function($query) {
-                            if (Market::whereDate('closing_at', Carbon::today()->toDateString())->exists()) {
-                                $query->whereDate('closing_at', '<', Carbon::today()->toDateString());
-                            } else {
-                                $query->whereDate('id', null);
-                            }
-                        })
-                        ->latest('closing_at')
-                        ->firstOr( function() {
-                            $market = new Market(['closing_at' => Carbon::yesterday()]);
+                'created_at' => Market::where( function($query) {
+                        if (Market::whereDate('closing_at', Carbon::today()->toDateString())->exists()) {
+                            $query->whereDate('closing_at', '<', Carbon::today()->toDateString());
+                        } else {
+                            $query->whereNull('id');
+                        }
+                    })
+                    ->latest('closing_at')
+                    ->firstOr( function() {
+                        $market = new Market(['closing_at' => Carbon::yesterday()]);
 
-                            while ($market->closing_at->isWeekend()) {
-                                $market->closing_at = $market->closing_at->subDay();
-                            }
+                        while ($market->closing_at->isWeekend()) {
+                            $market->closing_at = $market->closing_at->subDay();
+                        }
 
-                            return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
-                        })
-                        ->closing_at
-                        ->toDateString(),
-                ],
-                [
-                    'id' => null,
-                    'currency_id' => null,
-                ],
-            );
+                        return $market->fill(['closing_at' => $market->closing_at->toDateString()]);
+                    })
+                    ->closing_at
+                    ->toDateString(),
+            ])
+            ->firstOr( function() {
+                return new ClosingRate(['currency_id' => null]);
+            });
     }
 }
