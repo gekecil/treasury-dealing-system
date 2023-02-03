@@ -231,9 +231,7 @@ class SalesDeal extends Controller
             $request->request->set('interoffice_rate', $request->input('interoffice-rate'));
 		}
 
-        if (Validator::make($request->all(), $validations)->fails()) {
-            abort(500);
-        }
+        Validator::make($request->all(), $validations)->validate();
 
 		$account = Account::firstOrCreate(
 				[
