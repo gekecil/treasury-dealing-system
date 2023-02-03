@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -114,15 +115,15 @@ class SalesDeal extends Controller
     {
         $baseCurrencyClosingRate = $this->baseCurrencyClosingRate($request);
 
-        $request->validate([
-            'base-primary-code' => [
-                'required',
-                Rule::exists((new Currency)->getTable(), 'primary_code')
-                ->where(function ($query) use($baseCurrencyClosingRate) {
-                    $query->where('id', $baseCurrencyClosingRate->currency_id);
-                }),
-            ],
-        ]);
+        $validations = [
+                'base-primary-code' => [
+                    'required',
+                    Rule::exists((new Currency)->getTable(), 'primary_code')
+                    ->where(function ($query) use($baseCurrencyClosingRate) {
+                        $query->where('id', $baseCurrencyClosingRate->currency_id);
+                    }),
+                ],
+            ];
 
         try {
 			$decrypted = Crypt::decryptString($request->input('encrypted-query-string'));
@@ -155,47 +156,47 @@ class SalesDeal extends Controller
                 $usdEquivalent = $usdEquivalent->usd_equivalent;
             }
 
-			$request->validate([
-                'interoffice_rate' => [
-                    'required',
-                ],
-                'sales-limit' => [
-                    'required',
-                    'gte:'.$usdEquivalent,
-                ],
-				'currency_id' => [
-					'required',
-					Rule::exists((new CurrencyPair)->getTable(), 'id')->where(function ($query) {
-						$query->where('belongs_to_sales', true);
-					})
-				],
-                'csrf_token' => [
-					'required',
-                    Rule::in([
-                        $request->session()->token(),
-                        $request->user()->token->api_token,
-                    ]),
-				],
-			]);
+			$validations = array_merge($validations, [
+                    'interoffice_rate' => [
+                        'required',
+                    ],
+                    'sales-limit' => [
+                        'required',
+                        'gte:'.$usdEquivalent,
+                    ],
+                    'currency_id' => [
+                        'required',
+                        Rule::exists((new CurrencyPair)->getTable(), 'id')->where(function ($query) {
+                            $query->where('belongs_to_sales', true);
+                        })
+                    ],
+                    'csrf_token' => [
+                        'required',
+                        Rule::in([
+                            $request->session()->token(),
+                            $request->user()->token->api_token,
+                        ]),
+                    ],
+                ]);
 
             switch (Str::of($request->input('buy-sell'))->lower()->after('bank')->trim()) {
                 case 'buy':
-                    $request->validate([
-                        'customer-rate' => [
-                            'required',
-                            'lt:'.$request->input('interoffice_rate'),
-                        ],
-                    ]);
+                    $validations = array_merge($validations, [
+                            'customer-rate' => [
+                                'required',
+                                'lt:'.$request->input('interoffice_rate'),
+                            ],
+                        ]);
 
                     break;
 
                 case 'sell':
-                    $request->validate([
-                        'customer-rate' => [
-                            'required',
-                            'gt:'.$request->input('interoffice_rate'),
-                        ],
-                    ]);
+                    $validations = array_merge($validations, [
+                            'customer-rate' => [
+                                'required',
+                                'gt:'.$request->input('interoffice_rate'),
+                            ],
+                        ]);
 
                     break;
 
@@ -229,6 +230,10 @@ class SalesDeal extends Controller
 
             $request->request->set('interoffice_rate', $request->input('interoffice-rate'));
 		}
+
+        if (Validator::make($request->all(), $validations)->fails()) {
+            abort(500);
+        }
 
 		$account = Account::firstOrCreate(
 				[
