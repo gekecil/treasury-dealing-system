@@ -598,8 +598,10 @@
                                     case 429:
                                         Swal.fire({
                                             title: 'Loading...',
-                                            type: 'warning',
-                                            timer: jqXHR.getResponseHeader('Retry-After') * 1000
+                                            timer: jqXHR.getResponseHeader('Retry-After') * 1000,
+                                            onBeforeOpen: function onBeforeOpen() {
+                                                Swal.showLoading()
+                                            }
                                         })
 
                                         window.setTimeout(requestSalesDeal, (jqXHR.getResponseHeader('Retry-After') * 1000))
