@@ -598,6 +598,8 @@
                                     case 429:
                                         Swal.fire({
                                             title: 'Loading...',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
                                             timer: jqXHR.getResponseHeader('Retry-After') * 1000,
                                             onBeforeOpen: function onBeforeOpen() {
                                                 Swal.showLoading()
