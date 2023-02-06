@@ -1021,7 +1021,11 @@
                             $('a[href="{!! url()->current() !!}"]').parent().parent().parent().attr('class', 'active open');
                             initApp.buildNavigation(myapp_config.navHooks);
 
-@if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
+@if(session()->has('errors'))
+                            Swal.fire('Oops...', implode('\n', session('errors')->all()), 'error')
+@endif
+
+@if(collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
                             $(document).find('select[name="lhbu-remarks-code"]').select2({
                                 dropdownParent: $(document).find('select[name="lhbu-remarks-code"]').parent(),
                                 containerCssClass: 'mb-2',
