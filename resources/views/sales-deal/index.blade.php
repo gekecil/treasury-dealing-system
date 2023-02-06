@@ -18,12 +18,12 @@
     collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url())
 )
         <link rel="stylesheet" media="screen, print" href="/css/formplugins/ion-rangeslider/ion-rangeslider.css">
-        <link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
 @endif
         <link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
         <link rel="stylesheet" media="screen, print" href="/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
 @if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
         <link rel="stylesheet" media="screen, print" href="/css/formplugins/select2/select2.bundle.css">
+        <link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
 @endif
 @endsection
 
@@ -552,7 +552,6 @@
 	collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url())
 )
                     <script src="/js/formplugins/ion-rangeslider/ion-rangeslider.js"></script>
-                    <script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
 @endif
                     <script src="/js/datagrid/datatables/datatables.bundle.js"></script>
                     <script src="/moment/min/moment.min.js"></script>
@@ -560,6 +559,7 @@
 @if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
                     <script src="/js/formplugins/inputmask/inputmask.bundle.js"></script>
                     <script src="/js/formplugins/select2/select2.bundle.js"></script>
+                    <script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
 @elseif (request()->route()->named('sales-top-ten-obox.index'))
                     <script src="/js/datagrid/datatables/datatables.export.js"></script>
 @endif
@@ -581,10 +581,33 @@
                                 responseSalesDeal(response);
 
                             }).fail( function(jqXHR, textStatus, errorThrown) {
-                                $('.panel-sales-deal .panel-content > .row > *').parent().collapse('hide');
+                                switch(jqXHR.status) {
+                                    case 401:
+                                        Swal.fire({
+                                            title: 'Oops...',
+                                            text: jqXHR.responseJSON.message,
+                                            type: 'error',
+                                            confirmButtonText: '<i class="fal fa-refresh"></i> Reload'
+                                        })
+                                        .then(function(result) {
+                                            window.location.reload()
+                                        })
 
-                                if (jqXHR.status === 429) {
-                                    window.setTimeout(requestSalesDeal, (jqXHR.getResponseHeader('Retry-After') * 1000));
+                                        break
+
+                                    case 429:
+                                        Swal.fire({
+                                            title: 'Loading...',
+                                            type: 'warning',
+                                            timer: jqXHR.getResponseHeader('Retry-After') * 1000
+                                        })
+
+                                        window.setTimeout(requestSalesDeal, (jqXHR.getResponseHeader('Retry-After') * 1000))
+                                        break
+
+                                    default:
+                                        $(document).find('.panel-sales-deal .panel-content > .row > *').parent().collapse('hide')
+
                                 }
                             })
 
