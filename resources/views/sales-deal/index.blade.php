@@ -1022,7 +1022,7 @@
                             initApp.buildNavigation(myapp_config.navHooks);
 
 @if(session()->has('errors'))
-                            Swal.fire('Oops...', @json(implode('\n', session('errors')->all())), 'error')
+                            Swal.fire('Oops...', String('<p>').concat(@json(implode('</p><p>', session('errors')->all()))).concat('</p>'), 'error')
 @endif
 
 @if(collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
