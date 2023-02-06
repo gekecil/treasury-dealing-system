@@ -583,10 +583,14 @@
                             }).fail( function(jqXHR, textStatus, errorThrown) {
                                 switch(jqXHR.status) {
                                     case 401:
+                                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
+
                                         Swal.fire({
                                             title: 'Oops...',
                                             text: jqXHR.responseJSON.message,
                                             type: 'error',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false,
                                             confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
                                         })
                                         .then(function(result) {
