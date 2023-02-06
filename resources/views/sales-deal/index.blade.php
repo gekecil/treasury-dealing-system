@@ -587,7 +587,7 @@
                                             title: 'Oops...',
                                             text: jqXHR.responseJSON.message,
                                             type: 'error',
-                                            confirmButtonText: '<i class="fal fa-refresh"></i> Reload'
+                                            confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
                                         })
                                         .then(function(result) {
                                             window.location.reload()
