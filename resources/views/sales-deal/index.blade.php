@@ -1,12 +1,16 @@
 @extends('layouts.master')
 
-@section('title', collect([
-	route('sales-fx.index') => 'FX',
-    route('sales-special-rate-deal.index') => 'Request for Fx Deal',
-    route('sales-blotter.index') => 'Blotter',
-    route('sales-top-ten-obox.index') => 'Top Ten OBOX',
-])
-->get(request()->url()).' - Sales')
+@section(
+    'title',
+    collect([
+        route('sales-fx.index') => 'FX',
+        route('sales-special-rate-deal.index') => 'Request for Fx Deal',
+        route('sales-blotter.index') => 'Blotter',
+        route('sales-top-ten-obox.index') => 'Top Ten OBOX',
+    ])
+    ->get(request()->url())
+    .' - Sales'
+)
 
 @section('stylesheet')
 @if (
