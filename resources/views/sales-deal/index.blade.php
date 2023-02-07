@@ -569,58 +569,74 @@
             var oldTo;
 
             var requestSalesDeal = function() {
-                $.ajax({
-                    method: 'GET',
-                    url: @json(route('api.currencies.index')),
-                    data: {
-                        api_token: $(document).find('meta[name="api-token"]').attr('content'),
-                        csrf_token: $(document).find('meta[name="csrf-token"]').attr('content'),
-                        is_interbank_dealing: 0
+                    if(moment().isSameOrAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
+                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
+
+                        Swal.fire({
+                            title: 'Oops...',
+                            text: 'Your session token has expired!',
+                            type: 'error',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
+                        })
+                        .then(function(result) {
+                            window.location.reload()
+                        })
                     }
-                }).done( function(response) {
-                    responseSalesDeal(response);
 
-                }).fail( function(jqXHR, textStatus, errorThrown) {
-                    switch(jqXHR.status) {
-                        case 401:
-                            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
+                    $.ajax({
+                        method: 'GET',
+                        url: @json(route('api.currencies.index')),
+                        data: {
+                            api_token: $(document).find('meta[name="api-token"]').attr('content'),
+                            csrf_token: $(document).find('meta[name="csrf-token"]').attr('content'),
+                            is_interbank_dealing: 0
+                        }
+                    }).done( function(response) {
+                        responseSalesDeal(response);
 
-                            Swal.fire({
-                                title: 'Oops...',
-                                text: jqXHR.responseJSON.message,
-                                type: 'error',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                                confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
-                            })
-                            .then(function(result) {
-                                window.location.reload()
-                            })
+                    }).fail( function(jqXHR, textStatus, errorThrown) {
+                        switch(jqXHR.status) {
+                            case 401:
+                                $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
 
-                            break
+                                Swal.fire({
+                                    title: 'Oops...',
+                                    text: jqXHR.responseJSON.message,
+                                    type: 'error',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
+                                })
+                                .then(function(result) {
+                                    window.location.reload()
+                                })
 
-                        case 429:
-                            Swal.fire({
-                                title: 'Loading...',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                                timer: jqXHR.getResponseHeader('Retry-After') * 1000,
-                                onBeforeOpen: function onBeforeOpen() {
-                                    Swal.showLoading()
-                                }
-                            })
+                                break
 
-                            window.setTimeout(requestSalesDeal, (jqXHR.getResponseHeader('Retry-After') * 1000))
-                            break
+                            case 429:
+                                Swal.fire({
+                                    title: 'Loading...',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    timer: jqXHR.getResponseHeader('Retry-After') * 1000,
+                                    onBeforeOpen: function onBeforeOpen() {
+                                        Swal.showLoading()
+                                    }
+                                })
 
-                        default:
-                            $(document).find('.panel-sales-deal .panel-content > .row > *').parent().collapse('hide')
+                                window.setTimeout(requestSalesDeal, (jqXHR.getResponseHeader('Retry-After') * 1000))
+                                break
 
-                    }
-                })
+                            default:
+                                $(document).find('.panel-sales-deal .panel-content > .row > *').parent().collapse('hide')
 
-            };
-            
+                        }
+                    })
+
+                }
+
             var responseSalesDeal = function(response) {
                     window.setTimeout(requestSalesDeal, 1000);
 
