@@ -551,529 +551,530 @@
     auth()->user()->can('create', 'App\Market') &&
 	collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url())
 )
-                    <script src="/js/formplugins/ion-rangeslider/ion-rangeslider.js"></script>
+        <script src="/js/formplugins/ion-rangeslider/ion-rangeslider.js"></script>
 @endif
-                    <script src="/js/datagrid/datatables/datatables.bundle.js"></script>
-                    <script src="/moment/min/moment.min.js"></script>
-                    <script src="/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+        <script src="/js/datagrid/datatables/datatables.bundle.js"></script>
+        <script src="/moment/min/moment.min.js"></script>
+        <script src="/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 @if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
-                    <script src="/js/formplugins/inputmask/inputmask.bundle.js"></script>
-                    <script src="/js/formplugins/select2/select2.bundle.js"></script>
-                    <script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+        <script src="/js/formplugins/inputmask/inputmask.bundle.js"></script>
+        <script src="/js/formplugins/select2/select2.bundle.js"></script>
+        <script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
 @elseif (request()->route()->named('sales-top-ten-obox.index'))
-                    <script src="/js/datagrid/datatables/datatables.export.js"></script>
+        <script src="/js/datagrid/datatables/datatables.export.js"></script>
 @endif
-                    <script type="text/javascript">
-                        var countDown;
-                        var oldFrom;
-                        var oldTo;
+        <script type="text/javascript">
+            var countDown;
+            var oldFrom;
+            var oldTo;
 
-                        var requestSalesDeal = function() {
-                            $.ajax({
-                                method: 'GET',
-                                url: @json(route('api.currencies.index')),
-                                data: {
-                                    api_token: $(document).find('meta[name="api-token"]').attr('content'),
-                                    csrf_token: $(document).find('meta[name="csrf-token"]').attr('content'),
-                                    is_interbank_dealing: 0
-                                }
-                            }).done( function(response) {
-                                responseSalesDeal(response);
+            var requestSalesDeal = function() {
+                $.ajax({
+                    method: 'GET',
+                    url: @json(route('api.currencies.index')),
+                    data: {
+                        api_token: $(document).find('meta[name="api-token"]').attr('content'),
+                        csrf_token: $(document).find('meta[name="csrf-token"]').attr('content'),
+                        is_interbank_dealing: 0
+                    }
+                }).done( function(response) {
+                    responseSalesDeal(response);
 
-                            }).fail( function(jqXHR, textStatus, errorThrown) {
-                                switch(jqXHR.status) {
-                                    case 401:
-                                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
+                }).fail( function(jqXHR, textStatus, errorThrown) {
+                    switch(jqXHR.status) {
+                        case 401:
+                            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
 
-                                        Swal.fire({
-                                            title: 'Oops...',
-                                            text: jqXHR.responseJSON.message,
-                                            type: 'error',
-                                            allowOutsideClick: false,
-                                            allowEscapeKey: false,
-                                            confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
-                                        })
-                                        .then(function(result) {
-                                            window.location.reload()
-                                        })
+                            Swal.fire({
+                                title: 'Oops...',
+                                text: jqXHR.responseJSON.message,
+                                type: 'error',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
+                            })
+                            .then(function(result) {
+                                window.location.reload()
+                            })
 
-                                        break
+                            break
 
-                                    case 429:
-                                        Swal.fire({
-                                            title: 'Loading...',
-                                            allowOutsideClick: false,
-                                            allowEscapeKey: false,
-                                            timer: jqXHR.getResponseHeader('Retry-After') * 1000,
-                                            onBeforeOpen: function onBeforeOpen() {
-                                                Swal.showLoading()
-                                            }
-                                        })
-
-                                        window.setTimeout(requestSalesDeal, (jqXHR.getResponseHeader('Retry-After') * 1000))
-                                        break
-
-                                    default:
-                                        $(document).find('.panel-sales-deal .panel-content > .row > *').parent().collapse('hide')
-
+                        case 429:
+                            Swal.fire({
+                                title: 'Loading...',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                timer: jqXHR.getResponseHeader('Retry-After') * 1000,
+                                onBeforeOpen: function onBeforeOpen() {
+                                    Swal.showLoading()
                                 }
                             })
 
-                        };
-						
-                        var responseSalesDeal = function(response) {
-                            window.setTimeout(requestSalesDeal, 1000);
+                            window.setTimeout(requestSalesDeal, (jqXHR.getResponseHeader('Retry-After') * 1000))
+                            break
 
-                            response.data.base_currency_rate = response.data.currency.filter(currency_rate => currency_rate.belongs_to_sales);
+                        default:
+                            $(document).find('.panel-sales-deal .panel-content > .row > *').parent().collapse('hide')
 
-                            response.column = $('.panel-sales-deal:eq(0) .panel-content > .row > *');
+                    }
+                })
 
-                            response.data.base_currency_rate = response.data.base_currency_rate.filter(
-                                    currency_rate => (
-                                        response.data.closing_rate.find(
-                                            closing_rate => closing_rate.currency.primary_code === currency_rate.base_currency.primary_code
+            };
+            
+            var responseSalesDeal = function(response) {
+                    window.setTimeout(requestSalesDeal, 1000);
+
+                    response.data.base_currency_rate = response.data.currency.filter(currency_rate => currency_rate.belongs_to_sales);
+
+                    response.column = $('.panel-sales-deal:eq(0) .panel-content > .row > *');
+
+                    response.data.base_currency_rate = response.data.base_currency_rate.filter(
+                            currency_rate => (
+                                response.data.closing_rate.find(
+                                    closing_rate => closing_rate.currency.primary_code === currency_rate.base_currency.primary_code
 @if (request()->route()->named('sales-fx.index'))
-                                        ) && (
-                                            moment().isSame(currency_rate.updated_at, 'day')
-                                        ) && (
-                                            currency_rate.dealable_fx_rate
-                                        ) && (
-                                            currency_rate.buying_rate || currency_rate.selling_rate
+                                ) && (
+                                    moment().isSame(currency_rate.updated_at, 'day')
+                                ) && (
+                                    currency_rate.dealable_fx_rate
+                                ) && (
+                                    currency_rate.buying_rate || currency_rate.selling_rate
 @endif
-                                        )
-                                    )
                                 )
-                                .concat(
-                                    response.data.special_currency.filter(currency_rate => currency_rate.belongs_to_sales).filter(
-                                        special_currency_rate => (
-                                            !special_currency_rate.counter_currency_id && (
-                                                response.data.closing_rate.find(
-                                                    closing_rate => (
-                                                        closing_rate.currency.primary_code === special_currency_rate.base_currency.primary_code
-                                                    )
-                                                )
-@if (request()->route()->named('sales-fx.index'))
-                                            ) && (
-                                                moment().isSame(special_currency_rate.updated_at, 'day')
-                                            ) && (
-                                                special_currency_rate.dealable_fx_rate
-                                            ) && (
-                                                special_currency_rate.buying_rate || special_currency_rate.selling_rate
-@endif
+                            )
+                        )
+                        .concat(
+                            response.data.special_currency.filter(currency_rate => currency_rate.belongs_to_sales).filter(
+                                special_currency_rate => (
+                                    !special_currency_rate.counter_currency_id && (
+                                        response.data.closing_rate.find(
+                                            closing_rate => (
+                                                closing_rate.currency.primary_code === special_currency_rate.base_currency.primary_code
                                             )
                                         )
+@if (request()->route()->named('sales-fx.index'))
+                                    ) && (
+                                        moment().isSame(special_currency_rate.updated_at, 'day')
+                                    ) && (
+                                        special_currency_rate.dealable_fx_rate
+                                    ) && (
+                                        special_currency_rate.buying_rate || special_currency_rate.selling_rate
+@endif
                                     )
                                 )
-                                .map((value) => {
-                                    if (!value.base_currency.secondary_code) {
-                                        value.base_currency.secondary_code = value.base_currency.primary_code;
-                                    }
-
-                                    return value;
-                                });
-
-                            if (
-                                response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency) && (
-                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
-                                    .find('[name="sismontavar-threshold"]')
-                                    .val()
-                                    .length
-                                ) && (
-                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="threshold"]').val().length
-                                ) && (
-                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
-                                    .find('[name="sales-limit"]')
-                                    .val()
-                                    .length || (
-                                        @json(auth()->user()->is_super_administrator)
-                                    )
-                                ) && (
-                                    response.data.base_currency_rate.length
-                                )
-                            ) {
-                                response.column.parent().collapse('show');
-								
-                                $.each(response.data.base_currency_rate, function(key, value) {
-                                    if (key in response.column) {
-                                        value.column = response.column.get(key);
-
-                                    } else {
-                                        value.column = response.column.get(0).cloneNode('true');
-                                    }
-
-                                    value.column.dataset.baseCurrencyClosingRate = response.data.closing_rate.find(
-                                        closing_rate => (closing_rate.currency.primary_code === value.base_currency.primary_code)
-                                    )
-                                    .mid_rate;
-
-                                    value.worldCurrencyClosingRate = response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency);
-                                    value.column.dataset.worldCurrencyCode = value.worldCurrencyClosingRate.currency.primary_code;
-                                    value.column.dataset.worldCurrencyClosingRate = value.worldCurrencyClosingRate.mid_rate;
-
-                                    value.column.dataset.basePrimaryCode = value.base_currency.primary_code;
-                                    value.column.dataset.baseSecondaryCode = value.base_currency.secondary_code;
-                                    value.column.dataset.encryptedQueryString = value.encrypted_query_string;
-
-                                    value.column.querySelector('.card-title strong').innerHTML = value.base_currency.secondary_code;
-                                    value.column.querySelector('.card-title strong').innerHTML += '/';
-                                    value.column.querySelector('.card-title strong').innerHTML += value.counter_currency_id ? value.counter_currency.primary_code : 'IDR';
-
-                                    if (!(key in response.column)) {
-                                        response.column.get(0).parentElement.appendChild(value.column);
-                                    }
-
-                                    if (
-                                        $(value.column)
-                                        .find('.card-body > .row')
-                                        .children()
-                                        .eq(0)
-                                        .find('.h4.fw-400')
-                                        .attr('data-text')
-                                        !==
-                                        value.buying_rate
-                                    ) {
-                                        if (parseFloat(value.buying_rate)) {
-                                            $(value.column)
-                                            .find('.card-body > .row')
-                                            .children()
-                                            .eq(0)
-                                            .find('.h4.fw-400')
-                                            .attr('data-text', value.buying_rate);
-
-                                            $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').removeClass('show');
-                                            $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').collapse('show');
-											
-                                            if (!$(value.column).find('.card-body > .row').children().eq(0).hasClass('show')) {
-                                                $(value.column).find('.card-body > .row').children().eq(0).collapse('show');
-                                            }
-
-                                        } else {
-                                            $(value.column).find('.card-body > .row').children().eq(0).collapse('hide');
-                                        }
-                                    }
-
-                                    if (
-                                        $(value.column)
-                                        .find('.card-body > .row')
-                                        .children()
-                                        .eq(1)
-                                        .find('.h4.fw-400')
-                                        .attr('data-text')
-                                        !==
-                                        value.selling_rate
-                                    ) {
-                                        if (parseFloat(value.selling_rate)) {
-                                            $(value.column)
-                                            .find('.card-body > .row')
-                                            .children()
-                                            .eq(1)
-                                            .find('.h4.fw-400')
-                                            .attr('data-text', value.selling_rate);
-
-                                            $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').removeClass('show');
-                                            $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').collapse('show');
-
-                                            if (!$(value.column).find('.card-body > .row').children().eq(1).hasClass('show')) {
-                                                $(value.column).find('.card-body > .row').children().eq(1).collapse('show');
-                                            }
-
-                                        } else {
-                                            $(value.column).find('.card-body > .row').children().eq(1).collapse('hide');
-                                        }
-                                    }
-                                })
-
-                            } else {
-                                response.column.parent().collapse('hide');
+                            )
+                        )
+                        .map((value) => {
+                            if (!value.base_currency.secondary_code) {
+                                value.base_currency.secondary_code = value.base_currency.primary_code;
                             }
 
-                            response.column.filter(':gt(' + (response.data.base_currency_rate.length - 1) + ')')
-                            .each( function(key, element) {
-                                element.remove();
-                            });
+                            return value;
+                        });
 
-                            response.data.cross_currency_rate = response.data.cross_currency.filter(
-                                cross_currency_rate => cross_currency_rate.belongs_to_sales
-                            );
+                    if (
+                        response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency) && (
+                            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
+                            .find('[name="sismontavar-threshold"]')
+                            .val()
+                            .length
+                        ) && (
+                            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="threshold"]').val().length
+                        ) && (
+                            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)')
+                            .find('[name="sales-limit"]')
+                            .val()
+                            .length || (
+                                @json(auth()->user()->is_super_administrator)
+                            )
+                        ) && (
+                            response.data.base_currency_rate.length
+                        )
+                    ) {
+                        response.column.parent().collapse('show');
 
-                            response.column = $('.panel-sales-deal:eq(1) .panel-content > .row > *');
-
-                            response.data.cross_currency_rate = response.data.cross_currency_rate.filter(
-                                    cross_currency_rate => (
-                                        response.data.closing_rate.find(
-                                            closing_rate => closing_rate.currency.primary_code === cross_currency_rate.base_currency.primary_code
-                                        ) && (
-                                            response.data.closing_rate.find(
-                                                closing_rate => (
-                                                    closing_rate.currency.primary_code === cross_currency_rate.counter_currency.primary_code
-                                                )
-                                            )
-@if (request()->route()->named('sales-fx.index'))
-                                        ) && (
-                                            moment().isSame(cross_currency_rate.updated_at, 'day')
-                                        ) && (
-                                            cross_currency_rate.dealable_fx_rate
-                                        ) && (
-                                            cross_currency_rate.buying_rate || cross_currency_rate.selling_rate
-@endif
-                                        )
-                                    )
-                                ).concat(
-                                    response.data.special_currency.filter(cross_currency_rate => cross_currency_rate.belongs_to_sales).filter(
-                                        special_currency_rate => (
-                                            special_currency_rate.counter_currency_id && (
-                                                response.data.closing_rate.find(
-                                                    closing_rate => (
-                                                        closing_rate.currency.primary_code === special_currency_rate.base_currency.primary_code
-                                                    )
-                                                )
-                                            ) && (
-                                                response.data.closing_rate.find(
-                                                    closing_rate => (
-                                                        closing_rate.currency.primary_code === special_currency_rate.counter_currency.primary_code
-                                                    )
-                                                )
-@if (request()->route()->named('sales-fx.index'))
-                                            ) && (
-                                                moment().isSame(special_currency_rate.updated_at, 'day')
-                                            ) && (
-                                                special_currency_rate.dealable_fx_rate
-                                            ) && (
-                                                special_currency_rate.buying_rate || special_currency_rate.selling_rate
-@endif
-                                            )
-                                        )
-                                    )
-                                )
-                                .filter(
-                                    cross_currency_rate => (
-                                        response.data.base_currency_rate.find(
-                                            base_currency_rate => (
-                                                (
-                                                    base_currency_rate.base_currency.primary_code
-                                                ) === (
-                                                    cross_currency_rate.base_currency.primary_code
-                                                ) && (
-                                                    base_currency_rate.buying_rate || base_currency_rate.selling_rate
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                                .map((value) => {
-                                    if (!value.base_currency.secondary_code) {
-                                        value.base_currency.secondary_code = value.base_currency.primary_code;
-                                    }
-
-                                    if (!value.counter_currency.secondary_code) {
-                                        value.counter_currency.secondary_code = value.counter_currency.primary_code;
-                                    }
-
-                                    return value;
-                                });
-
-                            if (
-                                response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency) && (
-                                    $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="threshold"]').val().length
-                                ) && (
-                                    $(document)
-                                    .find('.modal:not(.js-modal-settings):not(.modal-alert)')
-                                    .find('[name="sales-limit"]')
-                                    .val()
-                                    .length
-                                    ||
-                                    @json(auth()->user()->is_super_administrator)
-                                ) && (
-                                    response.data.cross_currency_rate.length
-                                )
-                            ) {
-                                response.column.parent().collapse('show');
-
-                                $.each(response.data.cross_currency_rate, function(key, value) {
-                                    if (key in response.column) {
-                                        value.column = response.column.get(key);
-
-                                    } else {
-                                        value.column = response.column.get(0).cloneNode('true');
-                                    }
-
-                                    value.column.dataset.baseCurrencyClosingRate = response.data.closing_rate.find(
-                                        closing_rate => (closing_rate.currency.primary_code === value.base_currency.primary_code)
-                                    ).mid_rate;
-
-                                    value.worldCurrencyClosingRate = response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency);
-                                    value.column.dataset.worldCurrencyCode = value.worldCurrencyClosingRate.currency.primary_code;
-                                    value.column.dataset.worldCurrencyClosingRate = value.worldCurrencyClosingRate.mid_rate;
-
-                                    value.column.dataset.basePrimaryCode = value.base_currency.primary_code;
-                                    value.column.dataset.baseSecondaryCode = value.base_currency.secondary_code;
-                                    value.column.dataset.counterPrimaryCode = value.counter_currency.primary_code;
-                                    value.column.dataset.counterSecondaryCode = value.counter_currency.secondary_code;
-
-                                    value.column.dataset.encryptedQueryString = value.encrypted_query_string;
-
-                                    value.column.querySelector('.card-title strong').innerHTML = value.base_currency.secondary_code;
-                                    value.column.querySelector('.card-title strong').innerHTML += '/';
-                                    value.column.querySelector('.card-title strong').innerHTML += value.counter_currency_id ? value.counter_currency.primary_code : 'IDR';
-
-                                    if (!(key in response.column)) {
-                                        response.column.get(0).parentElement.appendChild(value.column);
-                                    }
-
-                                    if (
-                                        $(value.column)
-                                        .find('.card-body > .row')
-                                        .children()
-                                        .eq(0)
-                                        .find('.h4.fw-400')
-                                        .attr('data-text')
-                                        !==
-                                        value.buying_rate
-                                    ) {
-                                        if (
-                                            parseFloat(value.buying_rate) && (
-                                                parseFloat(
-                                                    response.data.base_currency_rate.find(
-                                                        base_currency_rate => (
-                                                            (
-                                                                base_currency_rate.base_currency.primary_code
-                                                            ) === (
-                                                                value.base_currency.primary_code
-                                                            )
-                                                        )
-                                                    )
-                                                    .buying_rate
-                                                )
-                                            )
-                                        ) {
-                                            $(value.column)
-                                            .find('.card-body > .row')
-                                            .children()
-                                            .eq(0)
-                                            .find('.h4.fw-400')
-                                            .attr('data-text', value.buying_rate);
-
-                                            $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').removeClass('show');
-                                            $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').collapse('show');
-
-                                            if (!$(value.column).find('.card-body > .row').children().eq(0).hasClass('show')) {
-                                                $(value.column).find('.card-body > .row').children().eq(0).collapse('show');
-                                            }
-
-                                        } else {
-                                            $(value.column).find('.card-body > .row').children().eq(0).collapse('hide');
-                                        }
-                                    }
-
-                                    if (
-                                        $(value.column)
-                                        .find('.card-body > .row')
-                                        .children()
-                                        .eq(1)
-                                        .find('.h4.fw-400')
-                                        .attr('data-text')
-                                        !==
-                                        value.selling_rate
-                                    ) {
-                                        if (
-                                            parseFloat(value.selling_rate) && (
-                                                parseFloat(
-                                                    response.data.base_currency_rate.find(
-                                                        base_currency_rate => (
-                                                            (
-                                                                base_currency_rate.base_currency.primary_code
-                                                            ) === (
-                                                                value.base_currency.primary_code
-                                                            )
-                                                        )
-                                                    )
-                                                    .selling_rate
-                                                )
-                                            )
-                                        ) {
-                                            $(value.column)
-                                            .find('.card-body > .row')
-                                            .children()
-                                            .eq(1)
-                                            .find('.h4.fw-400')
-                                            .attr('data-text', value.selling_rate);
-
-                                            $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').removeClass('show');
-                                            $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').collapse('show');
-
-                                            if (!$(value.column).find('.card-body > .row').children().eq(1).hasClass('show')) {
-                                                $(value.column).find('.card-body > .row').children().eq(1).collapse('show');
-                                            }
-
-                                        } else {
-                                            $(value.column).find('.card-body > .row').children().eq(1).collapse('hide');
-                                        }
-                                    }
-                                })
+                        $.each(response.data.base_currency_rate, function(key, value) {
+                            if (key in response.column) {
+                                value.column = response.column.get(key);
 
                             } else {
-                                response.column.parent().collapse('hide');
+                                value.column = response.column.get(0).cloneNode('true');
                             }
 
-                            response.column.filter(':gt(' + (response.data.cross_currency_rate.length - 1) + ')')
-                            .each( function(key, element) {
-                                element.remove();
-                            })
-                        };
+                            value.column.dataset.baseCurrencyClosingRate = response.data.closing_rate.find(
+                                closing_rate => (closing_rate.currency.primary_code === value.base_currency.primary_code)
+                            )
+                            .mid_rate;
 
-                        $(document).ready( function() {
-                            initApp.destroyNavigation(myapp_config.navHooks);
-                            $('a[href="{!! url()->current() !!}"]').parent().attr('class', 'active');
-                            $('a[href="{!! url()->current() !!}"]').parent().parent().parent().attr('class', 'active open');
-                            initApp.buildNavigation(myapp_config.navHooks);
+                            value.worldCurrencyClosingRate = response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency);
+                            value.column.dataset.worldCurrencyCode = value.worldCurrencyClosingRate.currency.primary_code;
+                            value.column.dataset.worldCurrencyClosingRate = value.worldCurrencyClosingRate.mid_rate;
+
+                            value.column.dataset.basePrimaryCode = value.base_currency.primary_code;
+                            value.column.dataset.baseSecondaryCode = value.base_currency.secondary_code;
+                            value.column.dataset.encryptedQueryString = value.encrypted_query_string;
+
+                            value.column.querySelector('.card-title strong').innerHTML = value.base_currency.secondary_code;
+                            value.column.querySelector('.card-title strong').innerHTML += '/';
+                            value.column.querySelector('.card-title strong').innerHTML += value.counter_currency_id ? value.counter_currency.primary_code : 'IDR';
+
+                            if (!(key in response.column)) {
+                                response.column.get(0).parentElement.appendChild(value.column);
+                            }
+
+                            if (
+                                $(value.column)
+                                .find('.card-body > .row')
+                                .children()
+                                .eq(0)
+                                .find('.h4.fw-400')
+                                .attr('data-text')
+                                !==
+                                value.buying_rate
+                            ) {
+                                if (parseFloat(value.buying_rate)) {
+                                    $(value.column)
+                                    .find('.card-body > .row')
+                                    .children()
+                                    .eq(0)
+                                    .find('.h4.fw-400')
+                                    .attr('data-text', value.buying_rate);
+
+                                    $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').removeClass('show');
+                                    $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').collapse('show');
+                                    
+                                    if (!$(value.column).find('.card-body > .row').children().eq(0).hasClass('show')) {
+                                        $(value.column).find('.card-body > .row').children().eq(0).collapse('show');
+                                    }
+
+                                } else {
+                                    $(value.column).find('.card-body > .row').children().eq(0).collapse('hide');
+                                }
+                            }
+
+                            if (
+                                $(value.column)
+                                .find('.card-body > .row')
+                                .children()
+                                .eq(1)
+                                .find('.h4.fw-400')
+                                .attr('data-text')
+                                !==
+                                value.selling_rate
+                            ) {
+                                if (parseFloat(value.selling_rate)) {
+                                    $(value.column)
+                                    .find('.card-body > .row')
+                                    .children()
+                                    .eq(1)
+                                    .find('.h4.fw-400')
+                                    .attr('data-text', value.selling_rate);
+
+                                    $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').removeClass('show');
+                                    $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').collapse('show');
+
+                                    if (!$(value.column).find('.card-body > .row').children().eq(1).hasClass('show')) {
+                                        $(value.column).find('.card-body > .row').children().eq(1).collapse('show');
+                                    }
+
+                                } else {
+                                    $(value.column).find('.card-body > .row').children().eq(1).collapse('hide');
+                                }
+                            }
+                        })
+
+                    } else {
+                        response.column.parent().collapse('hide');
+                    }
+
+                    response.column.filter(':gt(' + (response.data.base_currency_rate.length - 1) + ')')
+                    .each( function(key, element) {
+                        element.remove();
+                    });
+
+                    response.data.cross_currency_rate = response.data.cross_currency.filter(
+                        cross_currency_rate => cross_currency_rate.belongs_to_sales
+                    );
+
+                    response.column = $('.panel-sales-deal:eq(1) .panel-content > .row > *');
+
+                    response.data.cross_currency_rate = response.data.cross_currency_rate.filter(
+                            cross_currency_rate => (
+                                response.data.closing_rate.find(
+                                    closing_rate => closing_rate.currency.primary_code === cross_currency_rate.base_currency.primary_code
+                                ) && (
+                                    response.data.closing_rate.find(
+                                        closing_rate => (
+                                            closing_rate.currency.primary_code === cross_currency_rate.counter_currency.primary_code
+                                        )
+                                    )
+@if (request()->route()->named('sales-fx.index'))
+                                ) && (
+                                    moment().isSame(cross_currency_rate.updated_at, 'day')
+                                ) && (
+                                    cross_currency_rate.dealable_fx_rate
+                                ) && (
+                                    cross_currency_rate.buying_rate || cross_currency_rate.selling_rate
+@endif
+                                )
+                            )
+                        )
+                        .concat(
+                            response.data.special_currency.filter(cross_currency_rate => cross_currency_rate.belongs_to_sales).filter(
+                                special_currency_rate => (
+                                    special_currency_rate.counter_currency_id && (
+                                        response.data.closing_rate.find(
+                                            closing_rate => (
+                                                closing_rate.currency.primary_code === special_currency_rate.base_currency.primary_code
+                                            )
+                                        )
+                                    ) && (
+                                        response.data.closing_rate.find(
+                                            closing_rate => (
+                                                closing_rate.currency.primary_code === special_currency_rate.counter_currency.primary_code
+                                            )
+                                        )
+@if (request()->route()->named('sales-fx.index'))
+                                    ) && (
+                                        moment().isSame(special_currency_rate.updated_at, 'day')
+                                    ) && (
+                                        special_currency_rate.dealable_fx_rate
+                                    ) && (
+                                        special_currency_rate.buying_rate || special_currency_rate.selling_rate
+@endif
+                                    )
+                                )
+                            )
+                        )
+                        .filter(
+                            cross_currency_rate => (
+                                response.data.base_currency_rate.find(
+                                    base_currency_rate => (
+                                        (
+                                            base_currency_rate.base_currency.primary_code
+                                        ) === (
+                                            cross_currency_rate.base_currency.primary_code
+                                        ) && (
+                                            base_currency_rate.buying_rate || base_currency_rate.selling_rate
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                        .map((value) => {
+                            if (!value.base_currency.secondary_code) {
+                                value.base_currency.secondary_code = value.base_currency.primary_code;
+                            }
+
+                            if (!value.counter_currency.secondary_code) {
+                                value.counter_currency.secondary_code = value.counter_currency.primary_code;
+                            }
+
+                            return value;
+                        });
+
+                    if (
+                        response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency) && (
+                            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[name="threshold"]').val().length
+                        ) && (
+                            $(document)
+                            .find('.modal:not(.js-modal-settings):not(.modal-alert)')
+                            .find('[name="sales-limit"]')
+                            .val()
+                            .length
+                            ||
+                            @json(auth()->user()->is_super_administrator)
+                        ) && (
+                            response.data.cross_currency_rate.length
+                        )
+                    ) {
+                        response.column.parent().collapse('show');
+
+                        $.each(response.data.cross_currency_rate, function(key, value) {
+                            if (key in response.column) {
+                                value.column = response.column.get(key);
+
+                            } else {
+                                value.column = response.column.get(0).cloneNode('true');
+                            }
+
+                            value.column.dataset.baseCurrencyClosingRate = response.data.closing_rate.find(
+                                closing_rate => (closing_rate.currency.primary_code === value.base_currency.primary_code)
+                            ).mid_rate;
+
+                            value.worldCurrencyClosingRate = response.data.closing_rate.find(closing_rate => closing_rate.is_world_currency);
+                            value.column.dataset.worldCurrencyCode = value.worldCurrencyClosingRate.currency.primary_code;
+                            value.column.dataset.worldCurrencyClosingRate = value.worldCurrencyClosingRate.mid_rate;
+
+                            value.column.dataset.basePrimaryCode = value.base_currency.primary_code;
+                            value.column.dataset.baseSecondaryCode = value.base_currency.secondary_code;
+                            value.column.dataset.counterPrimaryCode = value.counter_currency.primary_code;
+                            value.column.dataset.counterSecondaryCode = value.counter_currency.secondary_code;
+
+                            value.column.dataset.encryptedQueryString = value.encrypted_query_string;
+
+                            value.column.querySelector('.card-title strong').innerHTML = value.base_currency.secondary_code;
+                            value.column.querySelector('.card-title strong').innerHTML += '/';
+                            value.column.querySelector('.card-title strong').innerHTML += value.counter_currency_id ? value.counter_currency.primary_code : 'IDR';
+
+                            if (!(key in response.column)) {
+                                response.column.get(0).parentElement.appendChild(value.column);
+                            }
+
+                            if (
+                                $(value.column)
+                                .find('.card-body > .row')
+                                .children()
+                                .eq(0)
+                                .find('.h4.fw-400')
+                                .attr('data-text')
+                                !==
+                                value.buying_rate
+                            ) {
+                                if (
+                                    parseFloat(value.buying_rate) && (
+                                        parseFloat(
+                                            response.data.base_currency_rate.find(
+                                                base_currency_rate => (
+                                                    (
+                                                        base_currency_rate.base_currency.primary_code
+                                                    ) === (
+                                                        value.base_currency.primary_code
+                                                    )
+                                                )
+                                            )
+                                            .buying_rate
+                                        )
+                                    )
+                                ) {
+                                    $(value.column)
+                                    .find('.card-body > .row')
+                                    .children()
+                                    .eq(0)
+                                    .find('.h4.fw-400')
+                                    .attr('data-text', value.buying_rate);
+
+                                    $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').removeClass('show');
+                                    $(value.column).find('.card-body > .row').children().eq(0).find('.h4.fw-400').collapse('show');
+
+                                    if (!$(value.column).find('.card-body > .row').children().eq(0).hasClass('show')) {
+                                        $(value.column).find('.card-body > .row').children().eq(0).collapse('show');
+                                    }
+
+                                } else {
+                                    $(value.column).find('.card-body > .row').children().eq(0).collapse('hide');
+                                }
+                            }
+
+                            if (
+                                $(value.column)
+                                .find('.card-body > .row')
+                                .children()
+                                .eq(1)
+                                .find('.h4.fw-400')
+                                .attr('data-text')
+                                !==
+                                value.selling_rate
+                            ) {
+                                if (
+                                    parseFloat(value.selling_rate) && (
+                                        parseFloat(
+                                            response.data.base_currency_rate.find(
+                                                base_currency_rate => (
+                                                    (
+                                                        base_currency_rate.base_currency.primary_code
+                                                    ) === (
+                                                        value.base_currency.primary_code
+                                                    )
+                                                )
+                                            )
+                                            .selling_rate
+                                        )
+                                    )
+                                ) {
+                                    $(value.column)
+                                    .find('.card-body > .row')
+                                    .children()
+                                    .eq(1)
+                                    .find('.h4.fw-400')
+                                    .attr('data-text', value.selling_rate);
+
+                                    $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').removeClass('show');
+                                    $(value.column).find('.card-body > .row').children().eq(1).find('.h4.fw-400').collapse('show');
+
+                                    if (!$(value.column).find('.card-body > .row').children().eq(1).hasClass('show')) {
+                                        $(value.column).find('.card-body > .row').children().eq(1).collapse('show');
+                                    }
+
+                                } else {
+                                    $(value.column).find('.card-body > .row').children().eq(1).collapse('hide');
+                                }
+                            }
+                        })
+
+                    } else {
+                        response.column.parent().collapse('hide');
+                    }
+
+                    response.column.filter(':gt(' + (response.data.cross_currency_rate.length - 1) + ')')
+                    .each( function(key, element) {
+                        element.remove();
+                    })
+                };
+
+            $(document).ready( function() {
+                initApp.destroyNavigation(myapp_config.navHooks);
+                $('a[href="{!! url()->current() !!}"]').parent().attr('class', 'active');
+                $('a[href="{!! url()->current() !!}"]').parent().parent().parent().attr('class', 'active open');
+                initApp.buildNavigation(myapp_config.navHooks);
 
 @if(session()->has('errors'))
-                            Swal.fire('Oops...', String('<p>').concat(@json(implode('</p><p>', session('errors')->all()))).concat('</p>'), 'error')
+                Swal.fire('Oops...', String('<p>').concat(@json(implode('</p><p>', session('errors')->all()))).concat('</p>'), 'error')
 @endif
 
 @if(collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
-                            $(document).find('select[name="lhbu-remarks-code"]').select2({
-                                dropdownParent: $(document).find('select[name="lhbu-remarks-code"]').parent(),
-                                containerCssClass: 'mb-2',
-                                data: @json(
-                                    $lhbuRemarksCode->prepend((object) collect(['id'=> ''])->merge(['text' => ucfirst('kode tujuan')])->toArray())
-                                    ->toArray()
-                                )
-                            })
+                $(document).find('select[name="lhbu-remarks-code"]').select2({
+                    dropdownParent: $(document).find('select[name="lhbu-remarks-code"]').parent(),
+                    containerCssClass: 'mb-2',
+                    data: @json(
+                        $lhbuRemarksCode->prepend((object) collect(['id'=> ''])->merge(['text' => ucfirst('kode tujuan')])->toArray())
+                        ->toArray()
+                    )
+                })
 
-                            $(document).find('select[name="lhbu-remarks-kind"]').select2({
-                                dropdownParent: $(document).find('select[name="lhbu-remarks-kind"]').parent(),
-                                data: @json(
-                                    $lhbuRemarksKind->prepend((object) collect(['id'=> ''])->merge(['text' => ucfirst('jenis dokumen')])->toArray())
-                                    ->toArray()
-                                )
-                            })
-                            .on('select2:select', function(e) {
-                                if (parseInt(e.params.data.id) === @json(
-                                    $lhbuRemarksKind->firstWhere('name', 'dengan underlying lainnya')->id
-                                )) {
-                                    $(document).find('select[name="lhbu-remarks-kind"]')
-                                    .parent()
-                                    .children('[name="other-lhbu-remarks-kind"]')
-                                    .prop('required', true);
+                $(document).find('select[name="lhbu-remarks-kind"]').select2({
+                    dropdownParent: $(document).find('select[name="lhbu-remarks-kind"]').parent(),
+                    data: @json(
+                        $lhbuRemarksKind->prepend((object) collect(['id'=> ''])->merge(['text' => ucfirst('jenis dokumen')])->toArray())
+                        ->toArray()
+                    )
+                })
+                .on('select2:select', function(e) {
+                    if (parseInt(e.params.data.id) === @json(
+                        $lhbuRemarksKind->firstWhere('name', 'dengan underlying lainnya')->id
+                    )) {
+                        $(document).find('select[name="lhbu-remarks-kind"]')
+                        .parent()
+                        .children('[name="other-lhbu-remarks-kind"]')
+                        .prop('required', true);
 
-                                    $(document).find('select[name="lhbu-remarks-kind"]')
-                                    .parent()
-                                    .children('[name="other-lhbu-remarks-kind"]')
-                                    .collapse('show');
+                        $(document).find('select[name="lhbu-remarks-kind"]')
+                        .parent()
+                        .children('[name="other-lhbu-remarks-kind"]')
+                        .collapse('show');
 
-                                } else {
-                                    $(document).find('select[name="lhbu-remarks-kind"]')
-                                    .parent()
-                                    .children('[name="other-lhbu-remarks-kind"]')
-                                    .prop('required', false);
+                    } else {
+                        $(document).find('select[name="lhbu-remarks-kind"]')
+                        .parent()
+                        .children('[name="other-lhbu-remarks-kind"]')
+                        .prop('required', false);
 
-                                    $(document).find('select[name="lhbu-remarks-kind"]')
-                                    .parent()
-                                    .children('[name="other-lhbu-remarks-kind"]')
-                                    .collapse('hide');
-                                }
-                            })
+                        $(document).find('select[name="lhbu-remarks-kind"]')
+                        .parent()
+                        .children('[name="other-lhbu-remarks-kind"]')
+                        .collapse('hide');
+                    }
+                })
 @endif
 
 @if (
@@ -1081,764 +1082,764 @@
     collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()) &&
     $market
 )
-                            $('#market-hour').ionRangeSlider({
-                                grid: true,
-                                drag_interval: true,
-                                skin: 'flat',
-                                type: 'double',
-                                min: moment('0800', 'hhmm').valueOf(),
-                                max: moment('1700', 'hhmm').valueOf(),
-                                from: moment(@json($market->opening_at->toTimeString()), 'hh:mm:ss').valueOf(),
-                                to: moment(@json($market->closing_at->toTimeString()), 'hh:mm:ss').valueOf(),
-                                prettify: function(n) {
-                                    return moment(n).format('HH:mm');
-                                },
-                                onStart: function(data) {
-                                    if (moment(data.from).isBefore(moment(data.to)) && !$('#panel-market-hour .btn-icon').hasClass('btn-danger')) {
-                                        $('#panel-market-hour .btn.btn-success').addClass('btn-danger');
-                                        $('#panel-market-hour .btn.btn-success').find('.fal').addClass('fa-times');
+                $('#market-hour').ionRangeSlider({
+                    grid: true,
+                    drag_interval: true,
+                    skin: 'flat',
+                    type: 'double',
+                    min: moment('0800', 'hhmm').valueOf(),
+                    max: moment('1700', 'hhmm').valueOf(),
+                    from: moment(@json($market->opening_at->toTimeString()), 'hh:mm:ss').valueOf(),
+                    to: moment(@json($market->closing_at->toTimeString()), 'hh:mm:ss').valueOf(),
+                    prettify: function(n) {
+                        return moment(n).format('HH:mm');
+                    },
+                    onStart: function(data) {
+                        if (moment(data.from).isBefore(moment(data.to)) && !$('#panel-market-hour .btn-icon').hasClass('btn-danger')) {
+                            $('#panel-market-hour .btn.btn-success').addClass('btn-danger');
+                            $('#panel-market-hour .btn.btn-success').find('.fal').addClass('fa-times');
 
-                                    } else {
+                        } else {
 @if ($marketTrashed)
-                                        oldFrom = moment(@json($marketTrashed->opening_at->toTimeString()), 'hh:mm:ss').valueOf();
-                                        oldTo = moment(@json($marketTrashed->closing_at->toTimeString()), 'hh:mm:ss').valueOf();
+                            oldFrom = moment(@json($marketTrashed->opening_at->toTimeString()), 'hh:mm:ss').valueOf();
+                            oldTo = moment(@json($marketTrashed->closing_at->toTimeString()), 'hh:mm:ss').valueOf();
 @endif
-                                    }
-                                },
-                                onFinish: function(data) {
-                                    $.ajax({
-                                        headers: {
-                                            'X-CSRF-TOKEN': $(document).find('meta[name="csrf-token"]').attr('content')
-                                        },
-                                        method: 'POST',
-                                        url: @json(route('api.markets.update', ['market' => 0], false)).replace(
-                                            /[0-9]+/g,
-                                            $('#market-hour').get(0).dataset.marketId
-                                        ),
+                        }
+                    },
+                    onFinish: function(data) {
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $(document).find('meta[name="csrf-token"]').attr('content')
+                            },
+                            method: 'POST',
+                            url: @json(route('api.markets.update', ['market' => 0], false)).replace(
+                                /[0-9]+/g,
+                                $('#market-hour').get(0).dataset.marketId
+                            ),
 
-                                        data: {
-                                            _method: 'PUT',
-                                            api_token: $(document).find('meta[name="api-token"]').attr('content'),
-                                            opening_at: moment(data.from).format('HH:mm:ss'),
-                                            closing_at: moment(data.to).format('HH:mm:ss')
-                                        }
-                                    })
-                                    .done( function(response) {
-                                        $('#market-hour').get(0).dataset.marketId = response.data.id;
-                                    })
-                                    .fail( function(jqXHR, textStatus, errorThrown) {
-                                        Swal.fire('Oops...', jqXHR.responseJSON.message, 'error');
-                                    });
-                                }
-                            })
+                            data: {
+                                _method: 'PUT',
+                                api_token: $(document).find('meta[name="api-token"]').attr('content'),
+                                opening_at: moment(data.from).format('HH:mm:ss'),
+                                closing_at: moment(data.to).format('HH:mm:ss')
+                            }
+                        })
+                        .done( function(response) {
+                            $('#market-hour').get(0).dataset.marketId = response.data.id;
+                        })
+                        .fail( function(jqXHR, textStatus, errorThrown) {
+                            Swal.fire('Oops...', jqXHR.responseJSON.message, 'error');
+                        });
+                    }
+                })
 @endif
 
 @if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
-                            window.setTimeout(requestSalesDeal, 1000);
+                window.setTimeout(requestSalesDeal, 1000);
 							
 @endif
-                            $.fn.dataTable.ext.errMode = 'throw';
+                $.fn.dataTable.ext.errMode = 'throw';
 
-                            dtAdvance = $('#dt-advance').DataTable({
-                                responsive: true,
-                                lengthChange: false,
-                                paging: true,
-                                pageLength: 50,
-                                bInfo: false,
+                dtAdvance = $('#dt-advance').DataTable({
+                        responsive: true,
+                        lengthChange: false,
+                        paging: true,
+                        pageLength: 50,
+                        bInfo: false,
 @can ('create', 'App\SalesDeal')
 @if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index'), route('sales-blotter.index')])->contains(request()->url()))
-                                order: [],
-                                orderCellsTop: true,
-                                searching: true,
-                                searchable: true,
-                                select: true,
+                        order: [],
+                        orderCellsTop: true,
+                        searching: true,
+                        searchable: true,
+                        select: true,
 @elseif (request()->route()->named('sales-top-ten-obox.index'))
-                                ordering: false,
+                        ordering: false,
 @endif
 @if (collect([route('sales-blotter.index'), route('sales-top-ten-obox.index')])->contains(request()->url()))
-                                dom: "<'row mb-3'" +
-                                    "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f>" +
-                                    "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>" +
-                                    ">" +
-                                    "<'row'<'col-sm-12'tr>>" +
-                                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-                                buttons: [
-                                    {
-                                        text: '<span class="fal fa-download mr-1"></span>Excel',
-                                        titleAttr: 'Generate Excel',
-                                        className: 'btn btn-outline-primary waves-effect waves-themed',
+                        dom: "<'row mb-3'" +
+                            "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f>" +
+                            "<'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>" +
+                            ">" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        buttons: [
+                            {
+                                text: '<span class="fal fa-download mr-1"></span>Excel',
+                                titleAttr: 'Generate Excel',
+                                className: 'btn btn-outline-primary waves-effect waves-themed',
 @if (request()->route()->named('sales-blotter.index'))
-                                        action: function() {
-                                            $(document)
-                                            .find('#panel-sales-blotter-export')
-                                            .find('[data-toggle="modal"][data-target="#modal-alert"]')
-                                            .click();
-                                        }
+                                action: function() {
+                                    $(document)
+                                    .find('#panel-sales-blotter-export')
+                                    .find('[data-toggle="modal"][data-target="#modal-alert"]')
+                                    .click();
+                                }
 @elseif (request()->route()->named('sales-top-ten-obox.index'))
-                                        extend: 'excelHtml5'
+                                extend: 'excelHtml5'
 @endif
-                                    }
-                                ],
+                            }
+                        ],
 @endif
 @endcan
 @if (request()->route()->named('sales-blotter.index'))
-                                serverSide: true,
-                                processing: true,
+                        serverSide: true,
+                        processing: true,
 @endif
-                                ajax: {
-                                    method: 'GET',
-                                    url: @json(route('api.sales-deals.index')),
-                                    data: function(params) {
-                                        params.api_token = $(document).find('meta[name="api-token"]').attr('content');
+                        ajax: {
+                            method: 'GET',
+                            url: @json(route('api.sales-deals.index')),
+                            data: function(params) {
+                                params.api_token = $(document).find('meta[name="api-token"]').attr('content');
 @if (request()->route()->named('sales-fx.index'))
-                                        params.is_sales_fx = true;
+                                params.is_sales_fx = true;
 @elseif (request()->route()->named('sales-special-rate-deal.index'))
-                                        params.is_sales_special_rate_deal = true;
+                                params.is_sales_special_rate_deal = true;
 @endif
-                                        if ($(document).find('input[name="date_from"]').length) {
-                                            params.date_from = $(document).find('input[name="date_from"]').val();
+                                if ($(document).find('input[name="date_from"]').length) {
+                                    params.date_from = $(document).find('input[name="date_from"]').val();
 
-                                        } else {
-                                            params.date_from = moment().startOf('day').format();
-                                        }
+                                } else {
+                                    params.date_from = moment().startOf('day').format();
+                                }
 
-                                        if ($(document).find('input[name="date_to"]').length) {
-                                            params.date_to = $(document).find('input[name="date_to"]').val();
+                                if ($(document).find('input[name="date_to"]').length) {
+                                    params.date_to = $(document).find('input[name="date_to"]').val();
 
-                                        } else {
-                                            params.date_to = moment().startOf('day').format();
-                                        }
+                                } else {
+                                    params.date_to = moment().startOf('day').format();
+                                }
 @if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index'), route('sales-top-ten-obox.index')])->contains(request()->url()))
-                                    },
-                                    dataSrc: function(json) {
+                            },
+                            dataSrc: function(json) {
 @if (request()->route()->named('sales-top-ten-obox.index'))
-                                        json.data = json.data
-                                            .map((value) => {
-                                                if (value.currency_pair.base_currency_id === 1) {
-                                                    value.usd_equivalent = parseFloat(value.amount);
+                                json.data = json.data
+                                    .map((value) => {
+                                        if (value.currency_pair.base_currency_id === 1) {
+                                            value.usd_equivalent = parseFloat(value.amount);
 
-                                                } else {
-                                                    value.usd_equivalent = parseFloat(value.base_currency_closing_rate.mid_rate);
-                                                    value.usd_equivalent *= parseFloat(value.amount);
-                                                    value.usd_equivalent /= parseFloat(
-                                                        value.base_currency_closing_rate.world_currency_closing_mid_rate
-                                                    );
-                                                }
-
-                                                return value;
-                                            });
-
-                                        json.data = json.data
-                                            .sort((x, y) => {
-                                                return y.usd_equivalent - x.usd_equivalent;
-                                            })
-                                            .filter(value => value.usd_equivalent >= 0)
-                                            .filter(value => !value.currency_pair.counter_currency)
-                                            .slice(0, 10)
-                                            .concat(
-                                                json.data
-                                                .sort((x, y) => {
-                                                    return y.usd_equivalent - x.usd_equivalent;
-                                                })
-                                                .filter(value => value.usd_equivalent < 0)
-                                                .filter(value => !value.currency_pair.counter_currency)
-                                                .slice(-10)
+                                        } else {
+                                            value.usd_equivalent = parseFloat(value.base_currency_closing_rate.mid_rate);
+                                            value.usd_equivalent *= parseFloat(value.amount);
+                                            value.usd_equivalent /= parseFloat(
+                                                value.base_currency_closing_rate.world_currency_closing_mid_rate
                                             );
+                                        }
+
+                                        return value;
+                                    });
+
+                                json.data = json.data
+                                    .sort((x, y) => {
+                                        return y.usd_equivalent - x.usd_equivalent;
+                                    })
+                                    .filter(value => value.usd_equivalent >= 0)
+                                    .filter(value => !value.currency_pair.counter_currency)
+                                    .slice(0, 10)
+                                    .concat(
+                                        json.data
+                                        .sort((x, y) => {
+                                            return y.usd_equivalent - x.usd_equivalent;
+                                        })
+                                        .filter(value => value.usd_equivalent < 0)
+                                        .filter(value => !value.currency_pair.counter_currency)
+                                        .slice(-10)
+                                    );
 
 @else
-                                        $(document).find('[name="sales-limit"]').val(json.sales_limit);
-                                        $(document).find('[name="threshold"]').val(json.threshold);
+                                $(document).find('[name="sales-limit"]').val(json.sales_limit);
+                                $(document).find('[name="threshold"]').val(json.threshold);
 
-                                        if (!json.threshold) {
-                                            $(document).find('#js-page-content').find('#alert-dismissible').find('.alert').addClass('show');
+                                if (!json.threshold) {
+                                    $(document).find('#js-page-content').find('#alert-dismissible').find('.alert').addClass('show');
 
-                                        } else if ($('#js-page-content').find('#alert-dismissible').find('.alert').hasClass('show')) {
-                                            $('#js-page-content').find('#alert-dismissible').find('.alert').removeClass('show');
-                                        }
+                                } else if ($('#js-page-content').find('#alert-dismissible').find('.alert').hasClass('show')) {
+                                    $('#js-page-content').find('#alert-dismissible').find('.alert').removeClass('show');
+                                }
 @endif
 
-                                        return json.data;
+                                return json.data;
 @endif
-                                    }
-                                },
-                                columns: [
+                            }
+                        },
+                        columns: [
 @if (
     collect([route('sales-fx.index'), route('sales-special-rate-deal.index'), route('sales-blotter.index')])->contains(request()->url()) &&
     auth()->user()->can('view', new App\SalesDeal)
 )
-                                    {
-                                        data: 'branch.name'
-                                    },
+                            {
+                                data: 'branch.name'
+                            },
 @endcan
-                                    {
-                                        data: 'account.name',
-                                        render: function(data, type, row, meta) {
-                                            return data.trim();
-                                        }
-                                    },
-                                    {
-                                        data: 'tt_or_bn.name',
-                                        className: 'text-center text-uppercase'
-                                    },
+                            {
+                                data: 'account.name',
+                                render: function(data, type, row, meta) {
+                                    return data.trim();
+                                }
+                            },
+                            {
+                                data: 'tt_or_bn.name',
+                                className: 'text-center text-uppercase'
+                            },
 @if (request()->route()->named('sales-top-ten-obox.index'))
-                                    {
-                                        data: 'tod_or_tom_or_spot_or_forward.name',
-                                        className: 'text-center text-uppercase'
-                                    },
+                            {
+                                data: 'tod_or_tom_or_spot_or_forward.name',
+                                className: 'text-center text-uppercase'
+                            },
 @endif
 @if (request()->route()->named('sales-blotter.index'))
-                                    {
-                                        data: 'account.cif',
-                                        className: 'text-center'
-                                    },
+                            {
+                                data: 'account.cif',
+                                className: 'text-center'
+                            },
 @endif
-                                    {
-                                        data: 'currency_pair',
-                                        className: 'text-center',
-                                        render: function(data, type, row, meta) {
-                                            if (!data.base_currency.secondary_code) {
-                                                data.base_currency.secondary_code = data.base_currency.primary_code;
-                                            }
-
-                                            return (
-                                                (data.base_currency.secondary_code).concat('/')
-                                                    .concat(
-                                                        data.counter_currency_id ? (
-                                                            data.counter_currency.primary_code
-                                                        ) : (
-                                                            'IDR'
-                                                        )
-                                                    )
-                                            );
-                                        }
-                                    },
-                                    {
-                                        data: 'amount',
-                                        className: 'text-right',
-                                        render: function(data, type, row, meta) {
-                                            data = parseFloat(data).toLocaleString('en-US', {
-                                                minimumFractionDigits: data.split('.').slice(1).join().length
-                                            });
-
-                                            row.element = document.createElement('span');
-                                            row.element.innerHTML = data;
-
-                                            if (
-                                                row.can_upload_underlying && (
-                                                    meta.settings.json.threshold
-                                                ) && (
-                                                    row.monthly_usd_equivalent > parseFloat(meta.settings.json.threshold)
-                                                )
-                                            ) {
-                                                if (row.sales_deal_file && row.sales_deal_file.confirmed) {
-                                                    row.element.classList.add('text-warning');
-
-                                                } else {
-                                                    row.element.classList.add('text-danger');
-                                                }
-                                            }
-
-                                            return row.element.outerHTML;
-                                        }
-                                    },
-@if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index'), route('sales-blotter.index')])->contains(request()->url()))
-                                    {
-                                        data: 'customer_rate',
-                                        className: 'text-right',
-                                        render: function(data, type, row, meta) {
-                                            return parseFloat(data).toLocaleString('en-US', {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: data.split('.').slice(1).join().length
-                                            });
-                                        }
-                                    },
-                                    {
-                                        data: 'interoffice_rate',
-                                        className: 'text-right',
-                                        render: function(data, type, row, meta) {
-                                            data = parseFloat(data).toLocaleString('en-US', {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: data.split('.').slice(1).join().length
-                                            });
-
-                                            row.element = document.createElement('span');
-                                            row.element.innerHTML = data;
-
-                                            if (row.special_rate_deal) {
-                                                if (row.special_rate_deal.confirmed) {
-                                                    row.element.classList.add('text-warning');
-
-                                                } else {
-                                                    row.element.classList.add('text-danger');
-                                                }
-                                            }
-
-                                            return row.element.outerHTML;
-                                        }
-                                    },
-                                    {
-                                        data: 'buy_or_sell.name',
-                                        className: 'text-center text-capitalize',
-                                        render: function(data, type, row, meta) {
-                                            return ('bank').concat(' ').concat(data);
-                                        }
-                                    },
-@elseif (request()->route()->named('sales-top-ten-obox.index'))
-                                    {
-                                        className: 'text-right',
-                                        render: function(data, type, row, meta) {
-                                            data = row.customer_rate;
-                                            data *= row.amount;
-
-                                            return data.toLocaleString('en-US', {
-                                                maximumFractionDigits: 2
-                                            });
-                                        }
-                                    },
-                                    {
-                                        data: 'usd_equivalent',
-                                        className: 'text-right',
-                                        render: function(data, type, row, meta) {
-                                            return Math.abs(data).toLocaleString('en-US', {
-                                                maximumFractionDigits: 2
-                                            });
-                                        }
+                            {
+                                data: 'currency_pair',
+                                className: 'text-center',
+                                render: function(data, type, row, meta) {
+                                    if (!data.base_currency.secondary_code) {
+                                        data.base_currency.secondary_code = data.base_currency.primary_code;
                                     }
-@endif
-@if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index'), route('sales-blotter.index')])->contains(request()->url()))
-                                    {
-                                        data: 'created_at',
-                                        className: 'text-center',
-                                        render: function(data, type, row, meta) {
-                                            return moment(data).format('lll');
-                                        }
-                                    },
-                                    {
-                                        className: 'text-center',
-                                        orderable: false,
-                                        render: function(data, type, row, meta) {
-                                            row.element = document.createElement('span');
 
-                                            if (
-                                                row.can_upload_underlying && (
-                                                    meta.settings.json.threshold
-                                                ) && (
-                                                    row.monthly_usd_equivalent > parseFloat(meta.settings.json.threshold)
-                                                ) && (
-                                                    !row.sales_deal_file
+                                    return (
+                                        (data.base_currency.secondary_code).concat('/')
+                                            .concat(
+                                                data.counter_currency_id ? (
+                                                    data.counter_currency.primary_code
+                                                ) : (
+                                                    'IDR'
                                                 )
                                             )
-                                            {
-                                                row.element.classList.add('badge', 'badge-primary', 'badge-pill');
-                                                row.element.innerHTML = 'Attention';
-
-                                            } else if (
-                                                (row.special_rate_deal && !row.special_rate_deal.confirmed) || (
-                                                    row.modification_updated && !row.modification_updated.confirmed
-                                                ) || (
-                                                    (row.sales_deal_file && !row.sales_deal_file.confirmed)
-                                                )
-                                            )
-                                            {
-                                                row.element.classList.add('badge', 'badge-warning', 'badge-pill');
-                                                row.element.innerHTML = 'Pending';
-
-                                            } else {
-                                                row.element.classList.add('badge', 'badge-success', 'badge-pill');
-                                                row.element.innerHTML = 'Success';
-                                            }
-
-                                            return row.element.outerHTML;
-                                        }
-                                    }
-@endif
-@if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
-                                    ,{
-                                        className: 'text-center',
-                                        orderable: false,
-                                        render: function(data, type, row, meta) {
-                                            row.element = document.createElement('span');
-
-                                            if (row.sismontavar_deal)
-                                            {
-                                                if (parseFloat(row.sismontavar_deal.status_code) === 200)
-                                                {
-                                                    row.element.classList.add('badge', 'badge-success', 'badge-pill');
-                                                    row.element.innerHTML = 'Success';
-
-                                                } else {
-                                                    row.element.classList.add('badge', 'badge-primary', 'badge-pill');
-                                                    row.element.innerHTML = 'Attention';
-                                                }
-                                            }
-
-                                            return row.element.outerHTML;
-                                        }
-                                    }
-@endif
-                                ],
-                                language: {
-                                    infoFiltered: ''
-                                },
-@can ('create', 'App\SalesDeal')
-                                createdRow: function(row, data, dataIndex) {
-                                    $(row).addClass('pointer');
-
-@if (request()->route()->named('sales-top-ten-obox.index'))
-                                    if (data.usd_equivalent < 0) {
-                                        $(row).addClass('table-success');
-
-                                    } else {
-                                        $(row).addClass('table-danger');
-                                    }
-
-@endif
-                                },
-@endcan
-                                initComplete: function(settings, json) {
-                                    settings.oInstance.api().columns().header().to$().addClass('text-center');
-
-@if (auth()->user()->can('view', new App\SalesDeal) && request()->route()->named('sales-blotter.index'))
-                                    $(settings.oInstance.api().table().header().querySelector('select')).on('change', function (e) {
-                                        if (e.currentTarget.options[e.currentTarget.selectedIndex].value) {
-                                            settings.oInstance.api().column(0)
-                                            .search(e.currentTarget.options[e.currentTarget.selectedIndex].text)
-                                            .draw();                                            
-                                        }
-
-                                    });
-
-                                    $.each(json.branch, function(key, value) {
-                                        settings.oInstance.api().table().header().querySelector('select').appendChild(new Option(value, key));
-                                    });
-@endif
-
-                                    window.setInterval( function () {
-                                        settings.oInstance.api().ajax.reload(null, false);
-                                    }, 15000 );
-
-                                    $(settings.oInstance).closest('main').find('form input.datepicker').on('change', function(e) {
-                                        settings.oInstance.api().ajax.reload(null, false);
-                                    })
-
-                                }
-                            });
-
-                            dtAdvance.on('search', function(e, dt, type, indexes) {
-                                if ($(e.currentTarget).find('thead tr').last().children().first().find('option:selected')) {
-                                    $(e.currentTarget)
-                                    .closest('main')
-                                    .find('form input[name="branch-code"]')
-                                    .val($(e.currentTarget).find('thead tr').last().children().first().find('option:selected').val());
-								}
-							})
-
-@if (!$market)
-                            $(document).find('#panel-market-hour > .panel-container > .panel-content').find('.btn').prop('disabled', true);
-@endif
-
-                        })
-
-                        $(document).find('input.datepicker').on('change', function(e) {
-                            var sibling = $(e.currentTarget).closest('.form-group').siblings().find('input.datepicker');
-
-                            if ($(e.currentTarget).is('input[name="date_from"]')) {
-                                if (moment(e.currentTarget.value).isBefore(moment(sibling.data().dateEndDate), 'year')) {
-                                    sibling.datepicker('setEndDate', moment(e.currentTarget.value).endOf('year').format('YYYY-MM-DD'));
-                                }
-
-                            } else {
-                                if (moment(e.currentTarget.value).isBefore(moment(sibling.data().dateEndDate))) {
-                                    sibling.datepicker('setEndDate', moment(e.currentTarget.value).format('YYYY-MM-DD'));
-                                }
-                            }
-                        })
-
-                        $(document).find('#panel-market-hour > .panel-container > .panel-content').find('.btn').on('click', function(e) {
-                            let dataIon = $(e.currentTarget).closest('.panel').find('#market-hour').data('ionRangeSlider');
-
-                            if ($(e.currentTarget).is('.btn-danger')) {
-                                oldFrom = dataIon.result.from;
-                                oldTo = dataIon.result.to;
-
-                                dataIon.update({
-                                    from: dataIon.result.min,
-                                    to: dataIon.result.min
-                                });
-
-                            } else {
-                                dataIon.update({
-                                    from: oldFrom,
-                                    to: oldTo
-                                });
-                            }
-
-                            dataIon.options.onFinish(dataIon.result);
-                            $(e.currentTarget).toggleClass('btn-danger');
-                            $(e.currentTarget).find('.fal').toggleClass('fa-times');
-                        })
-
-                        $(document).on('show.bs.collapse', '.panel-sales-deal .card-body .h4.fw-400', function(e) {
-                            e.currentTarget.innerHTML = parseFloat(e.currentTarget.dataset.text).toLocaleString('en-US', {
-                                maximumFractionDigits: e.currentTarget.dataset.text.split('.').slice(1).join().length
-                            });
-                        });
-
-                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('show.bs.modal', function(e) {
-@if (request()->route()->named('sales-fx.index'))
-                            let countDownTime = moment().add(1, 'm');
-
-                            if (countDown) {
-                                window.clearInterval(countDown);
-                            }
-
-                            countDown = window.setInterval(() => {
-                                let seconds = moment(countDownTime.diff(moment())).format('ss');
-
-                                if (moment().isSameOrAfter(countDownTime)) {
-                                    $(e.currentTarget).modal('hide');
-                                    window.clearInterval(countDown);
-
-                                } else {
-                                    $(e.currentTarget).find('.modal-header time').text('00' + ':' + seconds);
-                                }
-
-                            }, 500);
-
-                            $(e.currentTarget).find('input[name="encrypted-query-string"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.encryptedQueryString
-                            );
-
-                            $(e.currentTarget)
-                            .find('input[name="interoffice-rate"]')
-                            .next()
-                            .val($(e.relatedTarget).prev().children('[data-text]')
-                            .text().trim());
-
-                            $(e.currentTarget).find('input[name="interoffice-rate"]').next().trigger('input');
-@elseif (request()->route()->named('sales-special-rate-deal.index'))
-                            $(e.currentTarget).find('input[name="interoffice-rate"]').next().val('');
-                            $(e.currentTarget).find('input[name="interoffice-rate"]').next().trigger('input');
-@endif
-                            $(e.currentTarget).find('.modal-header .modal-title').text(e.relatedTarget.children[0].innerHTML);
-                            $(e.currentTarget).find('.modal-header .modal-title').append(document.createElement('small'));
-                            $(e.currentTarget).find('.modal-header .modal-title small').addClass('m-0', 'text-muted');
-                            $(e.currentTarget)
-                            .find('.modal-header .modal-title small')
-                            .addClass('m-0', 'text-muted')
-                            .text(e.relatedTarget.closest('.card').querySelector('.card-title strong').innerHTML);
-
-                            if (
-                                (e.relatedTarget.children[0].innerHTML.trim().toLowerCase() === 'bank sell') && (
-                                    !e.relatedTarget.closest('[class^=col-sm]').dataset.counterCurrencyCode
-                                )
-                            ) {
-                                $(e.currentTarget).find('[for="monthly-usd-equivalent"]').closest('.form-group').show();
-
-                            } else {
-                                $(e.currentTarget).find('[for="monthly-usd-equivalent"]').closest('.form-group').hide();
-                            }
-
-                            $(e.currentTarget).find('input[name="base-primary-code"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.basePrimaryCode
-                            );
-
-                            $(e.currentTarget).find('input[name="base-secondary-code"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.baseSecondaryCode
-                            );
-
-                            $(e.currentTarget).find('input[name="counter-primary-code"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.counterPrimaryCode
-                            );
-
-                            $(e.currentTarget).find('input[name="counter-secondary-code"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.counterSecondaryCode
-                            );
-
-                            $(e.currentTarget).find('input[name="buy-sell"]').val(e.relatedTarget.children[0].innerHTML.trim());
-
-                            $(e.currentTarget).find('input[name="base-currency-closing-rate"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.baseCurrencyClosingRate
-                            );
-
-                            $(e.currentTarget).find('input[name="world-currency-closing-rate"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyClosingRate
-                            );
-
-                            $(e.currentTarget).find('input[name="world-currency-code"]').val(
-                                e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyCode
-                            );
-
-                            $(e.currentTarget).find('input[name="customer-rate"]').next().val('');
-                            $(e.currentTarget).find('input[name="customer-rate"]').next().trigger('input');
-
-                            $(e.currentTarget).find('input[name="amount"]').next().val('');
-                            $(e.currentTarget).find('input[name="amount"]').next().trigger('input');
-
-                            $(e.currentTarget).find('input[name="interoffice-rate"]').get(0).dataset.minimum = .0001;
-                            $(e.currentTarget).find('input[name="amount"]').get(0).dataset.minimum = .01;
-
-                            switch (e.relatedTarget.children[0].innerHTML.trim().toLowerCase()) {
-                                case 'bank buy':
-                                    $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = .0001;
-
-                                    if ($(e.currentTarget).find('input[name="interoffice-rate"]').val()) {
-                                        $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum = $(e.currentTarget)
-                                            .find('input[name="interoffice-rate"]')
-                                            .val();
-                                    }
-
-                                break;
-
-                                case 'bank sell':
-                                    if ($(e.currentTarget).find('input[name="interoffice-rate"]').val()) {
-                                        $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = $(e.currentTarget)
-                                            .find('input[name="interoffice-rate"]')
-                                            .val();
-                                    }
-
-                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
-                                        delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
-                                    }
-
-                                break;
-
-                                default:
-                                    if ('minimum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
-                                        delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum;
-                                    }
-
-                                    if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
-                                        delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
-                                    }
-
-                            }
-
-@if (request()->route()->named('sales-fx.index'))
-                            if ($(e.currentTarget).find('input[name="sales-limit"]').val().length) {
-                                $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = $(e.currentTarget)
-                                    .find('input[name="sales-limit"]')
-                                    .val();
-
-                                if (
-                                    e.relatedTarget.closest('[class^=col-sm]').dataset.basePrimaryCode
-                                    !==
-                                    e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyCode
-                                ) {
-                                    $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = Math.abs(
-                                        e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyClosingRate * (
-                                            parseFloat($(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum)
-                                            / (
-                                                parseFloat(parseFloat(e.relatedTarget.closest('[class^=col-sm]').dataset.baseCurrencyClosingRate))
-                                            )
-                                        )
                                     );
                                 }
+                            },
+                            {
+                                data: 'amount',
+                                className: 'text-right',
+                                render: function(data, type, row, meta) {
+                                    data = parseFloat(data).toLocaleString('en-US', {
+                                        minimumFractionDigits: data.split('.').slice(1).join().length
+                                    });
 
-                            }
+                                    row.element = document.createElement('span');
+                                    row.element.innerHTML = data;
 
-@endif
-                        })
-
-                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('hidden.bs.modal', function(e) {
-@if (request()->route()->named('sales-special-rate-deal.index'))
-                            $(e.currentTarget).find('input[name="interoffice-rate"]').next().val('');
-                            $(e.currentTarget).find('input[name="interoffice-rate"]').next().trigger('input');
-@endif
-                            $(e.currentTarget).find('input[name="customer-rate"]').next().val('');
-                            $(e.currentTarget).find('input[name="customer-rate"]').next().trigger('input');
-
-                            $(e.currentTarget).find('input[name="amount"]').next().val('');
-                            $(e.currentTarget).find('input[name="amount"]').next().trigger('input');
-                        })
-
-                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[type="submit"]').on('focus', function(e) {
-                            $(e.currentTarget).closest('form').find('[required]').each( function(key, element) {
-                                if (
-                                    (
-                                        ($(element).is(':hidden') && $(element.nextElementSibling).is('[im-insert]')) || (
-                                            $(element).is(':visible') && element.name
+                                    if (
+                                        row.can_upload_underlying && (
+                                            meta.settings.json.threshold
+                                        ) && (
+                                            row.monthly_usd_equivalent > parseFloat(meta.settings.json.threshold)
                                         )
-                                    ) && (
-                                        !element.value
-                                    )
-                                ) {
-                                    if ($(element).is(':hidden') || $(element).is('[data-select2-id]')) {
-                                        element = element.nextElementSibling
+                                    ) {
+                                        if (row.sales_deal_file && row.sales_deal_file.confirmed) {
+                                            row.element.classList.add('text-warning');
+
+                                        } else {
+                                            row.element.classList.add('text-danger');
+                                        }
                                     }
 
-                                    $(element).tooltip({
-                                        trigger: 'manual',
-                                        placement: 'bottom',
-                                        title: 'Alert! Please fill out this field.',
-                                        template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner bg-danger-500 mw-100"></div></div>'
-                                    })
-                                    .tooltip('show')
-
-                                    e.preventDefault()
+                                    return row.element.outerHTML;
                                 }
-                            })
-
-                            if (
-                                ($(e.currentTarget).closest('form').find('[name="buy-sell"]').val().toLowerCase() === 'bank buy') &&
-                                parseFloat(
-                                    $(e.currentTarget).closest('form').find('[name="customer-rate"]').val()
-                                ) > parseFloat(
-                                    $(e.currentTarget).closest('form').find('[name="interoffice-rate"]').val()
-                                )
-                            )
+                            },
+@if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index'), route('sales-blotter.index')])->contains(request()->url()))
                             {
-                                $(e.currentTarget).closest('form').find('[name="customer-rate"]').next().tooltip('dispose')
-                                $(e.currentTarget).closest('form').find('[name="customer-rate"]').next()
-                                .tooltip({
-                                    trigger: 'manual',
-                                    placement: 'bottom',
-                                    title: 'Alert! The customer rate over interoffice rate.',
-                                    template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner bg-danger-500 mw-100"></div></div>'
-                                })
-                                .tooltip('show')
-
-                            } else if (
-                                ($(e.currentTarget).closest('form').find('[name="buy-sell"]').val().toLowerCase() === 'bank sell') &&
-                                parseFloat(
-                                    $(e.currentTarget).closest('form').find('[name="customer-rate"]').val()
-                                ) < parseFloat(
-                                    $(e.currentTarget).closest('form').find('[name="interoffice-rate"]').val()
-                                )
-                            )
+                                data: 'customer_rate',
+                                className: 'text-right',
+                                render: function(data, type, row, meta) {
+                                    return parseFloat(data).toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: data.split('.').slice(1).join().length
+                                    });
+                                }
+                            },
                             {
-                                $(e.currentTarget).closest('form').find('[name="customer-rate"]').next().tooltip('dispose')
-                                $(e.currentTarget).closest('form').find('[name="customer-rate"]').next()
-                                .tooltip({
-                                    trigger: 'manual',
-                                    placement: 'bottom',
-                                    title: 'Alert! The customer rate under interoffice rate.',
-                                    template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner bg-danger-500 mw-100"></div></div>'
-                                })
-                                .tooltip('show')
+                                data: 'interoffice_rate',
+                                className: 'text-right',
+                                render: function(data, type, row, meta) {
+                                    data = parseFloat(data).toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: data.split('.').slice(1).join().length
+                                    });
+
+                                    row.element = document.createElement('span');
+                                    row.element.innerHTML = data;
+
+                                    if (row.special_rate_deal) {
+                                        if (row.special_rate_deal.confirmed) {
+                                            row.element.classList.add('text-warning');
+
+                                        } else {
+                                            row.element.classList.add('text-danger');
+                                        }
+                                    }
+
+                                    return row.element.outerHTML;
+                                }
+                            },
+                            {
+                                data: 'buy_or_sell.name',
+                                className: 'text-center text-capitalize',
+                                render: function(data, type, row, meta) {
+                                    return ('bank').concat(' ').concat(data);
+                                }
+                            },
+@elseif (request()->route()->named('sales-top-ten-obox.index'))
+                            {
+                                className: 'text-right',
+                                render: function(data, type, row, meta) {
+                                    data = row.customer_rate;
+                                    data *= row.amount;
+
+                                    return data.toLocaleString('en-US', {
+                                        maximumFractionDigits: 2
+                                    });
+                                }
+                            },
+                            {
+                                data: 'usd_equivalent',
+                                className: 'text-right',
+                                render: function(data, type, row, meta) {
+                                    return Math.abs(data).toLocaleString('en-US', {
+                                        maximumFractionDigits: 2
+                                    });
+                                }
                             }
-                        })
+@endif
+@if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index'), route('sales-blotter.index')])->contains(request()->url()))
+                            {
+                                data: 'created_at',
+                                className: 'text-center',
+                                render: function(data, type, row, meta) {
+                                    return moment(data).format('lll');
+                                }
+                            },
+                            {
+                                className: 'text-center',
+                                orderable: false,
+                                render: function(data, type, row, meta) {
+                                    row.element = document.createElement('span');
 
-                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('form')
-                        .on('focus', '[required]', function(e) {
-                            $(e.currentTarget).tooltip('hide');
-                        })
-
-                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('form').on('submit', function(e) {
-                            $(e.currentTarget).find('[data-minimum],[data-maximum]').each( function(key, element) {
-                                if (
-                                    !element.value.length || !(
-                                        (
-                                            parseFloat(element.dataset.minimum) <= parseFloat(element.value)
+                                    if (
+                                        row.can_upload_underlying && (
+                                            meta.settings.json.threshold
                                         ) && (
-                                            !element.dataset.maximum || parseFloat(element.dataset.maximum) >= parseFloat(element.value)
+                                            row.monthly_usd_equivalent > parseFloat(meta.settings.json.threshold)
+                                        ) && (
+                                            !row.sales_deal_file
                                         )
                                     )
-                                ) {
-                                    e.preventDefault();
-                                }
-                            })
-                        })
+                                    {
+                                        row.element.classList.add('badge', 'badge-primary', 'badge-pill');
+                                        row.element.innerHTML = 'Attention';
 
-                    </script>
+                                    } else if (
+                                        (row.special_rate_deal && !row.special_rate_deal.confirmed) || (
+                                            row.modification_updated && !row.modification_updated.confirmed
+                                        ) || (
+                                            (row.sales_deal_file && !row.sales_deal_file.confirmed)
+                                        )
+                                    )
+                                    {
+                                        row.element.classList.add('badge', 'badge-warning', 'badge-pill');
+                                        row.element.innerHTML = 'Pending';
+
+                                    } else {
+                                        row.element.classList.add('badge', 'badge-success', 'badge-pill');
+                                        row.element.innerHTML = 'Success';
+                                    }
+
+                                    return row.element.outerHTML;
+                                }
+                            }
+@endif
+@if (collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url()))
+                            ,{
+                                className: 'text-center',
+                                orderable: false,
+                                render: function(data, type, row, meta) {
+                                    row.element = document.createElement('span');
+
+                                    if (row.sismontavar_deal)
+                                    {
+                                        if (parseFloat(row.sismontavar_deal.status_code) === 200)
+                                        {
+                                            row.element.classList.add('badge', 'badge-success', 'badge-pill');
+                                            row.element.innerHTML = 'Success';
+
+                                        } else {
+                                            row.element.classList.add('badge', 'badge-primary', 'badge-pill');
+                                            row.element.innerHTML = 'Attention';
+                                        }
+                                    }
+
+                                    return row.element.outerHTML;
+                                }
+                            }
+@endif
+                        ],
+                        language: {
+                            infoFiltered: ''
+                        },
+@can ('create', 'App\SalesDeal')
+                        createdRow: function(row, data, dataIndex) {
+                            $(row).addClass('pointer');
+
+@if (request()->route()->named('sales-top-ten-obox.index'))
+                            if (data.usd_equivalent < 0) {
+                                $(row).addClass('table-success');
+
+                            } else {
+                                $(row).addClass('table-danger');
+                            }
+
+@endif
+                        },
+@endcan
+                        initComplete: function(settings, json) {
+                            settings.oInstance.api().columns().header().to$().addClass('text-center');
+
+@if (auth()->user()->can('view', new App\SalesDeal) && request()->route()->named('sales-blotter.index'))
+                            $(settings.oInstance.api().table().header().querySelector('select')).on('change', function (e) {
+                                if (e.currentTarget.options[e.currentTarget.selectedIndex].value) {
+                                    settings.oInstance.api().column(0)
+                                    .search(e.currentTarget.options[e.currentTarget.selectedIndex].text)
+                                    .draw();                                            
+                                }
+
+                            });
+
+                            $.each(json.branch, function(key, value) {
+                                settings.oInstance.api().table().header().querySelector('select').appendChild(new Option(value, key));
+                            });
+@endif
+
+                            window.setInterval( function () {
+                                settings.oInstance.api().ajax.reload(null, false);
+                            }, 15000 );
+
+                            $(settings.oInstance).closest('main').find('form input.datepicker').on('change', function(e) {
+                                settings.oInstance.api().ajax.reload(null, false);
+                            })
+
+                        }
+                    });
+
+                dtAdvance.on('search', function(e, dt, type, indexes) {
+                    if ($(e.currentTarget).find('thead tr').last().children().first().find('option:selected')) {
+                        $(e.currentTarget)
+                        .closest('main')
+                        .find('form input[name="branch-code"]')
+                        .val($(e.currentTarget).find('thead tr').last().children().first().find('option:selected').val());
+                    }
+                })
+
+@if (!$market)
+                $(document).find('#panel-market-hour > .panel-container > .panel-content').find('.btn').prop('disabled', true);
+@endif
+
+            })
+
+            $(document).find('input.datepicker').on('change', function(e) {
+                var sibling = $(e.currentTarget).closest('.form-group').siblings().find('input.datepicker');
+
+                if ($(e.currentTarget).is('input[name="date_from"]')) {
+                    if (moment(e.currentTarget.value).isBefore(moment(sibling.data().dateEndDate), 'year')) {
+                        sibling.datepicker('setEndDate', moment(e.currentTarget.value).endOf('year').format('YYYY-MM-DD'));
+                    }
+
+                } else {
+                    if (moment(e.currentTarget.value).isBefore(moment(sibling.data().dateEndDate))) {
+                        sibling.datepicker('setEndDate', moment(e.currentTarget.value).format('YYYY-MM-DD'));
+                    }
+                }
+            })
+
+            $(document).find('#panel-market-hour > .panel-container > .panel-content').find('.btn').on('click', function(e) {
+                let dataIon = $(e.currentTarget).closest('.panel').find('#market-hour').data('ionRangeSlider');
+
+                if ($(e.currentTarget).is('.btn-danger')) {
+                    oldFrom = dataIon.result.from;
+                    oldTo = dataIon.result.to;
+
+                    dataIon.update({
+                        from: dataIon.result.min,
+                        to: dataIon.result.min
+                    });
+
+                } else {
+                    dataIon.update({
+                        from: oldFrom,
+                        to: oldTo
+                    });
+                }
+
+                dataIon.options.onFinish(dataIon.result);
+                $(e.currentTarget).toggleClass('btn-danger');
+                $(e.currentTarget).find('.fal').toggleClass('fa-times');
+            })
+
+            $(document).on('show.bs.collapse', '.panel-sales-deal .card-body .h4.fw-400', function(e) {
+                e.currentTarget.innerHTML = parseFloat(e.currentTarget.dataset.text).toLocaleString('en-US', {
+                    maximumFractionDigits: e.currentTarget.dataset.text.split('.').slice(1).join().length
+                });
+            });
+
+            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('show.bs.modal', function(e) {
+@if (request()->route()->named('sales-fx.index'))
+                let countDownTime = moment().add(1, 'm');
+
+                if (countDown) {
+                    window.clearInterval(countDown);
+                }
+
+                countDown = window.setInterval(() => {
+                    let seconds = moment(countDownTime.diff(moment())).format('ss');
+
+                    if (moment().isSameOrAfter(countDownTime)) {
+                        $(e.currentTarget).modal('hide');
+                        window.clearInterval(countDown);
+
+                    } else {
+                        $(e.currentTarget).find('.modal-header time').text('00' + ':' + seconds);
+                    }
+
+                }, 500);
+
+                $(e.currentTarget).find('input[name="encrypted-query-string"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.encryptedQueryString
+                );
+
+                $(e.currentTarget)
+                .find('input[name="interoffice-rate"]')
+                .next()
+                .val($(e.relatedTarget).prev().children('[data-text]')
+                .text().trim());
+
+                $(e.currentTarget).find('input[name="interoffice-rate"]').next().trigger('input');
+@elseif (request()->route()->named('sales-special-rate-deal.index'))
+                $(e.currentTarget).find('input[name="interoffice-rate"]').next().val('');
+                $(e.currentTarget).find('input[name="interoffice-rate"]').next().trigger('input');
+@endif
+                $(e.currentTarget).find('.modal-header .modal-title').text(e.relatedTarget.children[0].innerHTML);
+                $(e.currentTarget).find('.modal-header .modal-title').append(document.createElement('small'));
+                $(e.currentTarget).find('.modal-header .modal-title small').addClass('m-0', 'text-muted');
+                $(e.currentTarget)
+                .find('.modal-header .modal-title small')
+                .addClass('m-0', 'text-muted')
+                .text(e.relatedTarget.closest('.card').querySelector('.card-title strong').innerHTML);
+
+                if (
+                    (e.relatedTarget.children[0].innerHTML.trim().toLowerCase() === 'bank sell') && (
+                        !e.relatedTarget.closest('[class^=col-sm]').dataset.counterCurrencyCode
+                    )
+                ) {
+                    $(e.currentTarget).find('[for="monthly-usd-equivalent"]').closest('.form-group').show();
+
+                } else {
+                    $(e.currentTarget).find('[for="monthly-usd-equivalent"]').closest('.form-group').hide();
+                }
+
+                $(e.currentTarget).find('input[name="base-primary-code"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.basePrimaryCode
+                );
+
+                $(e.currentTarget).find('input[name="base-secondary-code"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.baseSecondaryCode
+                );
+
+                $(e.currentTarget).find('input[name="counter-primary-code"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.counterPrimaryCode
+                );
+
+                $(e.currentTarget).find('input[name="counter-secondary-code"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.counterSecondaryCode
+                );
+
+                $(e.currentTarget).find('input[name="buy-sell"]').val(e.relatedTarget.children[0].innerHTML.trim());
+
+                $(e.currentTarget).find('input[name="base-currency-closing-rate"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.baseCurrencyClosingRate
+                );
+
+                $(e.currentTarget).find('input[name="world-currency-closing-rate"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyClosingRate
+                );
+
+                $(e.currentTarget).find('input[name="world-currency-code"]').val(
+                    e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyCode
+                );
+
+                $(e.currentTarget).find('input[name="customer-rate"]').next().val('');
+                $(e.currentTarget).find('input[name="customer-rate"]').next().trigger('input');
+
+                $(e.currentTarget).find('input[name="amount"]').next().val('');
+                $(e.currentTarget).find('input[name="amount"]').next().trigger('input');
+
+                $(e.currentTarget).find('input[name="interoffice-rate"]').get(0).dataset.minimum = .0001;
+                $(e.currentTarget).find('input[name="amount"]').get(0).dataset.minimum = .01;
+
+                switch (e.relatedTarget.children[0].innerHTML.trim().toLowerCase()) {
+                    case 'bank buy':
+                        $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = .0001;
+
+                        if ($(e.currentTarget).find('input[name="interoffice-rate"]').val()) {
+                            $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum = $(e.currentTarget)
+                                .find('input[name="interoffice-rate"]')
+                                .val();
+                        }
+
+                    break;
+
+                    case 'bank sell':
+                        if ($(e.currentTarget).find('input[name="interoffice-rate"]').val()) {
+                            $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum = $(e.currentTarget)
+                                .find('input[name="interoffice-rate"]')
+                                .val();
+                        }
+
+                        if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
+                            delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
+                        }
+
+                    break;
+
+                    default:
+                        if ('minimum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
+                            delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.minimum;
+                        }
+
+                        if ('maximum' in $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset) {
+                            delete $(e.currentTarget).find('input[name="customer-rate"]').get(0).dataset.maximum;
+                        }
+
+                }
+
+@if (request()->route()->named('sales-fx.index'))
+                if ($(e.currentTarget).find('input[name="sales-limit"]').val().length) {
+                    $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = $(e.currentTarget)
+                        .find('input[name="sales-limit"]')
+                        .val();
+
+                    if (
+                        e.relatedTarget.closest('[class^=col-sm]').dataset.basePrimaryCode
+                        !==
+                        e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyCode
+                    ) {
+                        $(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum = Math.abs(
+                            e.relatedTarget.closest('[class^=col-sm]').dataset.worldCurrencyClosingRate * (
+                                parseFloat($(e.currentTarget).find('input[name="amount"]').get(0).dataset.maximum)
+                                / (
+                                    parseFloat(parseFloat(e.relatedTarget.closest('[class^=col-sm]').dataset.baseCurrencyClosingRate))
+                                )
+                            )
+                        );
+                    }
+
+                }
+
+@endif
+            })
+
+            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').on('hidden.bs.modal', function(e) {
+@if (request()->route()->named('sales-special-rate-deal.index'))
+                $(e.currentTarget).find('input[name="interoffice-rate"]').next().val('');
+                $(e.currentTarget).find('input[name="interoffice-rate"]').next().trigger('input');
+@endif
+                $(e.currentTarget).find('input[name="customer-rate"]').next().val('');
+                $(e.currentTarget).find('input[name="customer-rate"]').next().trigger('input');
+
+                $(e.currentTarget).find('input[name="amount"]').next().val('');
+                $(e.currentTarget).find('input[name="amount"]').next().trigger('input');
+            })
+
+            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('[type="submit"]').on('focus', function(e) {
+                $(e.currentTarget).closest('form').find('[required]').each( function(key, element) {
+                    if (
+                        (
+                            ($(element).is(':hidden') && $(element.nextElementSibling).is('[im-insert]')) || (
+                                $(element).is(':visible') && element.name
+                            )
+                        ) && (
+                            !element.value
+                        )
+                    ) {
+                        if ($(element).is(':hidden') || $(element).is('[data-select2-id]')) {
+                            element = element.nextElementSibling
+                        }
+
+                        $(element).tooltip({
+                            trigger: 'manual',
+                            placement: 'bottom',
+                            title: 'Alert! Please fill out this field.',
+                            template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner bg-danger-500 mw-100"></div></div>'
+                        })
+                        .tooltip('show')
+
+                        e.preventDefault()
+                    }
+                })
+
+                if (
+                    ($(e.currentTarget).closest('form').find('[name="buy-sell"]').val().toLowerCase() === 'bank buy') &&
+                    parseFloat(
+                        $(e.currentTarget).closest('form').find('[name="customer-rate"]').val()
+                    ) > parseFloat(
+                        $(e.currentTarget).closest('form').find('[name="interoffice-rate"]').val()
+                    )
+                )
+                {
+                    $(e.currentTarget).closest('form').find('[name="customer-rate"]').next().tooltip('dispose')
+                    $(e.currentTarget).closest('form').find('[name="customer-rate"]').next()
+                    .tooltip({
+                        trigger: 'manual',
+                        placement: 'bottom',
+                        title: 'Alert! The customer rate over interoffice rate.',
+                        template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner bg-danger-500 mw-100"></div></div>'
+                    })
+                    .tooltip('show')
+
+                } else if (
+                    ($(e.currentTarget).closest('form').find('[name="buy-sell"]').val().toLowerCase() === 'bank sell') &&
+                    parseFloat(
+                        $(e.currentTarget).closest('form').find('[name="customer-rate"]').val()
+                    ) < parseFloat(
+                        $(e.currentTarget).closest('form').find('[name="interoffice-rate"]').val()
+                    )
+                )
+                {
+                    $(e.currentTarget).closest('form').find('[name="customer-rate"]').next().tooltip('dispose')
+                    $(e.currentTarget).closest('form').find('[name="customer-rate"]').next()
+                    .tooltip({
+                        trigger: 'manual',
+                        placement: 'bottom',
+                        title: 'Alert! The customer rate under interoffice rate.',
+                        template: '<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner bg-danger-500 mw-100"></div></div>'
+                    })
+                    .tooltip('show')
+                }
+            })
+
+            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('form')
+            .on('focus', '[required]', function(e) {
+                $(e.currentTarget).tooltip('hide');
+            })
+
+            $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('form').on('submit', function(e) {
+                $(e.currentTarget).find('[data-minimum],[data-maximum]').each( function(key, element) {
+                    if (
+                        !element.value.length || !(
+                            (
+                                parseFloat(element.dataset.minimum) <= parseFloat(element.value)
+                            ) && (
+                                !element.dataset.maximum || parseFloat(element.dataset.maximum) >= parseFloat(element.value)
+                            )
+                        )
+                    ) {
+                        e.preventDefault();
+                    }
+                })
+            })
+
+        </script>
 @endsection
