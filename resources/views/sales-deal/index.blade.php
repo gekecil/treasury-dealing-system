@@ -418,9 +418,9 @@
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
 @if (request()->route()->named('sales-fx.index'))
-                                <form action="{{ route('sales-fx.store') }}" method="post">
+                                <form action="{{ route('sales-fx.store') }}" method="post" data-submit="false">
 @elseif (request()->route()->named('sales-special-rate-deal.index'))
-                                <form action="{{ route('sales-special-rate-deal.store') }}" method="post">
+                                <form action="{{ route('sales-special-rate-deal.store') }}" method="post" data-submit="false">
 @endif
                                     @csrf
                                     
@@ -601,17 +601,19 @@
                             case 401:
                                 $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
 
-                                Swal.fire({
-                                    title: 'Oops...',
-                                    text: jqXHR.responseJSON.message,
-                                    type: 'error',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false,
-                                    confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
-                                })
-                                .then(function(result) {
-                                    window.location.reload()
-                                })
+                                if(!$(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').find('form').data('submit')) {
+                                    Swal.fire({
+                                        title: 'Oops...',
+                                        text: jqXHR.responseJSON.message,
+                                        type: 'error',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false,
+                                        confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
+                                    })
+                                    .then(function(result) {
+                                        window.location.reload()
+                                    })
+                                }
 
                                 break
 
@@ -1855,6 +1857,8 @@
                         e.preventDefault();
                     }
                 })
+
+                $(e.currentTarget).data('submit', true)
             })
 
         </script>
