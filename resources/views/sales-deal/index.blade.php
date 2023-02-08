@@ -569,7 +569,7 @@
             var oldTo;
 
             var requestSalesDeal = function() {
-                    if(!Swal.isVisible() && moment().isAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
+                    if(!Swal.isVisible() && moment().isSameOrAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
                         $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
 
                         Swal.fire({
@@ -582,6 +582,7 @@
                         })
                         .then( function(result) {
                             window.location.reload()
+                            $(document).find('meta[name="token-expires-at"]').attr('content', moment().add(30, 's').format())
                         })
                     }
 
