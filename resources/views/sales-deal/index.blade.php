@@ -569,8 +569,7 @@
             var oldTo;
 
             var requestSalesDeal = function() {
-//                    if(moment().isSameOrAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
-                    if(false) {
+                    if(moment().isAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
                         $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
 
                         Swal.fire({
@@ -581,7 +580,7 @@
                             allowEscapeKey: false,
                             confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
                         })
-                        .then(function(result) {
+                        .then( function(result) {
                             window.location.reload()
                         })
                     }
@@ -611,7 +610,7 @@
                                         allowEscapeKey: false,
                                         confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
                                     })
-                                    .then(function(result) {
+                                    .then( function(result) {
                                         window.location.reload()
                                     })
                                 }
