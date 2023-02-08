@@ -569,7 +569,8 @@
             var oldTo;
 
             var requestSalesDeal = function() {
-                    if(moment().isSameOrAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
+//                    if(moment().isSameOrAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
+                    if(false) {
                         $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
 
                         Swal.fire({
