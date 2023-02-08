@@ -569,23 +569,6 @@
             var oldTo;
 
             var requestSalesDeal = function() {
-                    if(!Swal.isVisible() && moment().isSameOrAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
-                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
-
-                        Swal.fire({
-                            title: 'Oops...',
-                            text: 'Your session token has expired!',
-                            type: 'error',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
-                        })
-                        .then( function(result) {
-                            window.location.reload()
-                            $(document).find('meta[name="token-expires-at"]').attr('content', moment().add(30, 's').format())
-                        })
-                    }
-
                     $.ajax({
                         method: 'GET',
                         url: @json(route('api.currencies.index')),
@@ -641,7 +624,25 @@
                 }
 
             var responseSalesDeal = function(response) {
-                    window.setTimeout(requestSalesDeal, 1000);
+                    if(moment().isSameOrAfter($(document).find('meta[name="token-expires-at"]').attr('content'))) {
+                        $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
+
+                        Swal.fire({
+                            title: 'Oops...',
+                            text: 'Your session token has expired!',
+                            type: 'error',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
+                        })
+                        .then( function(result) {
+                            window.location.reload()
+                            $(document).find('meta[name="token-expires-at"]').attr('content', moment().add(30, 's').format())
+                        })
+
+                    } else {
+                        window.setTimeout(requestSalesDeal, 1000);
+                    }
 
                     response.data.base_currency_rate = response.data.currency.filter(currency_rate => currency_rate.belongs_to_sales);
 
