@@ -13,7 +13,7 @@
         <!-- API Token -->
         <meta name="api-token" content="{{ auth()->user()->token()->first()->api_token }}">
         <meta name="token-expires-at" content="{{ Illuminate\Support\Facades\Session::get('last_activity') }}">
-        <meta name="token-expires-at" content="{{ implode(', ' session()->all()) }}">
+        <meta name="token-expires-at" content="{{ implode(', ', session()->all()) }}">
 @endif
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
