@@ -626,7 +626,7 @@
             var responseSalesDeal = function(response) {
                     response.session_timeout = moment
                         .unix($(document).find('meta[name="session-last-activity"]').attr('content'))
-                        .add($(document).find('meta[name="session-lifetime"]').attr('content'), 'm');
+                        .add($(document).find('meta[name="session-lifetime"]').attr('content'), 'm')
 
                     if(moment().isSameOrAfter(response.session_timeout)) {
                         $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
@@ -641,7 +641,6 @@
                         })
                         .then( function(result) {
                             window.location.reload(true)
-                            $(document).find('meta[name="token-expires-at"]').attr('content', moment().add(30, 's').format())
                         })
 
                     } else {
