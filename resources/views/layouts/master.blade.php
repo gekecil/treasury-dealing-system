@@ -11,8 +11,8 @@
         <meta name="msapplication-tap-highlight" content="no">
 @if (auth()->check() && auth()->user()->exists)
         <!-- API Token -->
-        <meta name="token-expires-at" content="{{ auth()->user()->token()->first()->updated_at->addMinutes(config('session.lifetime')) }}">
         <meta name="api-token" content="{{ auth()->user()->token()->first()->api_token }}">
+        <meta name="token-expires-at" content="{{ session()->activity() }}">
 @endif
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">

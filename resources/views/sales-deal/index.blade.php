@@ -595,7 +595,7 @@
                                         confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
                                     })
                                     .then( function(result) {
-                                        window.location.reload()
+                                        window.location.reload(true)
                                     })
                                 }
 
@@ -636,7 +636,7 @@
                             confirmButtonText: '<i class="fal fa-repeat-alt"></i> Reload'
                         })
                         .then( function(result) {
-                            window.location.reload()
+                            window.location.reload(true)
                             $(document).find('meta[name="token-expires-at"]').attr('content', moment().add(30, 's').format())
                         })
 
