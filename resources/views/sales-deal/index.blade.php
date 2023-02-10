@@ -624,11 +624,7 @@
                 }
 
             var responseSalesDeal = function(response) {
-                    response.session_timeout = moment
-                        .unix($(document).find('meta[name="session-last-activity"]').attr('content'))
-                        .add($(document).find('meta[name="session-lifetime"]').attr('content'), 'm')
-
-                    if(moment().isSameOrAfter(response.session_timeout)) {
+                    if(moment().isSameOrAfter(moment.unix($(document).find('meta[name="token-expires"]').attr('content')))) {
                         $(document).find('.modal:not(.js-modal-settings):not(.modal-alert)').modal('hide')
 
                         Swal.fire({

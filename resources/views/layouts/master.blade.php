@@ -15,9 +15,8 @@
 @endif
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <!-- Session Lifetime -->
-        <meta name="session-last-activity" content="{{ time() }}">
-        <meta name="session-lifetime" content="{{ config('session.lifetime') }}">
+        <!-- Token Expires -->
+        <meta name="token-expires" content="{{ time() + (60 * config('session.lifetime')) }}">
         <!-- base css -->
         <link rel="stylesheet" media="screen, print" href="/css/vendors.bundle.css">
         <link rel="stylesheet" media="screen, print" href="/css/app.bundle.css">
