@@ -12,7 +12,7 @@
 @if (auth()->check() && auth()->user()->exists)
         <!-- API Token -->
         <meta name="api-token" content="{{ auth()->user()->token()->first()->api_token }}">
-        <meta name="token-expires-at" content="{{ Illuminate\Support\Facades\Session::activity() }}">
+        <meta name="token-expires-at" content="{{ Illuminate\Support\Facades\Session::getMetadataBag()->getLastUsed() }}">
         <meta name="token-expires-at" content="{{ session()->all() }}">
 @endif
         <!-- CSRF Token -->
