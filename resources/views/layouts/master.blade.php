@@ -12,11 +12,12 @@
 @if (auth()->check() && auth()->user()->exists)
         <!-- API Token -->
         <meta name="api-token" content="{{ auth()->user()->token()->first()->api_token }}">
-        <meta name="token-expires-at" content="{{ Illuminate\Support\Facades\Session::get('last_activity') }}">
-        <meta name="token-expires-at" content="{{ implode(', ', session()->all()) }}">
 @endif
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <!-- Session Lifetime -->
+        <meta name="session-last-activity" content="{{ time() }}">
+        <meta name="session-lifetime" content="{{ config('session.lifetime') }}">
         <!-- base css -->
         <link rel="stylesheet" media="screen, print" href="/css/vendors.bundle.css">
         <link rel="stylesheet" media="screen, print" href="/css/app.bundle.css">
