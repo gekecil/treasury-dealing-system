@@ -1316,20 +1316,33 @@
                                 data: 'currency_pair',
                                 className: 'text-center',
                                 render: function(data, type, row, meta) {
+                                    if (!data.counter_currency) {
+                                        data.counter_currency = { primary_code: 'IDR', secondary_code: 'IDR' };
+                                    }
+
                                     if (!data.base_currency.secondary_code) {
                                         data.base_currency.secondary_code = data.base_currency.primary_code;
                                     }
 
-                                    return (
-                                        (data.base_currency.secondary_code).concat('/')
-                                            .concat(
-                                                data.counter_currency_id ? (
-                                                    data.counter_currency.primary_code
-                                                ) : (
-                                                    'IDR'
-                                                )
-                                            )
-                                    );
+                                    if (!data.counter_currency.secondary_code) {
+                                        data.counter_currency.secondary_code = data.counter_currency.primary_code;
+                                    }
+
+                                    row.element = document.createElement('span');
+                                    row.element.innerHTML = data.base_currency.secondary_code
+                                        .concat('/')
+                                        .concat(data.counter_currency.secondary_code);
+
+                                    if (row.element.innerHTML.toLowerCase() === String('cny').concat('/').concat('idr')) {
+                                        if (row.sales_deal_file && row.sales_deal_file.confirmed) {
+                                            row.element.classList.add('text-warning');
+
+                                        } else {
+                                            row.element.classList.add('text-danger');
+                                        }
+                                    }
+
+                                    return row.element.outerHTML;
                                 }
                             },
                             {
