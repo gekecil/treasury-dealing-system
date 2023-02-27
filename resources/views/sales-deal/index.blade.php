@@ -548,8 +548,8 @@
 
 @section('javascript')
 @if (
-    auth()->user()->can('create', 'App\Market') &&
-	collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url())
+    auth()->user()->can('create', 'App\Market')
+    && collect([route('sales-fx.index'), route('sales-special-rate-deal.index')])->contains(request()->url())
 )
         <script src="/js/formplugins/ion-rangeslider/ion-rangeslider.js"></script>
 @endif

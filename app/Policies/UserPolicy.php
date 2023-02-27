@@ -9,11 +9,11 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
-	public function before($user, $ability)
-	{
-		if ($user->is_super_administrator) {
-			return true;
-		}
+    public function before($user, $ability)
+    {
+        if ($user->is_super_administrator) {
+            return true;
+        }
 	}
 
     /**
@@ -24,7 +24,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-		return ($user->is_it_security || $user->is_head_office_dealer);
+        return ($user->is_it_security || $user->is_head_office_dealer);
     }
 
     /**
@@ -36,7 +36,7 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-		return ($user->is_it_security || ($user->id === $model->id));
+        return ($user->is_it_security || ($user->id === $model->id));
     }
 
     /**
@@ -47,7 +47,7 @@ class UserPolicy
      */
     public function create(User $user)
     {
-		return $user->is_it_security;
+        return $user->is_it_security;
     }
 
     /**
@@ -59,7 +59,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-		return $user->is_it_security;
+        return $user->is_it_security;
     }
 
     /**
@@ -71,7 +71,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-		return ($user->is_it_security && !$model->is_administrator);
+        return $user->is_it_security;
     }
 
     /**
