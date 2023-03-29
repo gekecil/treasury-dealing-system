@@ -68,11 +68,11 @@ class SismontavarDeal extends Controller
             'deal_type' => $request->input('deal-type'),
             'direction' => $request->input('direction'),
             'periods' => $request->input('periods'),
-            'transaction_purpose' => $request->input('transaction-purpose'),
+            'transaction_purpose' => ($request->input('transaction-purpose') ?: null),
             'near_rate' => $request->input('near-rate'),
-            'far_rate' => $request->input('far-rate'),
+            'far_rate' => ($request->input('far-rate') ?: null),
             'near_value_date' => $request->input('near-value-date'),
-            'far_value_date' => $request->input('far-value-date'),
+            'far_value_date' => ($request->input('far-value-date') ?: null),
         ]);
 
         if ($request->has('transaction-id') && $request->filled('transaction-id')) {
