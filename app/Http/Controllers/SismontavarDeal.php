@@ -76,7 +76,19 @@ class SismontavarDeal extends Controller
         ]);
 
         if ($request->has('transaction-id') && $request->filled('transaction-id')) {
-            $salesDeal->forceFill(['transaction_id' => $request->input('transaction-id')]);
+            $salesDeal->transaction_id = $request->input('transaction-id');
+
+            $salesDealTransaction = SalesDeal::select(['id', 'user_id', 'created_at'])
+                ->where('created_at', $salesDeal->created_at)
+                ->get()
+                ->filter( function($item) use($salesDeal) {
+                    return (($item->fx_sr).($item->created_at->format('dmy')).($item->blotter_number) === $salesDeal->transaction_id);
+                });
+
+            if ($salesDealTransaction->isNotEmpty()) {
+                $salesDeal->id = $salesDealTransaction->first()->id;
+                $salesDeal->user_id = $salesDealTransaction->first()->user_id;
+            }
         }
 
         $this->sismontavar($salesDeal);

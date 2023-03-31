@@ -109,7 +109,7 @@ class Controller extends BaseController
                 $sismontavarDeal->far_rate = $salesDeal->far_rate;
 
             } else {
-                $sismontavarDeal = $sismontavarDeal->mergeGuarded(['far_rate']);
+                unset($sismontavarDeal->far_rate);
             }
 
             if ($salesDeal->far_value_date) {
