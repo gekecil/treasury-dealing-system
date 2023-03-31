@@ -107,6 +107,9 @@ class Controller extends BaseController
 
             if ($salesDeal->far_rate) {
                 $sismontavarDeal->far_rate = $salesDeal->far_rate;
+
+            } else {
+                unset($sismontavarDeal->far_rate);
             }
 
             if ($salesDeal->far_value_date) {
